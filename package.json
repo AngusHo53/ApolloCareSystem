@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "apollo system frontend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/apollosystem/frontend.git"
+  },
+  "author": "Angus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/apollosystem/frontend/issues"
+  },
+  "homepage": "https://gitlab.com/apollosystem/frontend#readme",
+  "dependencies": {
+    "@vue/cli": "^4.3.0"
+  }
+}
