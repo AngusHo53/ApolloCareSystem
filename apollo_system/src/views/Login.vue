@@ -20,9 +20,9 @@
         </b-form-input>
       </b-form-group>
  <b-form-group label="職務" >
-      <b-form-radio v-model="job" name="some-radios" value="doctor" state="fasle" required>
+      <b-form-radio v-model="form.job" name="some-radios" value="doctor" state="fasle" required>
           <font-awesome-icon icon="user-md" />醫生</b-form-radio>
-      <b-form-radio v-model="job" name="some-radios" value="nurce">
+      <b-form-radio v-model="form.job" name="some-radios" value="nurce">
           <font-awesome-icon icon="user-nurse" />看護</b-form-radio>
     </b-form-group>
       <b-button type="submit" variant="primary">Submit</b-button>
