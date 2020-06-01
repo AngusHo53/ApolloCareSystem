@@ -2,7 +2,7 @@
   <v-container fill-height justify-center align-center>
     <!-- <v-layout row > -->
     <v-flex xs12 sm6 md5 lg4>
-      <v-card class="mt-0 pt-0"   elevation="2" >
+      <v-card class="mt-0 pt-0" elevation="2">
         <v-card-title class="blue darken-1">
           <h4 style="color:white">Apollo System</h4>
         </v-card-title>
@@ -47,9 +47,7 @@
               v-model="error"
             >
               {{ text }}
-              <v-btn class="pink--text" text @click.native="error = false"
-                >Close</v-btn
-              >
+              <v-btn class="pink--text" text @click.native="error = false">Close</v-btn>
             </v-snackbar>
           </form>
         </v-card-text>
@@ -61,8 +59,8 @@
 <script lang="ts">
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
+import axios from "axios";
 import { userModule } from "@/store/modules/user";
-
 
 @Component
 export default class Login extends Vue {
@@ -78,13 +76,43 @@ export default class Login extends Vue {
   public async login() {
     const params = {
       email: this.email,
-      password: this.pass,
+      password: this.pass
     };
-    Vue.prototype.$http.post(`/user/login`,params);
-    this.$router.push({name: '儀錶板'}).catch((err) => {
-      console.log(err);
+    const httpToken = localStorage.getItem('token');
+    const { accessToken: accessToken, user };
+    axios({
+      method: 'post',
+      baseURL: Vue.prototype.baseURL,
+      url: '/user/login',
+       headers: {
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json',
+        "Access-Control-Allow-Origin" : "*", 
+        'Authorization' : 'Bearer Guest'
+      },
+      data: params,
     })
+      .then(result => {
+       data: {
+          accessToken: 'aaa',
+          user: {
+            "firstName": "Admin",
+            "lastName": "",
+            "email": "admin@test.com",
+            "password": "password"
+        },
+        };
+      }
+        this.$router.push({ name: "儀錶板" });
+        console.log('跳轉');
+      })
+      .catch(err => {
+        console.error(err);
+      });
+    // Vue.prototype.$http.post(`/user/login`, params);
+    // this.$router.push({ name: "儀錶板" }).catch(err => {
+    //   console.log(err);
+    // });
   }
-
 }
 </script>

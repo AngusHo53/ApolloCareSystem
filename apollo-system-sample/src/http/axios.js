@@ -29,8 +29,7 @@ export default {
       data: value,
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        'Authorization': 'Bearer Guest',
+        'Content-Type' : 'application/json',
       },
     };
     return axios(params).then((response) => {

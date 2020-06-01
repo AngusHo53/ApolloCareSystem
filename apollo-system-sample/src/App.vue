@@ -84,7 +84,7 @@ import { userModule } from '@/store/modules/user';
 @Component
 export default class App extends Vue {
   get signedIn() {
-    return userModule.isSignedIn;
+    return true;
   }
 
   get user() {
