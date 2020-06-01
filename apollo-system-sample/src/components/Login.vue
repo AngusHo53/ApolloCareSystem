@@ -79,6 +79,7 @@ export default class Login extends Vue {
       password: this.pass
     };
     const httpToken = localStorage.getItem('token');
+    const { accessToken: accessToken, user };
     axios({
       method: 'post',
       baseURL: Vue.prototype.baseURL,
@@ -92,6 +93,18 @@ export default class Login extends Vue {
       data: params,
     })
       .then(result => {
+       data: {
+          accessToken: 'aaa',
+          user: {
+            "firstName": "Admin",
+            "lastName": "",
+            "email": "admin@test.com",
+            "password": "password"
+        },
+        };
+      }
+        this.$router.push({ name: "儀錶板" });
+        console.log('跳轉');
       })
       .catch(err => {
         console.error(err);
