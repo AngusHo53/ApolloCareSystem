@@ -10,7 +10,7 @@
           <form @submit.prevent="login">
             <v-layout row wrap>
               <v-flex xs12 md4>
-                <v-subheader>使用者ID</v-subheader>
+                <v-subheader>使用者信箱</v-subheader>
               </v-flex>
               <v-flex xs12 md8>
                 <v-text-field
@@ -66,8 +66,8 @@ import { userModule } from "@/store/modules/user";
 
 @Component
 export default class Login extends Vue {
-  private email = "admin@test.com";
-  private pass = "password";
+  private email = "";
+  private pass = "";
   private error = false;
   private text = "";
 
@@ -76,8 +76,14 @@ export default class Login extends Vue {
   }
 
   public async login() {
-    await userModule.signIn({ username: this.email, password: this.pass });
-    this.$router.push("/");
+    const params = {
+      email: this.email,
+      password: this.pass,
+    };
+    Vue.prototype.$http.post(`/user/login`,params);
+    this.$router.push({name: '儀錶板'}).catch((err) => {
+      console.log(err);
+    })
   }
 
 }

@@ -170,7 +170,7 @@ this.avatar = customerModule.customer.avatar;
   }
 
   cancel() {
-    this.$router.push({ name: "Customers" });
+    this.$router.push({ name: "使用者名單" });
   }
 
   closeSnackbar() {
@@ -181,9 +181,9 @@ this.avatar = customerModule.customer.avatar;
   }
   mounted() {
     if (this.$route.params.id) {
-      this.title = "Edit Customer";
+      this.title = "編輯用戶";
       this.customerAvatar();
-    } else this.title = "New Customer";
+    } else this.title = "新增用戶";
   }
 }
 </script>
