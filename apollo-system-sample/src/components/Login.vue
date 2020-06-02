@@ -61,6 +61,7 @@ import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import axios from "axios";
 import { userModule } from "@/store/modules/user";
+import { User } from "@/types";
 
 @Component
 export default class Login extends Vue {
@@ -78,8 +79,6 @@ export default class Login extends Vue {
       email: this.email,
       password: this.pass
     };
-    const httpToken = localStorage.getItem('token');
-    const { accessToken: accessToken, user };
     axios({
       method: 'post',
       baseURL: Vue.prototype.baseURL,
@@ -93,18 +92,18 @@ export default class Login extends Vue {
       data: params,
     })
       .then(result => {
-       data: {
-          accessToken: 'aaa',
-          user: {
-            "firstName": "Admin",
-            "lastName": "",
-            "email": "admin@test.com",
-            "password": "password"
-        },
-        };
-      }
-        this.$router.push({ name: "儀錶板" });
-        console.log('跳轉');
+        console.log(result);
+        if(result.data.status === 'Success'){
+          const data = result.data.data;
+          const userData = {
+            accessToken: data.session.token,
+            user: data.user
+          }
+          
+          userModule.signIn(userData);
+          this.$router.push({ name: "儀錶板" });
+          console.log('跳轉');
+        }
       })
       .catch(err => {
         console.error(err);
