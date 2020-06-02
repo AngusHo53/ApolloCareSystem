@@ -84,7 +84,7 @@ import { userModule } from '@/store/modules/user';
 @Component
 export default class App extends Vue {
   get signedIn() {
-    return true;
+    return userModule.isSignedIn;
   }
 
   get user() {
@@ -178,7 +178,7 @@ export default class App extends Vue {
 
   async handleUserActions(item: TODO) {
     this.menuItem = item.title;
-    if (item.title === 'Logout') {
+    if (item.title === '登出') {
       await userModule.logout();
     }
     this.$router.push(item.link);

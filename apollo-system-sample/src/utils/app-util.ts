@@ -12,8 +12,8 @@ const SearchFilterOps = {
   between: "_between",
 };
 
-const SESSION_TOKEN_KEY = "vue-crm-token";
-const SESSION_USER_KEY = "vue-crm-user";
+const SESSION_TOKEN_KEY = "apollo-token";
+const SESSION_USER_KEY = "apollo-user";
 
 export function setToken(token: string): void {
   if (sessionStorage) {
