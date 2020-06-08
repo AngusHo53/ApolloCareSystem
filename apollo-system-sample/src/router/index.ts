@@ -5,11 +5,14 @@ import ErrorPage from "@/components/404.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import OrderList from "@/pages/OrderList.vue";
 import OrderForm from "@/pages/OrderForm.vue";
+import CustomerDetails from "@/pages/CustomerDetails.vue";
 import CustomerList from "@/pages/CustomerList.vue";
 import CustomerForm from "@/pages/CustomerForm.vue";
 import Products from "@/pages/ProductList.vue";
 import ProductForm from "@/pages/ProductForm.vue";
 import Login from "@/components/Login.vue";
+import PatientList from "@/pages/PatientList.vue";
+import PatientRecords from "@/pages/PatientRecords.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
   console.log(`userModule.isSignedI ${userModule.isSignedIn}`);
@@ -58,6 +61,18 @@ const routes: Array<RouteConfig> = [
     beforeEnter: requireAuth
   },
   {
+    path: "/patients",
+    component: PatientList,
+    name: "病人名單",
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/patients/:id/records",
+    component: PatientRecords,
+    name: "病人紀錄",
+    beforeEnter: requireAuth
+  },
+  {
     path: "/newcustomer",
     component: CustomerForm,
     name: "NewCustomer",
@@ -65,8 +80,8 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/customer/:id",
-    component: CustomerForm,
-    name: "Customer",
+    component: CustomerDetails,
+    name: "使用者資訊",
     beforeEnter: requireAuth
   },
   {

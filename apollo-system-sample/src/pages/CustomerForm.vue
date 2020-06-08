@@ -177,7 +177,7 @@ this.avatar = customerModule.customer.avatar;
     appModule.closeNotice();
   }
   created() {
-    customerModule.getCustomerById(this.$route.params.id);
+    // customerModule.getCustomerById(this.$route.params.id);
   }
   mounted() {
     if (this.$route.params.id) {

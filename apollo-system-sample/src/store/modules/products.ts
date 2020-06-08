@@ -158,9 +158,9 @@ class ProductModule extends VuexModule implements ProductState {
   }
 
   @Action setDataTable(items: Product[]) {
-    const pagination = getPagination(items);
-    this.setPagination(pagination);
-    this.setItems(items);
+    // const pagination = getPagination(items);
+    // this.setPagination(pagination);
+    // this.setItems(items);
   }
 
   @Mutation setCategories(categories: Category[]) {

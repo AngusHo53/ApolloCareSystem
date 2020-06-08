@@ -7,15 +7,16 @@
         label="Search"
         single-line
         hide-details
+        @keyup="$emit('search', search)"
       ></v-text-field>
     </v-card-text>
     <v-data-table
       class="elevation-1"
-      :search="search"
       :headers="headers"
       :items="items"
       :page.sync="pagination.page"
       :items-per-page="pagination.rowsPerPage"
+      @click:row="$emit('dataTableClickHandler',$event)"
       hide-default-footer
     >
       <template v-slot:item.actions="{ item }">
@@ -37,7 +38,7 @@
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2" v-if="isNotEmpty">
-      <v-pagination v-model="pagination.page" :length="pagination.pages" :total-visible="5" circle></v-pagination>
+      <v-pagination v-model="pagination.page" :length="pagination.pages"  :total-visible="5"  @input="searchDataTable($event)" circle></v-pagination>
     </div>
   </div>
 </template>
@@ -54,10 +55,6 @@ export default class Table extends Vue {
 
   search ='';
 
-  editItem() {}
-
-  deleteItem() {}
-
   renderData = (item: TODO, header: TODO) => {
     let val = '';
     if (header.value.includes('.')) {
@@ -71,9 +68,18 @@ export default class Table extends Vue {
     }
     return val;
   };
-
   isNotEmpty() {
     return this.items && this.items.length > 0;
+  }
+
+  searchDataTable(event) {
+    if(this.search === ''){
+      console.log('updateTableData');
+      this.$emit('updateTableData',event);
+    }else {
+      // console.log('searchPatients');
+      // this.$emit('searchPatients', this.search);
+    }
   }
 
   hasHeader(header: TODO) {

@@ -30,16 +30,16 @@ export default {
       timeout: 10000,
       headers: {
         'Content-Type' : 'application/json',
+        'Accept' : 'application/json',
+        "Access-Control-Allow-Origin" : "*", 
+        'Authorization' : 'Bearer Guest'
       },
     };
     return axios(params).then((response) => {
       // console.log(url)
       const res = response;
       return res;
-    }).then((response) => {
-      const res = response;
-      return res;
-    });
+    })
   },
   put(url, value) {
     const params = {

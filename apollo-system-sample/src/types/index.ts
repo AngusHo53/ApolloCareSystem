@@ -1,3 +1,6 @@
+import {Patient, PatientInfo} from './patient';
+
+export {Patient, PatientInfo};
 export interface Entity {
   id: number;
   text?: string;

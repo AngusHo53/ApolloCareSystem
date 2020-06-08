@@ -4,62 +4,17 @@
       <v-card>
         <v-card-title>
           <span class="title"
-            >用戶名單 {{ pagination ? '(' + pagination.totalItems + ')' : '' }}
+            >用戶量測歷史 {{ pagination ? '(' + pagination.totalItems + ')' : '' }}
           </span>
           <v-spacer></v-spacer>
           <table-header-buttons :add="add" :reloadData="reloadData" :updateSearchPanel="updateSearchPanel"></table-header-buttons>
         </v-card-title>
-        <Table v-if="loading === false" :headers="headers" :items="items" :pagination="pagination" @edit="edit" @remove="remove" @changeToPage="changeToCustomerDetails"></Table>
+        <Table v-if="loading === false"  :headers="headers" :items="items" :pagination="pagination"></Table>
       </v-card>
     </v-flex>
-    <!--
-    <search-panel :rightDrawer="rightDrawer" @cancelSearch="cancelSearch" @searchData="searchCustomers">
-      <v-layout row>
-        <v-flex xs11 offset-xs1>
-          <v-text-field name="input-1-3" label="Frist Name" light v-model="searchFilter.contains.firstName"></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs11 offset-xs1>
-          <v-text-field name="input-1-3" label="Last Name" light v-model="searchFilter.contains.lastName"></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs11 offset-xs1>
-          <v-subheader class="text-sm-central" light>Reward range between Reward 1 and Reward 2 </v-subheader>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs8 offset-xs1>
-          <v-slider label="Reward 1" light v-bind:max="50" v-model="searchFilter.between.rewards.former"></v-slider>
-        </v-flex>
-        <v-flex xs3>
-          <v-text-field type="number" light v-model="searchFilter.between.rewards.former"></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs8 offset-xs1>
-          <v-slider label="Reward 2" light v-bind:max="100" v-model="searchFilter.between.rewards.latter"></v-slider>
-        </v-flex>
-        <v-flex xs3>
-          <v-text-field type="number" light v-model="searchFilter.between.rewards.latter"></v-text-field>
-        </v-flex>
-      </v-layout>
-    </search-panel>
-    -->
-    <confirm-dialog
-      :dialog="dialog"
-      :dialogTitle="dialogTitle"
-      :dialogText="dialogText"
-      @onConfirm="onConfirm"
-      @onCancel="onCancel"
-    ></confirm-dialog>
-    <v-snackbar v-if="loading === false" :right="true" :timeout="2000" :color="mode" v-model="snackbar">
-      {{ notice }}
-      <v-btn dark text @click.native="closeSnackbar">Close</v-btn>
-    </v-snackbar>
-  </v-container>
+    </v-container>
 </template>
+
 <script lang="ts">
 import Table from '@/components/Table.vue';
 import TableHeaderButtons from '@/components/TableHeaderButtons.vue'
@@ -83,7 +38,8 @@ import { getToken } from "../utils/app-util";
     ConfirmDialog
   }
 })
-export default class CustomerList extends Vue {
+
+export default class CustomerDetails extends Vue {
   public dialog = false;
   public dialogTitle = 'Customer Delete Dialog';
   public dialogText = 'Do you want to delete this customer?';
@@ -99,7 +55,7 @@ export default class CustomerList extends Vue {
     { text: 'ID', value: 'id_card' },
     { text: '年齡', value: 'age' },
     { text: '測量', value: 'created_at' },
-    { text: '', value: 'actions', sortable: false }
+     { text: '', value: 'actions', sortable: false }
   ];
   private searchFilter = {
     contains: {
@@ -117,9 +73,6 @@ export default class CustomerList extends Vue {
   private itemId = -1;
 
 
-  changeToCustomerDetails(item){
-    this.$router.push(`customer/${item.id_card}`);
-  }
 
   edit(item: Entity) {
     this.$router.push(`customer/${item.id}`);
