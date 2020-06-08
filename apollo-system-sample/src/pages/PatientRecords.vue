@@ -44,14 +44,12 @@ import { getToken } from "../utils/app-util";
 })
 export default class PatientRecords extends Vue {
   created() {
-    console.log('create');
     if(this.$router.currentRoute.params.patient){
       patientModule.setPatient(this.$router.currentRoute.params.patient);
     }else {
+      console.log(this.$router.currentRoute.params.id);
       patientModule.getPatientById(this.$router.currentRoute.params.id);
-      
     }
-    console.log(patientModule.patient);
   }
   test() {
 

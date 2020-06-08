@@ -4,9 +4,8 @@ import { Patient, Order, Entity, PatientInfo  } from '@/types';
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
-import { getToken } from "@/utils/app-util";
 import Vue from 'vue';
-import axios from "axios";
+import http from "@/http/axios";
 
 export interface PatientState {
   pagination: Pagination;
@@ -27,63 +26,41 @@ class PatientModule extends VuexModule implements PatientState {
   public currentPage = 1;
   public items :PatientInfo[] = []
 
-  @Action getPatientsByPages(page: number): void {
-    this.context.commit('setLoading', { loading: true });
+  @Action async getPatientsByPages(page: number): Promise<TODO> {
+    this.context.commit('setLoading', true );
     this.setLoading(true);
-    axios({
-      method: 'get',
-      baseURL: Vue.prototype.baseURL,
-      url: `/patient/list/${page}`,
-       headers: {
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        "Access-Control-Allow-Origin" : "*", 
-        'Authorization' : 'Bearer ' + getToken()
-      }
-    })
-      .then(result => {
-        const data = result.data.data;
-        if(data){
-          this.setTotalPatients(data.total_patients);
-          this.setTotalPages(data.total_page);
-          this.setPatients(data.patients);
-          this.setCurrentPage(page);
-          // Extract Table Data
-          this.extractPatientInfo(data.patients)
-          this.setDataTable(this.items);
-        }
-        this.setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    const result = await http.get(`/patient/list/${page}`);
+    const data = result.data.data;
+    if(data){
+      this.setTotalPatients(data.total_patients);
+      this.setTotalPages(data.total_page);
+      this.setPatients(data.patients);
+      this.setCurrentPage(page);
+      // Extract Table Data
+      this.extractPatientInfo(data.patients);
+      this.setDataTable(this.items);
+
+      this.context.commit('setLoading', { loading: false });
+    }else{
+      console.error(result);
+    }
+    this.setLoading(false);
   }
 
   @Action getPatientsByKeyword(keyword: string): void {
     // To Do
   }
 
-  @Action getPatientById(id: number): void {
+  @Action async getPatientById(id: number): Promise<TODO> {
     this.context.commit('setLoading', { loading: true });
     this.setLoading(true);
-    axios({
-      method: 'get',
-      baseURL: Vue.prototype.baseURL,
-      url: `/user/${id}`,
-       headers: {
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        "Access-Control-Allow-Origin" : "*", 
-        'Authorization' : 'Bearer ' + getToken()
-      }
-    })
-      .then(result => {
-        const data = result.data.data;
-        this.setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    const result = await http.get(`/user/${id}`);
+    if(result.data.data){
+      const data = result.data.data;
+    }else{
+      console.error(result);
+    }
+    this.setLoading(false);
   }
 
   @Action({ rawError: true })

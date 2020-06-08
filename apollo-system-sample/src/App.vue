@@ -128,7 +128,7 @@ export default class App extends Vue {
 
   created() {
     //  [App.vue specific] When App.vue is first loaded start the progress bar
-    this.$Progress.start();
+    // this.$Progress.start();
     //  hook the progress bar to start before we move router-view
     this.$router.beforeEach((to, _from, next) => {
       //  does the page we want to go to have a meta.progress object
