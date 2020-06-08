@@ -118,6 +118,12 @@ export default class App extends Vue {
       link: 'customers'
     },
     {
+      icon: 'mdi-account-group',
+      title: '病人名單',
+      vertical: 'Patient',
+      link: 'patients'
+    },
+    {
       icon: 'mdi-book-multiple',
       title: '產品',
       vertical: 'Product',

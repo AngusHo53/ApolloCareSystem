@@ -227,8 +227,8 @@ class OrderModule extends VuexModule implements OrderState {
   }
 
   @Action setDataTable(items: Order[]) {
-    const pagination = getPagination(items);
-    this.setPagination(pagination);
+    // const pagination = getPagination(items);
+    // this.setPagination(pagination);
     this.setItems(items);
   }
 

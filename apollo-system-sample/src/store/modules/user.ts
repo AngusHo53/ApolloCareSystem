@@ -15,7 +15,8 @@ import {
   setUser,
   cleanSession
 } from "@/utils/app-util";
-
+import Vue from 'vue';
+import axios from "axios";
 export interface UserState {
   callingAPI: boolean;
   searching: string;
@@ -79,9 +80,25 @@ class UserModule extends VuexModule implements UserState {
   @Action({ rawError: true })
   logout() {
     console.log('登出');
-    this.setToken("");
-    this.setUser({} as User);
-    cleanSession();
+    axios({
+      method: 'get',
+      baseURL: Vue.prototype.baseURL,
+      url: `/user/logout`,
+       headers: {
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json',
+        "Access-Control-Allow-Origin" : "*", 
+        'Authorization' : 'Bearer ' + getToken()
+      }
+    })
+      .then(result => {
+        this.setToken("");
+        this.setUser({} as User);
+        cleanSession();
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 }
 

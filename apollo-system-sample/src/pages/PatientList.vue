@@ -4,49 +4,19 @@
       <v-card>
         <v-card-title>
           <span class="title"
-            >用戶名單 {{ pagination ? '(' + pagination.totalItems + ')' : '' }}
+            >病人名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}
           </span>
           <v-spacer></v-spacer>
-          <table-header-buttons :add="add" :reloadData="reloadData" :updateSearchPanel="updateSearchPanel"></table-header-buttons>
+            <div>
+              <v-btn class="teal darken-2  mr-2" fab small dark @click.native="test()">
+              <v-icon>mdi-printer</v-icon>
+              </v-btn>
+            </div>
         </v-card-title>
-        <Table v-if="loading === false" :headers="headers" :items="items" :pagination="pagination" @edit="edit" @remove="remove" @changeToPage="changeToCustomerDetails"></Table>
+        <Table v-if="loading === false" :headers="headers" :items="items" :pagination="pagination" @updateTableData="updateTableData"
+        @search="searchPatients" @dataTableClickHandler="changeToPatientRecordPage"></Table>
       </v-card>
     </v-flex>
-    <!--
-    <search-panel :rightDrawer="rightDrawer" @cancelSearch="cancelSearch" @searchData="searchCustomers">
-      <v-layout row>
-        <v-flex xs11 offset-xs1>
-          <v-text-field name="input-1-3" label="Frist Name" light v-model="searchFilter.contains.firstName"></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs11 offset-xs1>
-          <v-text-field name="input-1-3" label="Last Name" light v-model="searchFilter.contains.lastName"></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs11 offset-xs1>
-          <v-subheader class="text-sm-central" light>Reward range between Reward 1 and Reward 2 </v-subheader>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs8 offset-xs1>
-          <v-slider label="Reward 1" light v-bind:max="50" v-model="searchFilter.between.rewards.former"></v-slider>
-        </v-flex>
-        <v-flex xs3>
-          <v-text-field type="number" light v-model="searchFilter.between.rewards.former"></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex xs8 offset-xs1>
-          <v-slider label="Reward 2" light v-bind:max="100" v-model="searchFilter.between.rewards.latter"></v-slider>
-        </v-flex>
-        <v-flex xs3>
-          <v-text-field type="number" light v-model="searchFilter.between.rewards.latter"></v-text-field>
-        </v-flex>
-      </v-layout>
-    </search-panel>
-    -->
     <confirm-dialog
       :dialog="dialog"
       :dialogTitle="dialogTitle"
@@ -70,7 +40,7 @@ import { buildSearchFilters, buildJsonServerQuery, clearSearchFilters } from '@/
 import { Component } from 'vue-property-decorator';
 import Vue from 'vue';
 import {  Entity } from '../types';
-import { customerModule } from '@/store/modules/customers';
+import { patientModule } from '@/store/modules/patients';
 import { appModule } from '@/store/modules/app';
 import axios from "axios";
 import { getToken } from "../utils/app-util";
@@ -83,23 +53,22 @@ import { getToken } from "../utils/app-util";
     ConfirmDialog
   }
 })
-export default class CustomerList extends Vue {
+export default class PatientList extends Vue {
   public dialog = false;
-  public dialogTitle = 'Customer Delete Dialog';
-  public dialogText = 'Do you want to delete this customer?';
+  public dialogTitle = 'Patient Delete Dialog';
+  public dialogText = 'Do you want to delete this patient?';
   private showSearchPanel = false;
   public right = true;
-  public search = '';
   public headers = [
     {
       text: '名稱',
       left: true,
       value: 'name'
     },
-    { text: 'ID', value: 'id_card' },
+    { text: 'ID Card', value: 'id_card' },
+    { text: '性別', value: 'gender' },
     { text: '年齡', value: 'age' },
-    { text: '測量', value: 'created_at' },
-    { text: '', value: 'actions', sortable: false }
+    { text: '上一次測量', value: 'updated_at' }
   ];
   private searchFilter = {
     contains: {
@@ -115,27 +84,40 @@ export default class CustomerList extends Vue {
   private color = '';
   private quickSearchFilter = '';
   private itemId = -1;
-
-
-  changeToCustomerDetails(item){
-    this.$router.push(`customer/${item.id_card}`);
-  }
-
-  edit(item: Entity) {
-    this.$router.push(`customer/${item.id}`);
-  }
-
-  remove(item: Entity) {
-    this.itemId = item.id;
-    this.dialog = true;
+  private nowPage = 1;
+  created() {
+    patientModule.getPatientsByPages(this.nowPage);
   }
 
   add() {
-    this.$router.push('NewCustomer');
+    this.$router.push('NewPatient');
   }
 
+  test() {
+      console.log('test');
+  }
+
+  changeToPatientRecordPage($event){
+    this.$router.push({name:`病人紀錄`, params:{
+      id: $event.id,
+      patient: $event
+    }});
+  }
+
+  searchPatients(keyword: string) {
+      // To Do
+      console.log(keyword);
+      patientModule.clearPatients();
+      keyword !== ''? patientModule.getPatientsByKeyword(keyword): this.updateTableData(this.nowPage);
+  }
+
+  updateTableData(page: number) {
+      this.nowPage = page;
+      patientModule.getPatientsByPages(page);
+  } 
+
   onConfirm() {
-    customerModule.deleteCustomer(this.itemId);
+    // patientModule.deleteCustomer(this.itemId);
     this.dialog = false;
   }
   onCancel() {
@@ -147,19 +129,19 @@ export default class CustomerList extends Vue {
     buildSearchFilters(this.searchFilter);
     this.query = buildJsonServerQuery(this.searchFilter);
     this.quickSearch = '';
-    customerModule.searchCustomers(this.query);
+    // patientModule.searchCustomers(this.query);
     this.showSearchPanel = false;
   }
 
   clearSearchFilters() {
     this.showSearchPanel = !this.showSearchPanel;
     clearSearchFilters(this.searchFilter);
-    customerModule.getAllCustomers();
+    // patientModule.getAllCustomers();
   }
 
   reloadData() {
     this.query = '';
-    customerModule.getAllCustomers();
+    //patientModule.getAllCustomers();
   }
 
   updateSearchPanel(){
@@ -175,15 +157,24 @@ export default class CustomerList extends Vue {
   }
 
   quickSearchCustomers = debounce(function() {
-    customerModule.quickSearch(this.headers, this.quickSearchFilter);
+    // patientModule.quickSearch(this.headers, this.quickSearchFilter);
   }, 500);
 
-  get items() {
-    return customerModule.items;
+  get patients() {
+    return patientModule.patients;
   }
   get pagination() {
-    return customerModule.pagination;
+    return patientModule.pagination;
   }
+
+  get items() {
+    return patientModule.items;
+  }
+
+  get totalPatients() {
+    return patientModule.totalPatients;
+  }
+
   get loading() {
     return appModule.loading;
   }
@@ -213,11 +204,6 @@ export default class CustomerList extends Vue {
   set quickSearch(val) {
     this.quickSearchFilter = val;
     this.quickSearchFilter && this.quickSearchCustomers();
-  }
-
-  created() {
-    customerModule.getAllCustomers();
-
   }
 
   mounted() {

@@ -5,6 +5,7 @@ import Vuex from "vuex";
 import { UserState } from "./modules/user";
 import { OrderState } from "./modules/orders";
 import { CustomerState } from "./modules/customers";
+import { PatientState } from "./modules/patients";
 import { ProductState } from "./modules/products";
 import { AppState } from "./modules/app";
 
@@ -15,6 +16,7 @@ interface RootState {
   userState: UserState;
   orderState: OrderState;
   customerState: CustomerState;
+  patientState: PatientState;
   productState: ProductState;
 }
 

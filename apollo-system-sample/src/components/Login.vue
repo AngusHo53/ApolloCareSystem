@@ -61,7 +61,7 @@ import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import axios from "axios";
 import { userModule } from "@/store/modules/user";
-import { User } from "@/types";
+import http from "../http/axios";
 
 @Component
 export default class Login extends Vue {
@@ -108,6 +108,7 @@ export default class Login extends Vue {
       .catch(err => {
         console.error(err);
       });
+
     // Vue.prototype.$http.post(`/user/login`, params);
     // this.$router.push({ name: "儀錶板" }).catch(err => {
     //   console.log(err);

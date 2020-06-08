@@ -11,8 +11,12 @@ export function getDefaultPagination(): Pagination {
 }
 
 
-export function getPagination(items: Entity[]) {
+
+export function getPagination(items: Entity[],pages: number, page: number) {
   const totalItems = items ? items.length : 0;
-  const pages = Math.ceil(totalItems / DEFAULT_ROW_PER_PAGE);
-  return { totalItems, pages, page: 1, rowsPerPage: DEFAULT_ROW_PER_PAGE };
+  // const pages = Math.ceil(totalItems / DEFAULT_ROW_PER_PAGE);
+  console.log('getPagination');
+  console.log(pages);
+  console.log(page);
+  return { totalItems, pages, page, rowsPerPage: DEFAULT_ROW_PER_PAGE };
 }
