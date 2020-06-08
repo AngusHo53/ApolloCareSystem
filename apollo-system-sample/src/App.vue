@@ -100,34 +100,16 @@ export default class App extends Vue {
   private fixed = false;
   private items: AppMenu[] = [
     {
-      icon: 'mdi-view-dashboard',
-      title: '儀錶板',
-      vertical: 'Dashboard',
-      link: 'dashboard'
-    },
-    {
-      icon: 'mdi-point-of-sale',
-      title: '訂單',
-      vertical: 'Order',
-      link: 'orders'
-    },
-    {
-      icon: 'mdi-account-group',
-      title: '使用者名單',
-      vertical: 'Customer',
-      link: 'customers'
+      icon: 'mdi-home-group',
+      title: '社區狀態顯示表',
+      vertical: 'community',
+      link: 'communities'
     },
     {
       icon: 'mdi-account-group',
       title: '病人名單',
       vertical: 'Patient',
       link: 'patients'
-    },
-    {
-      icon: 'mdi-book-multiple',
-      title: '產品',
-      vertical: 'Product',
-      link: 'products'
     }
   ];
 

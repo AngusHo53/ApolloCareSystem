@@ -69,6 +69,9 @@ export default {
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
+        'Accept' : 'application/json',
+        "Access-Control-Allow-Origin" : "*",
+        'Authorization' : 'Bearer Guest'
       },
     };
     return axios(params).then((response) => {
