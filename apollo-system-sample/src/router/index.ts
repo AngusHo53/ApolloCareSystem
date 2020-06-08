@@ -2,14 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import { userModule } from "@/store/modules/user";
 import ErrorPage from "@/components/404.vue";
-import Dashboard from "@/pages/Dashboard.vue";
-import OrderList from "@/pages/OrderList.vue";
-import OrderForm from "@/pages/OrderForm.vue";
-import CustomerDetails from "@/pages/CustomerDetails.vue";
-import CustomerList from "@/pages/CustomerList.vue";
-import CustomerForm from "@/pages/CustomerForm.vue";
-import Products from "@/pages/ProductList.vue";
-import ProductForm from "@/pages/ProductForm.vue";
+import Community from "@/pages/Community.vue";
 import Login from "@/components/Login.vue";
 import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
@@ -31,36 +24,6 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
   { path: "/404", component: ErrorPage, name: "ErrorPage" },
   {
-    path: "/dashboard",
-    component: Dashboard,
-    name: "儀錶板",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/orders",
-    component: OrderList,
-    name: "訂單",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/neworder",
-    component: OrderForm,
-    name: "NewOrder",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/order/:id",
-    component: OrderForm,
-    name: "Order",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/customers",
-    component: CustomerList,
-    name: "使用者名單",
-    beforeEnter: requireAuth
-  },
-  {
     path: "/patients",
     component: PatientList,
     name: "病人名單",
@@ -73,37 +36,13 @@ const routes: Array<RouteConfig> = [
     beforeEnter: requireAuth
   },
   {
-    path: "/newcustomer",
-    component: CustomerForm,
-    name: "NewCustomer",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/customer/:id",
-    component: CustomerDetails,
-    name: "使用者資訊",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/product/:id",
-    component: ProductForm,
-    name: "Product",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/products",
-    component: Products,
-    name: "產品",
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/newproduct",
-    component: ProductForm,
-    name: "NewProduct",
+    path: "/community",
+    component: Community,
+    name: "社區狀態顯示表",
     beforeEnter: requireAuth
   },
   { path: "/login", component: Login, name: "Login" },
-  { path: "/", redirect: "/dashboard" },
+  { path: "/", redirect: "/community" },
   { path: "*", redirect: "/404" }
 ];
 

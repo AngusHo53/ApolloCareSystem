@@ -101,7 +101,7 @@ export default class Login extends Vue {
           }
           
           userModule.signIn(userData);
-          this.$router.push({ name: "儀錶板" });
+          this.$router.push({ name: "社區狀態顯示表" });
           console.log('跳轉');
         }
       })

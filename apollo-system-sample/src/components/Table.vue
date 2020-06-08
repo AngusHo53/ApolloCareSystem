@@ -19,18 +19,6 @@
       @click:row="$emit('dataTableClickHandler',$event)"
       hide-default-footer
     >
-      <template v-slot:item.actions="{ item }">
-        <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
-          <v-icon>
-            mdi-pencil
-          </v-icon>
-        </v-btn>
-        <v-btn fab class="cyan" small  @click.native="$emit('remove', item)">
-          <v-icon>
-            mdi-trash-can-outline
-          </v-icon>
-        </v-btn>
-      </template>
       <template slot="no-data">
         <span>
           <p class="pt-2 blue--text subheading"><v-icon medium class="blue--text">mdi-info</v-icon>Sorry, nothing to display here :(</p>
