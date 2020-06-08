@@ -52,6 +52,8 @@
           </form>
         </v-card-text>
       </v-card>
+      <v-overlay  :value="loading">
+    </v-overlay>
     </v-flex>
     <!-- </v-layout> -->
   </v-container>
@@ -59,9 +61,8 @@
 <script lang="ts">
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
-import axios from "axios";
 import { userModule } from "@/store/modules/user";
-import http from "../http/axios";
+import http from "@/http/axios";
 
 @Component
 export default class Login extends Vue {
@@ -69,50 +70,42 @@ export default class Login extends Vue {
   private pass = "";
   private error = false;
   private text = "";
+  private loading = false;
 
   public gotoDashboard() {
     this.$router.push("/");
   }
 
   public async login() {
+    this.loading = true;
+    this.$Progress.start();
     const params = {
       email: this.email,
       password: this.pass
     };
-    axios({
-      method: 'post',
-      baseURL: Vue.prototype.baseURL,
-      url: '/user/login',
-       headers: {
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        "Access-Control-Allow-Origin" : "*", 
-        'Authorization' : 'Bearer Guest'
-      },
-      data: params,
-    })
-      .then(result => {
-        console.log(result);
-        if(result.data.status === 'Success'){
-          const data = result.data.data;
-          const userData = {
-            accessToken: data.session.token,
-            user: data.user
-          }
-          
-          userModule.signIn(userData);
-          this.$router.push({ name: "社區狀態顯示表" });
-          console.log('跳轉');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
-
-    // Vue.prototype.$http.post(`/user/login`, params);
-    // this.$router.push({ name: "儀錶板" }).catch(err => {
-    //   console.log(err);
-    // });
+    const result = await http.post('/user/login', params);
+    console.log(result);
+    if(result) {  
+      if(result.data.status === 'Success'){  // Login Successful
+      const data = result.data.data;
+      const userData = {
+        accessToken: data.session.token,
+        user: data.user
+      }
+      userModule.signIn(userData);
+      this.$router.push({ name: "社區狀態顯示表" });
+      }else{ // Login Failed
+        this.error = true;
+        this.text = result.data.message;
+        console.log(`Login Failed`);
+      }
+    }else {
+      this.error = true;
+      this.text = "No Response";
+      console.log(`error`);
+    }
+    
+    this.loading = false;
   }
 }
 </script>

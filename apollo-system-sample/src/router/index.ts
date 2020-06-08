@@ -8,7 +8,6 @@ import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
-  console.log(`userModule.isSignedI ${userModule.isSignedIn}`);
   if (!userModule.isSignedIn) {
     next({
       path: "/login",

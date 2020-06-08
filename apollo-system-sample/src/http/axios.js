@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Vue from 'vue';
+import { getToken } from "@/utils/app-util";
 // 發送前的動作
 axios.interceptors.request.use((config) => {
   const httpToken = localStorage.getItem('token');
@@ -32,7 +33,7 @@ export default {
         'Content-Type' : 'application/json',
         'Accept' : 'application/json',
         "Access-Control-Allow-Origin" : "*", 
-        'Authorization' : 'Bearer Guest'
+        'Authorization' : getToken() === ''? 'Bearer Guest' : `Bearer ${getToken()}`
       },
     };
     return axios(params).then((response) => {
@@ -68,10 +69,10 @@ export default {
       url,
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
+        'Content-Type' : 'application/json',
         'Accept' : 'application/json',
-        "Access-Control-Allow-Origin" : "*",
-        'Authorization' : 'Bearer Guest'
+        "Access-Control-Allow-Origin" : "*", 
+        'Authorization' : `Bearer ${getToken()}`
       },
     };
     return axios(params).then((response) => {

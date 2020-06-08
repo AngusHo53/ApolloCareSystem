@@ -28,7 +28,8 @@
       {{ notice }}
       <v-btn dark text @click.native="closeSnackbar">Close</v-btn>
     </v-snackbar>
-  </v-container>
+    <v-overlay  :value="loading"></v-overlay>
+    </v-container>
 </template>
 <script lang="ts">
 import Table from '@/components/Table.vue';
@@ -39,11 +40,8 @@ import { debounce } from 'lodash';
 import { buildSearchFilters, buildJsonServerQuery, clearSearchFilters } from '@/utils/app-util';
 import { Component } from 'vue-property-decorator';
 import Vue from 'vue';
-import {  Entity } from '../types';
 import { patientModule } from '@/store/modules/patients';
 import { appModule } from '@/store/modules/app';
-import axios from "axios";
-import { getToken } from "../utils/app-util";
 
 @Component({
   components: {
