@@ -13,7 +13,7 @@
               </v-btn>
             </div>
         </v-card-title>
-        <Table v-if="loading === false" :headers="headers" :items="items" :pagination="pagination" @updateTableData="updateTableData"
+        <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="items" :pagination="pagination" @updateTableData="updateTableData"
         @search="searchPatients" @dataTableClickHandler="changeToPatientRecordPage"></Table>
       </v-card>
     </v-flex>
@@ -61,12 +61,13 @@ export default class PatientList extends Vue {
     {
       text: '名稱',
       left: true,
+      sortable: false,
       value: 'name'
     },
-    { text: 'ID Card', value: 'id_card' },
-    { text: '性別', value: 'gender' },
-    { text: '年齡', value: 'age' },
-    { text: '上一次測量', value: 'updated_at' }
+    { text: 'ID Card',sortable: false, value: 'id_card' },
+    { text: '性別',sortable: false, value: 'gender' },
+    { text: '年齡',sortable: false, value: 'age' },
+    { text: '上一次測量',sortable: false, value: 'updated_at' }
   ];
   private searchFilter = {
     contains: {
@@ -85,6 +86,7 @@ export default class PatientList extends Vue {
   private nowPage = 1;
   created() {
     patientModule.getPatientsByPages(this.nowPage);
+    console.log(patientModule.patients);
   }
 
   add() {

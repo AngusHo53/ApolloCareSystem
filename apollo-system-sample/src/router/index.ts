@@ -4,6 +4,7 @@ import { userModule } from "@/store/modules/user";
 import ErrorPage from "@/components/404.vue";
 import Community from "@/pages/Community.vue";
 import Login from "@/components/Login.vue";
+import PatientForm from "@/components/Login.vue";
 import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
 
@@ -33,6 +34,11 @@ const routes: Array<RouteConfig> = [
     component: PatientRecords,
     name: "病人紀錄",
     beforeEnter: requireAuth
+  },
+  {
+    path: "/newpatient",
+    component: PatientForm,
+    name: "NewPatient"
   },
   {
     path: "/community",
