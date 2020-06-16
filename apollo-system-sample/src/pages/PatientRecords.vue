@@ -45,62 +45,42 @@
             </v-col>
             <v-col
               cols="12"
-              md="8"
+              md="6"
+              lg="5"
             >
-            <v-flex md6 sm12 class="mx-1 px-0">
-              <v-text-field
-                name="姓名"
-                label="姓名"
-                value="Victor"
-                class="input-group--focused"
-                readonly
-                ></v-text-field>
-            </v-flex>
-            <v-flex md6 sm12 class="mx-1 px-0">
-                <v-text-field
-                name="ID"
-                label="ID"
-                value="D0444074566"
-                class="input-group--focused"
-                readonly
-                ></v-text-field>
-            </v-flex>
-            <v-flex md6 sm12 class="mx-1 px-0">
-                <v-text-field
-                name="性別"
-                label="性別"
-                value="男"
-                class="input-group--focused"
-                readonly
-                ></v-text-field>
-            </v-flex>
-            <v-flex md6 sm12 class="mx-1 px-0">
-                <v-text-field
-                name="生日"
-                label="生日"
-                value="2020/08/27"
-                class="input-group--focused"
-                readonly
-                ></v-text-field>
-            </v-flex>
-            <v-flex md6 sm12 class="mx-1 px-0">
-                <v-text-field
-                name="電話"
-                label="電話"
-                value="0983154789"
-                class="input-group--focused"
-                readonly
-                ></v-text-field>
-            </v-flex>
-             <v-flex md6 sm12 class="mx-1 px-0">
-                <v-text-field
-                name="地址"
-                label="地址"
-                value="台中市西屯區"
-                class="input-group--focused"
-                readonly
-                ></v-text-field>
-            </v-flex>
+            <v-list dense>
+                <v-list-item>
+                  <v-list-item-content :class="['text-h5 font-weight-bold']">姓名: </v-list-item-content>
+                  <v-list-item-content :class="['text-h5 text-left']"
+                  >黃曉明
+                  </v-list-item-content>
+                </v-list-item>
+                <hr>
+                <v-list-item>
+                  <v-list-item-content :class="['text-h5 font-weight-bold']">ID: </v-list-item-content>
+                  <v-list-item-content :class="['text-h5']">D0444074566</v-list-item-content>
+                </v-list-item>
+                <hr>
+                <v-list-item>
+                  <v-list-item-content :class="['text-h5 font-weight-bold']">性別: </v-list-item-content>
+                  <v-list-item-content :class="['text-h5']" >男生</v-list-item-content>
+                </v-list-item>
+                <hr>
+                <v-list-item>
+                  <v-list-item-content :class="['text-h5 font-weight-bold']">生日: </v-list-item-content>
+                  <v-list-item-content :class="['text-h5']" >2020/08/27</v-list-item-content>
+                </v-list-item>
+                <hr>
+                <v-list-item>
+                  <v-list-item-content :class="['text-h5 font-weight-bold']">電話: </v-list-item-content>
+                  <v-list-item-content :class="['text-h5']" >0983154789</v-list-item-content>
+                </v-list-item>
+              <hr>
+                <v-list-item>
+                  <v-list-item-content :class="['text-h5 font-weight-bold']">地址: </v-list-item-content>
+                  <v-list-item-content :class="['text-h5']" >台中市西屯區文華南10弄3巷155號</v-list-item-content>
+                </v-list-item>
+            </v-list>
             </v-col>
           </v-row>
         </v-container>

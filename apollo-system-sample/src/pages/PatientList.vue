@@ -67,7 +67,10 @@ export default class PatientList extends Vue {
     { text: 'ID Card',sortable: false, value: 'id_card' },
     { text: '性別',sortable: false, value: 'gender' },
     { text: '年齡',sortable: false, value: 'age' },
-    { text: '上一次測量',sortable: false, value: 'updated_at' }
+    { text: '生日',sortable: false, value: 'birthday' },
+    { text: '電話',sortable: false, value: 'phone'},
+    { text: '上一次測量',sortable: false, value: 'updated_at' },
+    { text: '', value: 'actions', sortable: false }
   ];
   private searchFilter = {
     contains: {
@@ -86,7 +89,6 @@ export default class PatientList extends Vue {
   private nowPage = 1;
   created() {
     patientModule.getPatientsByPages(this.nowPage);
-    console.log(patientModule.patients);
   }
 
   add() {
