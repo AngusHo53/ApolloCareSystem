@@ -19,7 +19,8 @@ export interface PatientState {
 class PatientModule extends VuexModule implements PatientState {
   public pagination = getDefaultPagination();
   public loading = true;
-  public patient = {} as Patient;
+  public patient :Patient = undefined;
+  public patientRecords= undefined;
   public patients: Patient[] = [];
   public totalPatients = 0;
   public totalPages = 0;
@@ -52,11 +53,13 @@ class PatientModule extends VuexModule implements PatientState {
   }
 
   @Action async getPatientById(id: number): Promise<TODO> {
-    this.context.commit('setLoading', { loading: true });
+    this.context.commit('setLoading', true );
     this.setLoading(true);
     const result = await http.get(`/user/${id}`);
     if(result.data.data){
-      const data = result.data.data;
+      console.log(result.data.data);
+      this.setPatient(result.data.data);
+      this.context.commit('setLoading', false );
     }else{
       console.error(result);
     }
@@ -71,7 +74,7 @@ class PatientModule extends VuexModule implements PatientState {
     });
   }
 
-  @Action setDataTable(data: PatientInfo[]) {
+  @Action setDataTable(data: Entity[]) {
     const pagination = getPagination(data, this.totalPages, this.currentPage);
     this.setPagination(pagination);
   }
@@ -90,6 +93,11 @@ class PatientModule extends VuexModule implements PatientState {
   @Mutation setPatient(patient: Patient): void {
     this.patient = patient;
   }
+
+  @Mutation setPatientRecords(records: any): void {
+    this.patient = records;
+  }
+  
   @Mutation setPatients(patients: Patient[]): void {
     this.patients = patients;
   }
