@@ -6,6 +6,7 @@ import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-dec
 import store from '@/store';
 import Vue from 'vue';
 import http from "@/http/axios";
+import { reject } from 'lodash';
 
 export interface PatientState {
   pagination: Pagination;
@@ -40,12 +41,11 @@ class PatientModule extends VuexModule implements PatientState {
       // Extract Table Data
       this.extractPatientInfo(data.patients);
       this.setDataTable(this.items);
-
       this.context.commit('setLoading', { loading: false });
+      this.setLoading(false);
     }else{
       console.error(result);
     }
-    this.setLoading(false);
   }
 
   @Action getPatientsByKeyword(keyword: string): void {
@@ -57,7 +57,6 @@ class PatientModule extends VuexModule implements PatientState {
     this.setLoading(true);
     const result = await http.get(`/user/${id}`);
     if(result.data.data){
-      console.log(result.data.data);
       this.setPatient(result.data.data);
       this.context.commit('setLoading', false );
     }else{
@@ -69,8 +68,12 @@ class PatientModule extends VuexModule implements PatientState {
   @Action({ rawError: true })
   extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
-      element.information.updated_at = new Date(element.information.updated_at).toLocaleString();
+      const date = new Date(element.information.updated_at).toLocaleString();
+      element.information.updated_at = date;
+      element.information.birthday = date;
+      element.information.phone = '09xx-xxx-xxx';
       this.items.push(element.information);
+      console.log('test')
     });
   }
 

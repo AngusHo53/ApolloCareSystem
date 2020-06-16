@@ -7,14 +7,14 @@ export interface Patient extends Entity {
 
   export interface PatientInfo extends Entity {
     age: number;
-    birthday: null;
+    birthday: string;
     created_at: string;
     gender:string;
     health_state: number;
     id: number;
     id_card: string;
     name: string;
-    phone: number;
+    phone: string;
     updated_at: string;
   }
 

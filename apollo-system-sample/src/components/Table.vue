@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!--
      <v-card-text>
       <v-text-field
         v-model="search"
@@ -10,15 +11,34 @@
         @keyup="$emit('search', search)"
       ></v-text-field>
     </v-card-text>
+    -->
+    <!--  @click:row="$emit('dataTableClickHandler',$event)"  -->
     <v-data-table
       class="elevation-1"
       :headers="headers"
       :items="items"
       :page.sync="pagination.page"
       :items-per-page="pagination.rowsPerPage"
-      @click:row="$emit('dataTableClickHandler',$event)"
       hide-default-footer
     >
+    <template v-slot:item.actions="{ item }">
+      <v-btn fab class="indigo mr-2" small dark @click.native="$emit('dataTableClickHandler', item)">
+        <v-icon>
+          mdi-account
+        </v-icon>
+      </v-btn>
+      <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
+        <v-icon>
+          mdi-pencil
+        </v-icon>
+      </v-btn>
+      <v-btn fab class="cyan" small  @click.native="$emit('remove', item)">
+        <v-icon>
+          mdi-trash-can-outline
+        </v-icon>
+      </v-btn>
+    </template>
+
       <template slot="no-data">
         <span>
           <p class="pt-2 blue--text subheading"><v-icon medium class="blue--text">mdi-info</v-icon>Sorry, nothing to display here :(</p>
@@ -26,7 +46,7 @@
       </template>
     </v-data-table>
     <div class="text-xs-center pt-2" v-if="isNotEmpty">
-      <v-pagination v-model="pagination.page" :length="pagination.pages"  :total-visible="5"  @input="searchDataTable($event)" circle></v-pagination>
+      <v-pagination v-model="pagination.page" :length="pagination.pages"  :total-visible="9"  @input="searchDataTable($event)" circle></v-pagination>
     </div>
   </div>
 </template>
