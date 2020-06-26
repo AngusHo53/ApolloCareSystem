@@ -1,5 +1,5 @@
 <template>
-  <v-app id="vcrm">
+  <v-app id="apollo">
     <vue-progress-bar> </vue-progress-bar>
     <template v-if="!signedIn">
       <router-view></router-view>
@@ -150,7 +150,7 @@ export default class App extends Vue {
       //  finish the progress bar
       this.$Progress.finish();
     });
-  
+
   }
 
   get activeMenuItem() {
@@ -177,7 +177,11 @@ export default class App extends Vue {
 }
 </script>
 <style scoped>
+@import '/assets/font/fstyle.css';
 .avatar {
   border-radius: 50%;
+}
+#apollo{
+  font-family: 'SF UI Display Medium';
 }
 </style>

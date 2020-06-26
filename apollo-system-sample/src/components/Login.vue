@@ -4,7 +4,8 @@
     <v-flex xs12 sm6 md5 lg4>
       <v-card class="mt-0 pt-0" elevation="2">
         <v-card-title class="blue darken-1">
-          <h4 style="color:white">Apollo System</h4>
+          <h2 style="color:white">阿波羅照護系統</h2>
+          <h4 style="color:white">Apollo Care Systems</h4>
         </v-card-title>
         <v-card-text>
           <form @submit.prevent="login">
@@ -85,7 +86,7 @@ export default class Login extends Vue {
     };
     const result = await http.post('/user/login', params);
     console.log(result);
-    if(result) {  
+    if(result) {
       if(result.data.status === 'Success'){  // Login Successful
       const data = result.data.data;
       const userData = {
@@ -104,7 +105,7 @@ export default class Login extends Vue {
       this.text = "No Response";
       console.log(`error`);
     }
-    
+
     this.loading = false;
   }
 }
