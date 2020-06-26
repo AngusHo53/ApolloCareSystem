@@ -1,5 +1,5 @@
 <template>
-  <v-app id="apollo">
+  <v-app id="apollo" class="overflow-auto">
     <vue-progress-bar> </vue-progress-bar>
     <template v-if="!signedIn">
       <router-view></router-view>
