@@ -1,111 +1,82 @@
 
 <template>
   <v-container fluid v-if='loading === false || patient'>
-     <v-tabs
-      v-model="tab"
-      background-color="indigo"
-      dark
-    >
-     <v-tab
-        v-for="item in tab_items"
-        :key="item.tab"
+    <v-flex xs12>
+      <v-card>
+        <v-card-title>
+          <v-toolbar flat>
+            <v-toolbar-title>歷年紀錄</v-toolbar-title>
+          </v-toolbar>
+          <v-spacer></v-spacer>
+            <div>
+              <v-btn class="teal darken-2  mr-1" fab small dark @click.native="test()">
+              <v-icon>mdi-printer</v-icon>
+              </v-btn>
+            </div>
+        </v-card-title>
+        <v-card-body>
+      <v-row
       >
-        {{ item.content }}
-      </v-tab>
-    </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item
-        :key="'patientInfo'"
-      >
-        <v-container fluid grid-list-sm>
-          <v-row
-          >
-            <v-col
-              cols="12"
-              md="4"
-            >
-              <v-img
-                src="/assets/img/avatar1.png"
-                lazy-src="https://picsum.photos/id/11/100/60"
-                aspect-ratio="1"
-                class="grey lighten-2"
-                max-width="480"
-                max-height="320"
-              >
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                  </v-row>
-                </template>
-              </v-img>
-            </v-col>
-            <v-col
-              cols="12"
-              md="6"
-              lg="5"
-            >
-            <v-list dense>
-                <v-list-item>
-                  <v-list-item-content :class="['text-h5 font-weight-bold']">姓名: </v-list-item-content>
-                  <v-list-item-content :class="['text-h5 text-left']"
-                  >黃曉明
-                  </v-list-item-content>
-                </v-list-item>
-                <hr>
-                <v-list-item>
-                  <v-list-item-content :class="['text-h5 font-weight-bold']">ID: </v-list-item-content>
-                  <v-list-item-content :class="['text-h5']">D0444074566</v-list-item-content>
-                </v-list-item>
-                <hr>
-                <v-list-item>
-                  <v-list-item-content :class="['text-h5 font-weight-bold']">性別: </v-list-item-content>
-                  <v-list-item-content :class="['text-h5']" >男生</v-list-item-content>
-                </v-list-item>
-                <hr>
-                <v-list-item>
-                  <v-list-item-content :class="['text-h5 font-weight-bold']">生日: </v-list-item-content>
-                  <v-list-item-content :class="['text-h5']" >2020/08/27</v-list-item-content>
-                </v-list-item>
-                <hr>
-                <v-list-item>
-                  <v-list-item-content :class="['text-h5 font-weight-bold']">電話: </v-list-item-content>
-                  <v-list-item-content :class="['text-h5']" >0983154789</v-list-item-content>
-                </v-list-item>
-              <hr>
-                <v-list-item>
-                  <v-list-item-content :class="['text-h5 font-weight-bold']">地址: </v-list-item-content>
-                  <v-list-item-content :class="['text-h5']" >台中市西屯區文華南10弄3巷155號</v-list-item-content>
-                </v-list-item>
-            </v-list>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-tab-item>
-      <v-tab-item
-        :key="'records'"
-      >
-        <v-flex xs12>
-          <v-card>
-            <v-card-title>
-            <v-toolbar flat>
-              <v-toolbar-title>歷年紀錄</v-toolbar-title>
-            </v-toolbar>
+        <v-col
+          cols="2"
+          md="2"
+          lg="2"
+        >
+        <v-list dense>
+            <v-list-item>
+              <v-list-item-content :class="['font-weight-bold']">姓名: </v-list-item-content>
+              <v-list-item-content :class="['text-left']"
+              >黃曉明
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content :class="[' font-weight-bold']">ID: </v-list-item-content>
+              <v-list-item-content :class="['']">D0444074566</v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content :class="[' font-weight-bold']">性別: </v-list-item-content>
+              <v-list-item-content :class="['']" >男生</v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content :class="[' font-weight-bold']">生日: </v-list-item-content>
+              <v-list-item-content :class="['']" >2020/08/27</v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content :class="[' font-weight-bold']">電話: </v-list-item-content>
+              <v-list-item-content :class="['']" >0983154789</v-list-item-content>
+            </v-list-item>
+        </v-list>
+        </v-col>
+        <v-col
+          cols="12"
+          md="6"
+          lg="9"
+        >
+          <v-layout class="">
+          <v-flex md4 xs12>
+            <v-card light>
+              <doughnut-chart></doughnut-chart>
+            </v-card>
+            </v-flex>
             <v-spacer></v-spacer>
-              <div>
-                <v-btn class="teal darken-2  mr-1" fab small dark @click.native="test()">
-                <v-icon>mdi-printer</v-icon>
-                </v-btn>
-              </div>
-            </v-card-title>
-            <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="records" :pagination="pagination"></Table>
-          </v-card>
-        </v-flex>
-      </v-tab-item>
-    </v-tabs-items>
+            <v-flex md4 xs12>
+              <v-card light>
+                <bar-chart></bar-chart>
+              </v-card>
+            </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex md4 xs12>
+              <v-card light>
+                <line-chart></line-chart>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-col>
+      </v-row>
+        <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="records" :pagination="pagination" :options="options"></Table>
+        </v-card-body>
+      </v-card>
+    </v-flex>
     <v-overlay  :value="loading"></v-overlay>
   </v-container>
 </template>
@@ -120,12 +91,19 @@ import Vue from 'vue';
 import { patientModule } from '@/store/modules/patients';
 import { appModule } from '@/store/modules/app';
 
+import BarChart from "@/components/chart/Bar";
+import DoughnutChart from "@/components/chart/Doughnut";
+import LineChart from "@/components/chart/LineChart";
+
 @Component({
   components: {
     Table,
     TableHeaderButtons,
     SearchPanel,
-    ConfirmDialog
+    ConfirmDialog,
+    BarChart,
+    DoughnutChart,
+    LineChart
   }
 })
 export default class PatientRecords extends Vue {
@@ -133,11 +111,6 @@ export default class PatientRecords extends Vue {
   singleExpand = false;
   expanded= [];
   patientInfo = {};
-  tab = null;
-  tab_items = [
-    { tab: 'patientInfo', content: '病人資訊' },
-    { tab: 'records', content: '病人歷史紀錄' },
-  ];
   headers = [
     {
       text: '量測時間',
@@ -154,6 +127,13 @@ export default class PatientRecords extends Vue {
     { text: '走路速度(公尺/秒)',sortable: false, value: 'walkspeed' },
     { text: '走路時間(秒)',sortable: false, value: 'walktime' }
   ];
+
+  options = {
+      page: 1,
+      q: '',
+      order: 'desc',
+      sort: ''
+  }
 
   pagination = {
     page: 1,
