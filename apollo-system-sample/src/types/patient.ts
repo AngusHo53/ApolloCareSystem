@@ -18,6 +18,13 @@ export interface Patient extends Entity {
     updated_at: string;
   }
 
+  export interface PatientOptions {
+    page: number,
+    q: string,
+    order: string,
+    sort: string
+  }
+
   export interface Record extends Entity {
     blood;
     blood_glucose;

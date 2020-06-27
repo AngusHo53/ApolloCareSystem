@@ -4,9 +4,9 @@ import { userModule } from "@/store/modules/user";
 import ErrorPage from "@/components/404.vue";
 import Community from "@/pages/Community.vue";
 import Login from "@/components/Login.vue";
-import PatientForm from "@/components/Login.vue";
 import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
+import PatientForm from "@/pages/PatientForm.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
   if (!userModule.isSignedIn) {
@@ -36,9 +36,10 @@ const routes: Array<RouteConfig> = [
     beforeEnter: requireAuth
   },
   {
-    path: "/newpatient",
+    path: "/newPatient",
     component: PatientForm,
-    name: "NewPatient"
+    name: "新增病人",
+    beforeEnter: requireAuth
   },
   {
     path: "/community",

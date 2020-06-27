@@ -8,13 +8,16 @@
           </span>
           <v-spacer></v-spacer>
             <div>
+              <v-btn class="blue darken-2  mr-2" fab small dark @click.native="createPatient()">
+              <v-icon>mdi-account-plus</v-icon>
+              </v-btn>
               <v-btn class="teal darken-2  mr-2" fab small dark @click.native="test()">
               <v-icon>mdi-printer</v-icon>
               </v-btn>
             </div>
         </v-card-title>
-        <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="items" :pagination="pagination" @updateTableData="updateTableData"
-        @search="searchPatients" @dataTableClickHandler="changeToPatientRecordPage"></Table>
+        <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="items" :pagination="pagination"
+         :options="patientOptions" @updateTableData = "updateTableData" @dataTableClickHandler="changeToPatientRecordPage"></Table>
       </v-card>
     </v-flex>
     <confirm-dialog
@@ -86,17 +89,22 @@ export default class PatientList extends Vue {
   private color = '';
   private quickSearchFilter = '';
   private itemId = -1;
-  private nowPage = 1;
-  created() {
-    patientModule.getPatientsByPages(this.nowPage);
+  private patientOptions = {
+      page: 1,
+      q: '',
+      order: 'asc',
+      sort: ''
   }
-
-  add() {
-    this.$router.push('NewPatient');
+  created() {
+    this.updateTableData();
   }
 
   test() {
       console.log('test');
+  }
+
+  createPatient() {
+    this.$router.push('newPatient');
   }
 
   changeToPatientRecordPage($event){
@@ -106,16 +114,10 @@ export default class PatientList extends Vue {
     }});
   }
 
-  searchPatients(keyword: string) {
-      // To Do
-      console.log(keyword);
-      patientModule.clearPatients();
-      keyword !== ''? patientModule.getPatientsByKeyword(keyword): this.updateTableData(this.nowPage);
-  }
-
-  updateTableData(page: number) {
-      this.nowPage = page;
-      patientModule.getPatientsByPages(page);
+  updateTableData() {
+    patientModule.clearPatients();
+    this.patientOptions.page = this.pagination.page;
+    patientModule.getPatientsByPages(this.patientOptions);
   } 
 
   onConfirm() {
