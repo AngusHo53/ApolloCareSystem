@@ -167,9 +167,9 @@ this.avatar = customerModule.customer.avatar;
   }
   mounted() {
     if (this.$route.params.id) {
-      this.title = "編輯用戶";
+      this.title = "編輯病人資料";
       this.customerAvatar();
-    } else this.title = "新增用戶";
+    } else this.title = "新增病人資料";
   }
 }
 </script>
