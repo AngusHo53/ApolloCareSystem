@@ -26,33 +26,89 @@ export interface Patient extends Entity {
   }
 
   export interface Record extends Entity {
-    blood;
-    blood_glucose;
-    blood_pressure;
-    body_temperature;
-    bone;
-    created_at;
-    frailty;
-    mental;
-    metabolic;
-    spo2;
-    updated_at;
+    blood_pressure: BloodPressure;
+    blood_glucose: BloodGlucose;
+    metabolic: Metabolic;
+    body_temerature: BodyTemperature;
+    spo2: SpO2;
+    frailty: frailty;
+    blood: Blood;
+    mental: Mental;
+    bone: Bone;
   }
 
   export interface BloodPressure {
-    afib;
-    arr;
-    diastolic;
-    id;
-    ihb;
-    machine_number;
-    pc;
-    pulse;
-    record_from;
-    scene;
-    systolic;
+    systolic: number;
+    diastolic: number;
+    pulse: number;
+    scene: string;
+    arr: boolean;
+    afib: boolean;
+    pc: boolean;
+    ihb: boolean;
   }
 
+  export interface BloodGlucose {
+    blood_glucose: number;
+    meal: string;
+  } 
+
+  export interface Metabolic {
+    height: number;
+    weight: number;
+    bmi: number;
+    nuscle_mass: number;
+    body_fat: number;
+    body_water: number;
+    visceral_fat: number;
+    bmr: number;
+  }
+
+  export interface BodyTemperature {
+    body_temperature: number;
+  }
+
+  export interface SpO2 {
+    spo2_highest: number;
+    spo2_lowest: number;
+    pulse_highest: number;
+    pulse_lowest: number;
+  }
+
+  export interface frailty{
+    handness: string; //慣用手
+    grip: number;
+    walktime: number;
+    walkspeed: number;
+    ftsst: number;
+  }
+
+  export interface Blood {
+    hb: number;
+    alb: number;
+    cre: number;
+    ast: number;
+    tcho: number;
+    hdl: number;
+    ldl: number;
+    ua: number;
+    hba1c: number;
+    fe: number;
+    mg: number;
+  }
+
+  export interface Mental {
+    spmsq: number;
+    ad8: number;
+    minicog: boolean;
+    bsrs: number;
+  }
+
+  export interface Bone {
+    osteoporosis: number;
+    fracture: number;
+  }
+  
   export interface MeasureData {
     measure_at: "Tue, 08 Jan 2019 03:35:45 GMT"
     name: {en: "afib", zh: "心房顫動"}
