@@ -84,50 +84,6 @@
           </v-row>
         </v-card-text>
       </v-card>
-
-      <v-card  style='margin-bottom:10px'>
-        <v-toolbar flat>
-          <v-toolbar-title class='text-h4 pa-2'>最新測量記錄</v-toolbar-title>
-        </v-toolbar>
-        <v-tabs
-          v-model="measureTab"
-          background-color="transparent"
-          color="basil"
-          grow
-        >
-          <v-tab
-            v-for="item in measureItem"
-            :key="item"
-          >
-            {{ item.name_ch }}
-          </v-tab>
-        </v-tabs>
-
-        <v-tabs-items v-model="measureTab">
-          <v-tab-item
-            v-for="item in measureItem"
-            :key="item"
-          >
-            <v-card
-              color="basil"
-              flat
-            >
-              <v-card-title>
-                <v-toolbar flat>
-                  <v-icon large>
-                    mdi-pause
-                  </v-icon>
-                  <v-toolbar-title class='text-h4 pa-2'>{{item.name_ch}}</v-toolbar-title>
-                </v-toolbar>
-              </v-card-title>
-              <v-card-text v-for="data in measureData[item.name_zn]" :key="data">
-                <MeasureCard :header="data.header" :normalRange="data.normalRange" :value='data.value' ></MeasureCard>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-card>
-
     <v-card>
       <v-card-title>
         <v-toolbar flat>
