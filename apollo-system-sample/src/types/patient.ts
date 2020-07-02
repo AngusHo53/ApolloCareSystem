@@ -31,7 +31,7 @@ export interface Patient extends Entity {
     metabolic: Metabolic;
     body_temerature: BodyTemperature;
     spo2: SpO2;
-    frailty: frailty;
+    frailty: Frailty;
     blood: Blood;
     mental: Mental;
     bone: Bone;
@@ -75,7 +75,7 @@ export interface Patient extends Entity {
     pulse_lowest: number;
   }
 
-  export interface frailty{
+  export interface Frailty{
     handness: string; //慣用手
     grip: number;
     walktime: number;

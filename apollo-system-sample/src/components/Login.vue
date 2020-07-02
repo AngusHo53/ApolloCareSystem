@@ -8,7 +8,7 @@
           <h4 style="color:white">Apollo Care Systems</h4>
         </v-card-title>
         <v-card-text>
-          <form @submit.prevent="login">
+          <v-form @submit.prevent="login" :lazy-validation="true" v-model="valid">
             <v-layout row wrap>
               <v-flex xs12 md4>
                 <v-subheader>使用者信箱</v-subheader>
@@ -20,6 +20,7 @@
                   v-model="email"
                   label="email"
                   value="Input text"
+                  required
                 ></v-text-field>
               </v-flex>
             </v-layout>
@@ -35,22 +36,17 @@
                   v-model="pass"
                   label="password"
                   value="Input text"
+                  required
                 ></v-text-field>
               </v-flex>
             </v-layout>
-            <v-btn type="submit">登入</v-btn>
-            <v-snackbar
-              v-if="error"
-              :timeout="timeout"
-              :top="true"
-              :multi-line="mode === 'multi-line'"
-              :vertical="mode === 'vertical'"
-              v-model="error"
-            >
-              {{ text }}
-              <v-btn class="pink--text" text @click.native="error = false">Close</v-btn>
-            </v-snackbar>
-          </form>
+            <v-flex class='d-flex'>
+              <v-alert class='pa-2' v-if='error' type="error" text dense outlined dismissible>
+                  {{ text }}
+              </v-alert>
+              <v-btn class="ml-auto pa-2" type="submit">登入</v-btn>
+            </v-flex>
+          </v-form>
         </v-card-text>
       </v-card>
       <v-overlay  :value="loading">
@@ -70,16 +66,17 @@ export default class Login extends Vue {
   private email = "";
   private pass = "";
   private error = false;
-  private text = "";
+  private text = "No Response";
   private loading = false;
-
+  private valid = true;
+  private timeout = 500000;
   public gotoDashboard() {
     this.$router.push("/");
   }
 
   public async login() {
     this.loading = true;
-    this.$Progress.start();
+    // this.$Progress.start();
     const params = {
       email: this.email,
       password: this.pass
@@ -105,8 +102,12 @@ export default class Login extends Vue {
       this.text = "No Response";
       console.log(`error`);
     }
-
     this.loading = false;
   }
 }
 </script>
+<style>
+.snacker {
+  background: #000000;
+}
+</style>

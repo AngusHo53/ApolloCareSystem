@@ -12,8 +12,19 @@ Vue.use(Vuetify);
 
 export default new Vuetify({
     preset,
+    options: {
+        customProperties: true
+    },
     theme: {
         dark: false,
         default: 'light'
+        },
+    themes: {
+        dark: {
+            background: '#00a86b'
+        },
+        light: {
+            background: '#EEEEF3'
         }
+    }
 });
