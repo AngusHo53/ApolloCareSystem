@@ -2,82 +2,142 @@
 <template>
   <v-container fluid v-if='loading === false || patient'>
     <v-flex xs12>
-      <v-card>
+      <v-card style='margin-bottom:10px'>
         <v-card-title>
           <v-toolbar flat>
-            <v-toolbar-title>歷年紀錄</v-toolbar-title>
+           <flex-row class='blue rounded-circle d-inline-flex pa-2' style='width:16px;height:16px;'></flex-row>
+            <v-toolbar-title class='text-h4 pa-2 ont-weight-bold '>最新測量記錄</v-toolbar-title>
           </v-toolbar>
-          <v-spacer></v-spacer>
-            <div>
-              <v-btn class="teal darken-2  mr-1" fab small dark @click.native="test()">
-              <v-icon>mdi-printer</v-icon>
-              </v-btn>
-            </div>
         </v-card-title>
-        <v-card-body>
-      <v-row
-      >
-        <v-col
-          cols="2"
-          md="2"
-          lg="2"
+        <v-tabs
+          v-model="measureTab"
+          background-color="transparent"
+          color="basil"
+          grow
         >
-        <v-list dense>
-            <v-list-item>
-              <v-list-item-content :class="['font-weight-bold']">姓名: </v-list-item-content>
-              <v-list-item-content :class="['text-left']"
-              >黃曉明
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content :class="[' font-weight-bold']">ID: </v-list-item-content>
-              <v-list-item-content :class="['']">D0444074566</v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content :class="[' font-weight-bold']">性別: </v-list-item-content>
-              <v-list-item-content :class="['']" >男生</v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content :class="[' font-weight-bold']">生日: </v-list-item-content>
-              <v-list-item-content :class="['']" >2020/08/27</v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content :class="[' font-weight-bold']">電話: </v-list-item-content>
-              <v-list-item-content :class="['']" >0983154789</v-list-item-content>
-            </v-list-item>
-        </v-list>
-        </v-col>
-        <v-col
-          cols="12"
-          md="6"
-          lg="9"
-        >
-          <v-layout class="">
-          <v-flex md4 xs12>
-            <v-card light>
-              <doughnut-chart></doughnut-chart>
+          <v-tab
+            v-for="item in measureItem"
+            :key="item"
+          >
+            {{ item.name_ch }}
+          </v-tab>
+        </v-tabs>
+        <v-card-text>
+          <v-row
+          >
+            <v-col
+              cols="3"
+              md="3"
+              lg="3"
+            >
+            <v-subheader>基本資訊</v-subheader>
+            <v-list>
+                <v-list-item>
+                  <v-list-item-content :class="['font-weight-bold text-h6']">姓名: </v-list-item-content>
+                  <v-list-item-content :class="['text-left text-h6']"
+                  >黃曉明
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content :class="['font-weight-bold text-h6']">編號: </v-list-item-content>
+                  <v-list-item-content :class="['text-h6']">D0444074566</v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content :class="['font-weight-bold text-h6']">性別: </v-list-item-content>
+                  <v-list-item-content :class="['text-h6']" >男</v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content :class="['font-weight-bold text-h6']">生日: </v-list-item-content>
+                  <v-list-item-content :class="['text-h6']" >2020/08/27</v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content :class="['font-weight-bold text-h6']">電話: </v-list-item-content>
+                  <v-list-item-content :class="['text-h6']" >0983154789</v-list-item-content>
+                </v-list-item>
+            </v-list>
+            </v-col>
+            <v-col >
+        <v-tabs-items v-model="measureTab">
+          <v-tab-item
+            v-for="item in measureItem"
+            :key="item"
+          >
+            <v-card
+              color="basil"
+              flat
+            >
+              <v-card-title>
+                <v-toolbar flat>
+                  <v-icon large>
+                    mdi-pause
+                  </v-icon>
+                  <v-toolbar-title class='text-h4 pa-2'>{{item.name_ch}}</v-toolbar-title>
+                </v-toolbar>
+              </v-card-title>
+              <v-card-text v-for="data in measureData[item.name_zn]" :key="data">
+                <MeasureCard :header="data.header" :normalRange="data.normalRange" :value='data.value' ></MeasureCard>
+              </v-card-text>
             </v-card>
-            </v-flex>
-            <v-spacer></v-spacer>
-            <v-flex md4 xs12>
-              <v-card light>
-                <bar-chart></bar-chart>
-              </v-card>
-            </v-flex>
-            <v-spacer></v-spacer>
-            <v-flex md4 xs12>
-              <v-card light>
-                <line-chart></line-chart>
-              </v-card>
-            </v-flex>
-          </v-layout>
-        </v-col>
-      </v-row>
-        <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="records" :pagination="pagination" :options="options"></Table>
-        </v-card-body>
+          </v-tab-item>
+        </v-tabs-items>
+            </v-col>
+          </v-row>
+        </v-card-text>
       </v-card>
+
+      <v-card  style='margin-bottom:10px'>
+        <v-toolbar flat>
+          <v-toolbar-title class='text-h4 pa-2'>最新測量記錄</v-toolbar-title>
+        </v-toolbar>
+        <v-tabs
+          v-model="measureTab"
+          background-color="transparent"
+          color="basil"
+          grow
+        >
+          <v-tab
+            v-for="item in measureItem"
+            :key="item"
+          >
+            {{ item.name_ch }}
+          </v-tab>
+        </v-tabs>
+
+        <v-tabs-items v-model="measureTab">
+          <v-tab-item
+            v-for="item in measureItem"
+            :key="item"
+          >
+            <v-card
+              color="basil"
+              flat
+            >
+              <v-card-title>
+                <v-toolbar flat>
+                  <v-icon large>
+                    mdi-pause
+                  </v-icon>
+                  <v-toolbar-title class='text-h4 pa-2'>{{item.name_ch}}</v-toolbar-title>
+                </v-toolbar>
+              </v-card-title>
+              <v-card-text v-for="data in measureData[item.name_zn]" :key="data">
+                <MeasureCard :header="data.header" :normalRange="data.normalRange" :value='data.value' ></MeasureCard>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
+      </v-card>
+
+    <v-card>
+      <v-card-title>
+        <v-toolbar flat>
+          <v-toolbar-title>歷年量測紀錄</v-toolbar-title>
+        </v-toolbar>
+      </v-card-title>
+      <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="records" :pagination="pagination" :options="options"></Table>
+    </v-card>
     </v-flex>
-    <v-overlay  :value="loading"></v-overlay>
+  <v-overlay  :value="loading"></v-overlay>
   </v-container>
 </template>
 <script>
@@ -85,6 +145,7 @@
 import Table from '@/components/Table.vue';
 import TableHeaderButtons from '@/components/TableHeaderButtons.vue'
 import SearchPanel from '@/components/SearchPanel.vue';
+import MeasureCard from '@/components/MeasureCard.vue';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import { Component } from 'vue-property-decorator';
 import Vue from 'vue';
@@ -103,7 +164,8 @@ import LineChart from "@/components/chart/LineChart";
     ConfirmDialog,
     BarChart,
     DoughnutChart,
-    LineChart
+    LineChart,
+    MeasureCard
   }
 })
 export default class PatientRecords extends Vue {
@@ -111,6 +173,56 @@ export default class PatientRecords extends Vue {
   singleExpand = false;
   expanded= [];
   patientInfo = {};
+
+  measureData={
+    blood_pressure:[
+      {
+        header: '收縮壓',
+        normalRange: [100, 120],
+        value: 130
+      },
+      {
+        header: '舒張壓',
+        normalRange: [60, 80],
+        value: 70
+      },
+      {
+        header: '脈搏',
+        normalRange: [50, 120],
+        value: 70
+      }
+    ],
+    blood_glucose:[
+      {
+        header: '血糖',
+        normalRange: [20, 600],
+        value: 400
+      }
+    ],
+    metabolic:[
+      {
+        header: '身高',
+        normalRange: [0, 250],
+        value: 177
+      },
+      {
+        header: '體重',
+        normalRange: [2.5, 150],
+        value: 80
+      }
+    ]
+  }
+  measureTab = null;
+  measureItem = [{name_zn: 'blood_pressure',
+                  name_ch: '血壓'},
+                { name_zn: 'blood_glucose',
+                  name_ch: '血糖'},
+                { name_zn: 'metabolic',
+                name_ch: '新陳代謝'},
+                { name_zn: 'blood_glucose',
+                name_ch: '血糖'},
+                { name_zn: 'blood_glucose',
+                name_ch: '血糖'}]
   headers = [
     {
       text: '量測時間',
