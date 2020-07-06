@@ -31,7 +31,7 @@ export interface UserState {
 class UserModule extends VuexModule implements UserState {
   public callingAPI = false;
   public searching = "";
-  user = getUser();
+  user: User = getUser();
   token = getToken();
 
   public userInfo = {} as UserInfo;
@@ -39,7 +39,7 @@ class UserModule extends VuexModule implements UserState {
 
 
   get isSignedIn(): boolean {
-    return this.user.email && this.token ? true : false;
+    return this.user.name && this.token ? true : false;
   }
 
   @Mutation

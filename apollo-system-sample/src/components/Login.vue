@@ -199,6 +199,12 @@ export default class Login extends Vue {
     }
   }
 
+  async created() {
+    if(userModule.isSignedIn) {
+      userModule.logout();
+    }
+  }
+
   public async login() {
     this.loading = true;
     // this.$Progress.start();
@@ -206,6 +212,7 @@ export default class Login extends Vue {
       email: this.email,
       password: this.pass
     };
+    await userModule.logout();
     const result = await http.post("/user/login", params);
     console.log(result);
     if (result) {
@@ -217,7 +224,8 @@ export default class Login extends Vue {
           user: data.user
         };
         userModule.signIn(userData);
-        this.$router.push({ name: "社區狀態顯示表" }).catch(err => {
+        this.$router.push({name: '社區狀態顯示表'}).catch(err => {
+          console.log('catch test');
           console.log(err)
         });
       } else {

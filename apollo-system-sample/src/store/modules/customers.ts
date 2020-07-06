@@ -67,30 +67,30 @@ class CustomerModule extends VuexModule implements CustomerState {
   }
 
   @Action getAllCustomers(): void {
-    this.context.commit('setLoading', { loading: true });
-    this.setLoading(true);
-    axios({
-      method: 'get',
-      baseURL: Vue.prototype.baseURL,
-      url: '/patient/list/1',
-       headers: {
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        "Access-Control-Allow-Origin" : "*", 
-        'Authorization' : 'Bearer ' + getToken()
-      }
-    })
-      .then(result => {
-        console.log(result);
-        const userInfo = result.data.data.information;
-        const customers = [userInfo];
+    // this.context.commit('setLoading', { loading: true });
+    // this.setLoading(true);
+    // axios({
+    //   method: 'get',
+    //   baseURL: Vue.prototype.baseURL,
+    //   url: '/patient/list/1',
+    //    headers: {
+    //     'Content-Type' : 'application/json',
+    //     'Accept' : 'application/json',
+    //     "Access-Control-Allow-Origin" : "*", 
+    //     'Authorization' : 'Bearer ' + getToken()
+    //   }
+    // })
+    //   .then(result => {
+    //     console.log(result);
+    //     const userInfo = result.data.data.information;
+    //     const customers = [userInfo];
         
-        this.setDataTable(customers);
-        this.setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    //     this.setDataTable(customers);
+    //     this.setLoading(false);
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //   });
   }
 
   @Action searchCustomers(searchQuery: string): void {

@@ -44,7 +44,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/community",
     component: Community,
-    name: "社區狀態顯示表",
+    name: '社區狀態顯示表',
     beforeEnter: requireAuth
   },
   { path: "/login", component: Login, name: "Login" },
