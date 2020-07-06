@@ -411,7 +411,7 @@ export default class CustomerList extends Vue {
   }
 
   created() {
-    customerModule.getAllCustomers();
+    // customerModule.getAllCustomers();
   }
 
   mounted() {}
