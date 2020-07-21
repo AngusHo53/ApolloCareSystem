@@ -21,10 +21,15 @@
                       <v-container>
                         <v-row>
                           <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="new_api_name" label="API token name"></v-text-field>
+                            <v-text-field v-model="editedItem.name" label="API token name"></v-text-field>
                           </v-col>
                           <v-col cols="12" sm="6" md="4">
-                            <v-select v-model="new_api_type" :items="[0,1]" label="Type" required></v-select>
+                            <v-select
+                              v-model="editedItem.api_type"
+                              :items="[0,1]"
+                              label="Type"
+                              required
+                            ></v-select>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -60,7 +65,6 @@ export default class CustomerList extends Vue {
     {
       text: "API name",
       align: "start",
-      sortable: false,
       value: "name"
     },
     { text: "API type", value: "api_type" },
@@ -70,24 +74,17 @@ export default class CustomerList extends Vue {
   ];
 
   public api_list = [];
-  public new_api_name = "";
-  public new_api_type = 0;
-  public desserts = [];
   public editedIndex = -1;
   public editedItem = {
     name: "",
-    calories: 0,
-    fat: 0,
-    carbs: 0,
-    protein: 0
+    api_type: 0,
+    uuid: ""
   };
 
   public defaultItem = {
     name: "",
-    calories: 0,
-    fat: 0,
-    carbs: 0,
-    protein: 0
+    api_type: 0,
+    uuid: ""
   };
 
   get formTitle() {
@@ -95,14 +92,29 @@ export default class CustomerList extends Vue {
   }
 
   editItem(item) {
-    this.editedIndex = this.desserts.indexOf(item);
+    this.editedIndex = this.api_list.indexOf(item);
     this.editedItem = Object.assign({}, item);
+    console.log(this.editedItem);
+    console.log(this.editedIndex);
+
     this.dialog = true;
   }
 
-  deleteItem(item) {
-    const index = this.desserts.indexOf(item);
-    confirm("確定要刪除嗎?") && this.desserts.splice(index, 1);
+  public async deleteItem(item) {
+    const index = this.api_list.indexOf(item);
+    console.log(this.api_list[index].uuid);
+    if (confirm("確定要刪除嗎?") == true) {
+      const result = await http.delete("/apikey/" + this.api_list[index].uuid);
+      if (result) {
+        if (result.data.status === "Success") {
+          confirm("刪除成功");
+        } else {
+          confirm("刪除失敗");
+        }
+      }
+    } else {
+      confirm("刪除失敗");
+    }
   }
 
   close() {
@@ -114,10 +126,10 @@ export default class CustomerList extends Vue {
   }
 
   public async save() {
-    if (this.new_api_name != "") {
+    if (this.editedIndex == -1) {
       const params = {
-        name: this.new_api_name,
-        type: this.new_api_type
+        name: this.editedItem.name,
+        type: this.editedItem.api_type
       };
       const result = await http.post("/apikey", params);
       console.log(result);
@@ -128,10 +140,23 @@ export default class CustomerList extends Vue {
           console.log("註冊失敗");
         }
       }
-    } else {
-      console.log("註冊失敗");
+    } else if (this.editedIndex == 0) {
+      const params = {
+        name: this.editedItem.name,
+        type: this.editedItem.api_type
+      };
+      const result = await http.put("/apikey/" + this.editedItem.uuid, params);
+      console.log(result);
+      if (result) {
+        if (result.data.status === "Success") {
+          console.log("修改成功");
+        } else {
+          console.log("修改失敗");
+        }
+      }
     }
     this.close();
+    this.apiList();
   }
 
   public async apiList() {
