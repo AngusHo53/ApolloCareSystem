@@ -7,6 +7,7 @@ import Login from "@/components/Login.vue";
 import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
 import PatientForm from "@/pages/PatientForm.vue";
+import ApiToken from "@/pages/ApiToken.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
   if (!userModule.isSignedIn) {
@@ -39,6 +40,12 @@ const routes: Array<RouteConfig> = [
     path: "/newPatient",
     component: PatientForm,
     name: "新增病人",
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/apiToken",
+    component: ApiToken,
+    name: 'API列表',
     beforeEnter: requireAuth
   },
   {

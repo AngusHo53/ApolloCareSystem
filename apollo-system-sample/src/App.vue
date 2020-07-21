@@ -1,11 +1,19 @@
 <template>
   <v-app id="apollo" class="overflow-auto" style="background:#EEEEF3;">
-    <vue-progress-bar> </vue-progress-bar>
+    <vue-progress-bar></vue-progress-bar>
     <template v-if="!signedIn">
       <router-view></router-view>
     </template>
     <template v-if="signedIn">
-      <v-navigation-drawer class="blue lighten-5" mini-variant-width="70" width="250" light :mini-variant.sync="mini" v-model="drawer" app>
+      <v-navigation-drawer
+        class="blue lighten-5"
+        mini-variant-width="70"
+        width="250"
+        light
+        :mini-variant.sync="mini"
+        v-model="drawer"
+        app
+      >
         <v-list class="pa-0">
           <v-list-item tag="div">
             <v-list-item-action>
@@ -23,7 +31,13 @@
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item v-for="item in userMenus" :key="item.title" value="true" @click="handleUserActions(item)" router>
+                  <v-list-item
+                    v-for="item in userMenus"
+                    :key="item.title"
+                    value="true"
+                    @click="handleUserActions(item)"
+                    router
+                  >
                     <v-list-item-content>
                       <v-list-item-title v-text="item.title"></v-list-item-title>
                     </v-list-item-content>
@@ -39,11 +53,17 @@
           </v-list-item>
         </v-list>
         <v-list>
-          <v-list-item v-for="item in items" :key="item.title" @click="handleNavigtiion(item)" router>
+          <v-list-item
+            v-for="item in items"
+            :key="item.title"
+            @click="handleNavigtiion(item)"
+            router
+          >
             <v-list-item-action class="pr-1 pl-2 mr-1">
-              <v-icon :class="activeMenuItem.includes(item.title) ? 'blue--text' : ''" :title="item.title">
-                {{ item.icon }}
-              </v-icon>
+              <v-icon
+                :class="activeMenuItem.includes(item.title) ? 'blue--text' : ''"
+                :title="item.title"
+              >{{ item.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content :class="activeMenuItem.includes(item.title) ? 'blue--text' : ''">
               <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -51,21 +71,9 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-app-bar app elevation=1>
+      <v-app-bar app elevation="1">
         <v-app-bar-nav-icon @click.native.stop="drawer = !drawer" light></v-app-bar-nav-icon>
         <v-spacer></v-spacer>
-        <div class="text-xs-center pr-3 mt-2">
-          <v-badge left="">
-            <span slot="badge">6</span>
-            <v-icon large color="grey lighten-1">mdi-bell-outline</v-icon>
-          </v-badge>
-
-          <v-badge color="red">
-            <span slot="badge">!</span>
-            <v-icon large color="grey">mdi-email-outline</v-icon>
-          </v-badge>
-        </div>
-
       </v-app-bar>
       <v-content>
         <v-container fluid>
@@ -76,10 +84,9 @@
   </v-app>
 </template>
 <script lang="ts">
-import { Component } from 'vue-property-decorator';
-import Vue from 'vue';
-import { userModule } from '@/store/modules/user';
-
+import { Component } from "vue-property-decorator";
+import Vue from "vue";
+import { userModule } from "@/store/modules/user";
 
 @Component
 export default class App extends Vue {
@@ -91,40 +98,43 @@ export default class App extends Vue {
     return userModule.user;
   }
 
-  private dialog = false;
   private mini = false;
-  private dialogText = '';
-  private dialogTitle = '';
   private isRootComponent = true;
   public drawer = window.innerWidth > 960;
   private fixed = false;
   private items: AppMenu[] = [
     {
-      icon: 'mdi-home-group',
-      title: '社區狀態顯示表',
-      vertical: 'community',
-      link: 'communities'
+      icon: "mdi-home-group",
+      title: "社區狀態顯示表",
+      vertical: "community",
+      link: "communities"
     },
     {
-      icon: 'mdi-account-group',
-      title: '病人名單',
-      vertical: 'Patient',
-      link: 'patients'
-    }
+      icon: "mdi-account-group",
+      title: "病人名單",
+      vertical: "Patient",
+      link: "patients"
+    },
+    {
+      icon: "mdi-api",
+      title: "API列表",
+      vertical: "apiList",
+      link: "apilist"
+    },
   ];
 
-  private userMenus: AppMenu[]  = [
+  private userMenus: AppMenu[] = [
     {
-      icon: 'bubble_chart',
-      title: '登出',
-      link: 'login'
+      icon: "bubble_chart",
+      title: "登出",
+      link: "login"
     }
   ];
 
   private miniVariant = false;
   private right = true;
   private rightDrawer = false;
-  private menuItem = '';
+  private menuItem = "";
 
   created() {
     //  [App.vue specific] When App.vue is first loaded start the progress bar
@@ -144,13 +154,12 @@ export default class App extends Vue {
     });
     //  hook the progress bar to finish after we've finished moving router-view
     this.$router.afterEach((to, from) => {
-      if (to.name !== 'ErrorPage') {
+      if (to.name !== "ErrorPage") {
         this.menuItem = to.name;
       }
       //  finish the progress bar
       this.$Progress.finish();
     });
-
   }
 
   get activeMenuItem() {
@@ -166,22 +175,21 @@ export default class App extends Vue {
 
   async handleUserActions(item: TODO) {
     this.menuItem = item.title;
-    if (item.title === '登出') {
+    if (item.title === "登出") {
       await userModule.logout();
     }
     this.$router.push(item.link);
   }
 
-  mounted() {
-  }
+  mounted() {}
 }
 </script>
 <style scoped>
-@import '/assets/font/fstyle.css';
+@import "/assets/font/fstyle.css";
 .avatar {
   border-radius: 50%;
 }
-#apollo{
-  font-family: 'SF UI Display Medium';
+#apollo {
+  font-family: "SF UI Display Medium";
 }
 </style>

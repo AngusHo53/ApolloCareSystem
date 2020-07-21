@@ -186,7 +186,7 @@ export default class Login extends Vue {
       gender: this.gender,
       phone: this.phone
     };
-    const result = await http.post("/user/register", params);
+    const result = await http.put("/auth", params);
     console.log(result);
     if (result) {
       if (result.data.status === "Success") {
@@ -213,7 +213,7 @@ export default class Login extends Vue {
       password: this.pass
     };
     await userModule.logout();
-    const result = await http.post("/user/login", params);
+    const result = await http.post("/auth", params);
     console.log(result);
     if (result) {
       if (result.data.status === "Success") {
