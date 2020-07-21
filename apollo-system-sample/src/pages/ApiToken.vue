@@ -140,7 +140,7 @@ export default class CustomerList extends Vue {
           console.log("註冊失敗");
         }
       }
-    } else if (this.editedIndex == 0) {
+    } else {
       const params = {
         name: this.editedItem.name,
         type: this.editedItem.api_type
