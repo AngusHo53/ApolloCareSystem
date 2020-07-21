@@ -50,7 +50,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import http from "@/http/axios";
 
 @Component
@@ -129,6 +129,7 @@ export default class CustomerList extends Vue {
         }
       }
     } else {
+      console.log("註冊失敗");
     }
     this.close();
   }
