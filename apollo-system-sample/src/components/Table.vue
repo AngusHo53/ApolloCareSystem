@@ -4,7 +4,7 @@
        <v-row>
         <v-col
           cols="12"
-          md="4"
+          md="12"
         >
         <v-text-field
           v-model="options.q"
@@ -13,13 +13,13 @@
           @keyup.enter="$emit('updateTableData')"
         ></v-text-field>
         </v-col>
-        <v-col
+        <!-- <v-col
             cols="12"
             md="4"
           >
           <v-select
             v-model="sort"
-            :items="['姓名','性別', 'ID', 'ID卡', '測量']"
+            :items="['名稱','ID', '性別', '年齡', '電話']"
             label="排序"
             @change="fomateSort()"
             @keyup.enter="$emit('updateTableData')"
@@ -30,7 +30,7 @@
             cols="1"
             md="1">
           <v-switch v-model="order" flat :label="order?`升序`:`降序`" @change='fomateOrder(order)'></v-switch>
-        </v-col>
+        </v-col>  -->
       </v-row>
     </v-card-text>
     
@@ -72,6 +72,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
 import Vue from 'vue';
 import { Entity, PatientOptions } from '@/types';
@@ -128,9 +129,8 @@ export default class Table extends Vue {
     const sortDir = {
       '姓名': 'name',
       '性別': 'gender',
-      'ID': 'id',
-      'ID卡': 'id_card',
-      '測量': 'measure'
+      'ID': 'iid',
+      '信箱': 'email'
     }
     this.options.sort = sortDir[this.sort];
     this.$emit('updateTableData');
@@ -140,9 +140,9 @@ export default class Table extends Vue {
     const sortDir = {
       name: '姓名',
       gender: '性別',
-      id: 'ID',
-      id_card: 'ID卡',
-      measure: '測量'
+      iid: 'ID',
+      measure: '測量',
+      email: '信箱'
     }
     return sortDir[key];
   }

@@ -67,12 +67,12 @@ export default class PatientList extends Vue {
       sortable: false,
       value: 'name'
     },
-    { text: 'ID Card',sortable: false, value: 'id_card' },
+    { text: 'ID',sortable: false, value: 'iid' },
     { text: '性別',sortable: false, value: 'gender' },
     { text: '年齡',sortable: false, value: 'age' },
     { text: '生日',sortable: false, value: 'birthday' },
     { text: '電話',sortable: false, value: 'phone'},
-    { text: '上一次測量',sortable: false, value: 'updated_at' },
+    { text: '信箱',sortable: false, value: 'email' },
     { text: '', value: 'actions', sortable: false }
   ];
   private searchFilter = {
@@ -95,6 +95,7 @@ export default class PatientList extends Vue {
       order: 'asc',
       sort: ''
   }
+  private lastSearch = '';
   created() {
     this.updateTableData();
   }
@@ -108,15 +109,22 @@ export default class PatientList extends Vue {
   }
 
   changeToPatientRecordPage($event){
+    console.log($event);
     this.$router.push({name:`病人紀錄`, params:{
-      id: $event.id,
+      id: $event.iid,
       patient: $event
     }});
   }
 
   updateTableData() {
     patientModule.clearPatients();
-    this.patientOptions.page = this.pagination.page;
+    if(this.patientOptions.q !== this.lastSearch) {
+       this.patientOptions.page = 1;
+       this.lastSearch = this.patientOptions.q;
+    } else {
+      this.patientOptions.page = this.pagination.page;
+    }
+    console.log(this.patientOptions);
     patientModule.getPatientsByPages(this.patientOptions);
   } 
 
