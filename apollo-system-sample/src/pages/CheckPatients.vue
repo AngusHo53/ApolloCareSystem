@@ -1,0 +1,218 @@
+<template>
+  <v-container fluid>
+    <v-flex xs12>
+      <v-card>
+          <v-data-table :headers="headers" :items="checkPatients" class="elevation-1"
+           show-select :single-select="singleSelect" item-key="name" :loading="!checkPatients" loading-text="請稍等..."
+           v-model="selected"
+           >
+            <template v-slot:top>
+              <v-toolbar flat color="white">
+                <v-toolbar-title>審核病人列表({{checkPatients.length}})</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-col
+                cols="12"
+                md="2"
+                >
+                <v-btn class="mb-3 blue" v-bind="attrs" v-on="on" @click="showDialog('通過名單')">通過</v-btn>
+                </v-col>
+                <v-col
+                cols="12"
+                md="2"
+                >
+                <v-btn class="mb-3 red" v-bind="attrs" v-on="on" @click="showDialog('不通過名單')">不通過</v-btn>
+                </v-col>
+              </v-toolbar>
+            </template>
+          </v-data-table>
+      </v-card>
+      <v-dialog v-model="dialog" max-width="500px">
+        <v-card>
+            <v-card-title>
+                <span class="headline">{{dialogTitle}}({{selected.length}})</span>
+            </v-card-title>
+            <v-card-text>
+                <v-list-item two-line v-for="item in selected" :key="item.name">
+                    <v-list-item-avatar class="grey lighten-1 white--text">
+                        <v-icon>mdi-account</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-content >
+                        <v-list-item-title>名稱: {{item.name}}</v-list-item-title>
+                        <v-list-item-subtitle>ID: {{item.iid}}</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="primary"
+                    text
+                    @click="dialog = false"
+                >
+                   取消
+                </v-btn>
+                <v-btn
+                    color="primary"
+                    text
+                    @click="dialog = false;saveCheckingPatients();"
+                >
+                   確認
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-flex>
+  </v-container>
+</template>
+<script lang="ts">
+import { Vue, Component } from "vue-property-decorator";
+import http from "@/http/axios";
+
+@Component
+export default class CheckPatients extends Vue {
+
+  public dialog = false ;
+  public snackbar = true;
+  public singleSelect = false;
+  public selected = [];
+  public dialogTitle = '';
+  public headers = [
+   {
+      text: '名稱',
+      left: true,
+      sortable: false,
+      value: 'name'
+    },
+    { text: 'ID',sortable: false, value: 'iid' },
+    { text: '性別',sortable: false, value: 'gender' },
+    { text: '年齡',sortable: false, value: 'age' },
+    { text: '生日',sortable: false, value: 'birthday' },
+    { text: '電話',sortable: false, value: 'phone'},
+    { text: '信箱',sortable: false, value: 'email' },
+  ];
+
+  public checkPatients = [
+      {
+        age: 0,
+        birthday: "2020/01/01",
+        email: "@gmail.com",
+        gender: '男',
+        iid: "L223410953",
+        name: "L2234109531",
+        phone: "xxxx-xxx-xxx",
+        place: "HW,1",
+      },
+       {
+        age: 0,
+        birthday: "2020/01/01",
+        email: "@gmail.com",
+        gender: '男',
+        iid: "L223410953",
+        name: "L223410953",
+        phone: "xxxx-xxx-xxx",
+        place: "HW,1",
+      },
+       {
+        age: 0,
+        birthday: "2020/01/01",
+        email: "@gmail.com",
+        gender: '男',
+        iid: "L223410953",
+        name: "L2234109532",
+        phone: "xxxx-xxx-xxx",
+        place: "HW,1",
+      }
+  ];
+  public editedIndex = -1;
+  public editedItem = {
+    name: "",
+    api_type: 0,
+    uuid: ""
+  };
+
+  public defaultItem = {
+    name: "",
+    api_type: 0,
+    uuid: ""
+  };
+
+  test(test) {
+      console.log(this.selected);
+  }
+
+  get formTitle() {
+    return this.editedIndex === -1 ? "Create API token" : "Edit API token";
+  }
+
+  editItem(item) {
+    
+  }
+
+  showDialog(title) {
+      this.dialog = true;
+      this.dialogTitle = title;
+  }
+
+  saveCheckingPatients() {
+      
+  }
+
+  deleteCheckingPatients() {
+
+  }
+
+  close() {
+    this.dialog = false;
+    this.$nextTick(() => {
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
+    });
+  }
+
+  public async save() {
+    if (this.editedIndex == -1) {
+      const params = {
+        name: this.editedItem.name,
+        type: this.editedItem.api_type
+      };
+      const result = await http.post("/apikey", params);
+      console.log(result);
+      if (result) {
+        if (result.data.status === "Success") {
+          console.log("註冊成功");
+        } else {
+          console.log("註冊失敗");
+        }
+      }
+    } else {
+      const params = {
+        name: this.editedItem.name,
+        type: this.editedItem.api_type
+      };
+      const result = await http.put("/apikey/" + this.editedItem.uuid, params);
+      console.log(result);
+      if (result) {
+        if (result.data.status === "Success") {
+          console.log("修改成功");
+        } else {
+          console.log("修改失敗");
+        }
+      }
+    }
+    this.close();
+    this.apiList();
+  }
+
+  public async apiList() {
+    const result = await http.get("/apikey");
+    
+  }
+
+  created() {
+    this.apiList();
+  }
+
+  mounted() {}
+}
+</script>

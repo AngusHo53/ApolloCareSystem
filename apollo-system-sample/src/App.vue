@@ -110,6 +110,12 @@ export default class App extends Vue {
       link: "communities"
     },
     {
+      icon: "mdi-check",
+      title: "病人審核",
+      vertical: "checkPatients",
+      link: "checkPatients"
+    },
+    {
       icon: "mdi-account-group",
       title: "病人名單",
       vertical: "Patient",

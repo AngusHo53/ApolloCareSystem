@@ -7,6 +7,7 @@ import Login from "@/components/Login.vue";
 import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
 import PatientForm from "@/pages/PatientForm.vue";
+import CheckPatients from "@/pages/CheckPatients.vue";
 import ApiToken from "@/pages/ApiToken.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
@@ -34,6 +35,12 @@ const routes: Array<RouteConfig> = [
     path: "/patients/:id/records",
     component: PatientRecords,
     name: "病人紀錄",
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/checkPatients",
+    component: CheckPatients,
+    name: '病人審核',
     beforeEnter: requireAuth
   },
   {

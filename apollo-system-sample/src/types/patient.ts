@@ -1,7 +1,7 @@
 import {Entity} from './index';
 
 export interface Patient extends Entity {
-    information:PatientInfo;
+    user:PatientInfo;
     record: Record;
   }
 
@@ -16,6 +16,7 @@ export interface Patient extends Entity {
     name: string;
     phone: string;
     updated_at: string;
+    uuid: string;
   }
 
   export interface PatientOptions {

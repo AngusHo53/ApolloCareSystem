@@ -29,19 +29,19 @@ class PatientModule extends VuexModule implements PatientState {
   public items :PatientInfo[] = []
 
   @Action async getPatientsByPages(patientOptions: PatientOptions): Promise<TODO> {
-    console.log(patientOptions);
     this.context.commit('setLoading', true );
     this.setLoading(true);
-    const result = await http.get(`/patient/list/${patientOptions.page}?q=${patientOptions.q}&&order=${patientOptions.order}&&sort=${patientOptions.sort}`);
-    const data = result.data.data;
-    if(data){
+    const result = await http.get(`/user?q=${patientOptions.q}&page=${patientOptions.page}&limit=10`);
+    // (`/patient/list/${patientOptions.page}?q=${patientOptions.q}&&order=${patientOptions.order}&&sort=${patientOptions.sort}`);
+    if(result){
+      const data = result.data.data;
       console.log(data);
-      this.setTotalPatients(data.total_patients);
+      this.setTotalPatients(data.total_users);
       this.setTotalPages(data.total_page);
-      this.setPatients(data.patients);
+      this.setPatients(data.users);
       this.setCurrentPage(patientOptions.page);
       // Extract Table Data
-      this.extractPatientInfo(data.patients);
+      await this.extractPatientInfo(data.users);
       this.setDataTable(this.items);
       this.context.commit('setLoading', { loading: false });
       this.setLoading(false);
@@ -53,7 +53,7 @@ class PatientModule extends VuexModule implements PatientState {
   @Action async getPatientById(id: number): Promise<TODO> {
     this.context.commit('setLoading', true );
     this.setLoading(true);
-    const result = await http.get(`/patient/list/1?q=id`);
+    const result = await http.get(`/user/${id}?with=record&record=mode:full|field:systolic,diastolic,pulse`);
     if(result.data.data){
       this.setPatient(result.data.data);
       this.context.commit('setLoading', false );
@@ -64,17 +64,18 @@ class PatientModule extends VuexModule implements PatientState {
   }
 
   @Action({ rawError: true })
-  extractPatientInfo(patients: Patient[]) {
+  async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
-      if(element.information.updated_at){
-        const timestamp = Date.parse(element.information.updated_at);
-        if(isNaN(timestamp) === false){
-          const date = new Date(element.information.updated_at).toLocaleString();
-          element.information.updated_at = date;
-          element.information.birthday = date;
-          element.information.phone = '0912-500-256';
-          this.items.push(element.information);
+      if(element.user){
+        if(element.user.birthday){
+          const timestamp = Date.parse(element.user.birthday);
+          if(isNaN(timestamp) === false){
+            const date = new Date(element.user.birthday).toLocaleString();
+            element.user.birthday = date;
+          } 
         }
+        element.user.phone = 'xxxx-xxx-xxx';
+        this.items.push(element.user);     
       }
     });
   }
@@ -104,7 +105,7 @@ class PatientModule extends VuexModule implements PatientState {
     this.patient = records;
   }
   
-  @Mutation setPatients(patients: Patient[]): void {
+  @Mutation setPatients(patients: any[]): void {
     this.patients = patients;
   }
   @Mutation setTotalPatients(totalPatients: number): void {
