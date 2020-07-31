@@ -32,6 +32,7 @@
                 <span class="headline">{{dialogTitle}}({{selected.length}})</span>
             </v-card-title>
             <v-card-text>
+              <v-divider></v-divider>
                 <v-list-item two-line v-for="item in selected" :key="item.name">
                     <v-list-item-avatar class="grey lighten-1 white--text">
                         <v-icon>mdi-account</v-icon>
