@@ -159,7 +159,7 @@ export default class App extends Vue {
       next();
     });
     //  hook the progress bar to finish after we've finished moving router-view
-    this.$router.afterEach((to, from) => {
+    this.$router.afterEach((to) => {
       if (to.name !== "ErrorPage") {
         this.menuItem = to.name;
       }

@@ -4,7 +4,7 @@
       <v-card>
         <v-container fluid>
           <v-data-iterator
-            :items="items"
+            :items="communityList"
             :page="page"
             :items-per-page.sync="itemsPerPage"
             :search="search"
@@ -12,7 +12,7 @@
           >
             <template v-slot:header>
               <v-card-title>
-                <span class="title">社區名單</span>
+                <span class="text-h4 font-weight-black">社區名單</span>
                 <v-spacer></v-spacer>
               </v-card-title>
               <v-text-field
@@ -27,47 +27,54 @@
 
             <template v-slot:default="props">
               <v-row>
-                <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="3">
+                <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="2">
                   <v-card>
-                    <v-card-title
-                      class="subheading font-weight-bold"
-                    >{{ item.area }}{{ item.community }}</v-card-title>
-                    <v-card-title class="subheading font-weight-bold">異常個案數</v-card-title>
+                    <v-card-title class="text-h6 font-weight-bold">{{ item.branch_name }}</v-card-title>
+                    <v-card-subtitle class="text-subtitle-1 font-weight-bold">異常個案數</v-card-subtitle>
+                    <div align="right">
+                      <v-btn
+                        class="ma-2 white--text"
+                        dark
+                        small
+                        @click.native="changeToCommunityRecordPage(item.branch_name)"
+                      >
+                        詳細資料
+                        <v-icon right dark>mdi-format-list-bulleted-square</v-icon>
+                      </v-btn>
+                    </div>
                     <v-divider></v-divider>
 
-                    <v-list dense>
+                    <v-list :subheader="true">
                       <v-list-item>
-                        <v-list-item-content>血壓(社區)平均值:</v-list-item-content>
-                        <v-list-item-content
-                          class="align-end"
-                        >{{ item.thisMonthTest[0].bloodPressure }}人</v-list-item-content>
+                        <v-list-item-content class="align-center">收縮壓:12人</v-list-item-content>
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content>五次坐站(秒)平均值:</v-list-item-content>
-                        <v-list-item-content class="align-end">{{ item.thisMonthTest[0].seat }}人</v-list-item-content>
+                        <v-list-item-content class="align-end">舒張壓:12人</v-list-item-content>
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content>走路速度平均值:</v-list-item-content>
-                        <v-list-item-content
-                          class="align-end"
-                        >{{ item.thisMonthTest[0].walkspeed }}人</v-list-item-content>
+                        <v-list-item-content class="align-end">脈搏:</v-list-item-content>
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content>握力平均值:</v-list-item-content>
-                        <v-list-item-content class="align-end">{{ item.thisMonthTest[0].grip }}人</v-list-item-content>
+                        <v-list-item-content class="align-end">五次坐站:</v-list-item-content>
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content>本月測量人數:</v-list-item-content>
-                        <v-list-item-content class="align-end">{{ item.thisMonthTest[0].total }}人</v-list-item-content>
+                        <v-list-item-content class="align-end">走路速度:</v-list-item-content>
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content>上月測量人數:</v-list-item-content>
-                        <v-list-item-content class="align-end">{{ item.lastMonthTest[0].total }}人</v-list-item-content>
+                        <v-list-item-content class="align-end">握力:</v-list-item-content>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <v-list-item-content class="align-end">上月測量人數:</v-list-item-content>
+                      </v-list-item>
+
+                      <v-list-item>
+                        <v-list-item-content class="align-end">本月測量人數:</v-list-item-content>
                       </v-list-item>
                     </v-list>
                   </v-card>
@@ -87,331 +94,96 @@
   </v-container>
 </template>
 <script lang="ts">
-import Table from "@/components/Table.vue";
-import TableHeaderButtons from "@/components/TableHeaderButtons.vue";
-import SearchPanel from "@/components/SearchPanel.vue";
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
-import { debounce } from "lodash";
+import { debounce } from 'lodash'
 import {
   buildSearchFilters,
   buildJsonServerQuery,
   clearSearchFilters
-} from "@/utils/app-util";
-import { Component } from "vue-property-decorator";
-import Vue from "vue";
-import { Entity } from "../types";
-import { customerModule } from "@/store/modules/customers";
-import { appModule } from "@/store/modules/app";
+} from '@/utils/app-util'
+import { Component } from 'vue-property-decorator'
+import Vue from 'vue'
+import { Entity } from '../types'
+import http from '@/http/axios'
+import { customerModule } from '@/store/modules/customers'
+import { appModule } from '@/store/modules/app'
 
 @Component({
-  components: {
-    Table,
-    TableHeaderButtons,
-    SearchPanel,
-    ConfirmDialog
-  }
+  components: {}
 })
-export default class CustomerList extends Vue {
-  public dialog = false;
-  private showSearchPanel = false;
-  public right = true;
-  public errorMsg = "";
-  public search = "";
-  public page = 1;
-  public itemsPerPage = 6;
-  public items = [
-    {
-      area: "大埤鄉",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 2,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 3,
-          seat: 1,
-          walkspeed: 4,
-          grip: 2,
-          total: 10
-        }
-      ]
-    },
-    {
-      area: "大埤鄉",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 1,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 1,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "大埤鄉",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "斗南鎮",
-      community: "北和社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "虎尾鎮",
-      community: "興中社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "虎尾鎮",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "虎尾鎮",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "大埤鄉",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "大埤鄉",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    },
-    {
-      area: "大埤鄉",
-      community: "舊社社區發展協會",
-      lastMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ],
-      thisMonthTest: [
-        {
-          bloodPressure: 0,
-          seat: 0,
-          walkspeed: 0,
-          grip: 0,
-          total: 0
-        }
-      ]
-    }
-  ];
-  private customerId = "";
-  private query = "";
-  private color = "";
-  private quickSearchFilter = "";
-  private itemId = -1;
-
-  onCancel() {
-    this.customerId = "";
-    this.dialog = false;
-  }
+export default class Community extends Vue {
+  private loading = false
+  public errorMsg = ''
+  public search = ''
+  public page = 1
+  public itemsPerPage = 12
+  private customerId = ''
+  private query = ''
+  private color = ''
+  private quickSearchFilter = ''
+  private itemId = -1
+  private communityList = []
+  private communityRecord = []
 
   nextPage() {
-    if (this.page + 1 <= this.numberOfPages) this.page += 1;
+    if (this.page + 1 <= this.numberOfPages) this.page += 1
   }
   formerPage() {
-    if (this.page - 1 >= 1) this.page -= 1;
-  }
-
-  updateSearchPanel() {
-    this.rightDrawer = !this.rightDrawer;
-  }
-
-  cancelSearch() {
-    this.showSearchPanel = false;
+    if (this.page - 1 >= 1) this.page -= 1
   }
 
   closeSnackbar() {
-    appModule.closeNotice();
+    appModule.closeNotice()
   }
 
-  quickSearchCustomers = debounce(function() {
-    customerModule.quickSearch(this.headers, this.quickSearchFilter);
-  }, 500);
+  changeToCommunityRecordPage($event) {
+    console.log($event)
+    this.$router.push({
+      name: `社區紀錄`,
+      params: {
+        name: $event
+      }
+    })
+  }
 
   get numberOfPages() {
-    return Math.ceil(this.items.length / this.itemsPerPage);
+    return Math.ceil(this.communityList.length / this.itemsPerPage)
   }
 
-  get loading() {
-    return appModule.loading;
+  public async communityBadRecord() {
+    this.loading = true
+    this.$Progress.start()
+
+    const result = await http.get('/place')
+    if (result) {
+      if (result.data.status === 'Success') {
+        // Login Successful
+        this.communityList = result.data.data.place
+      } else {
+        // Login Failed
+        this.errorMsg = result.data.message
+        console.log(this.errorMsg)
+      }
+    } else {
+      this.errorMsg = result.data.message
+      console.log(this.errorMsg)
+    }
+    this.loading = false
   }
+
   get mode() {
-    return appModule.mode;
+    return appModule.mode
   }
 
   get snackbar() {
-    return appModule.snackbar;
+    return appModule.snackbar
   }
 
   get notice() {
-    return appModule.notice;
-  }
-
-  get rightDrawer() {
-    return this.showSearchPanel;
-  }
-
-  set rightDrawer(_showSearchPanel: boolean) {
-    this.showSearchPanel = _showSearchPanel;
-  }
-
-  get quickSearch() {
-    return this.quickSearchFilter;
-  }
-  set quickSearch(val) {
-    this.quickSearchFilter = val;
-    this.quickSearchFilter && this.quickSearchCustomers();
+    return appModule.notice
   }
 
   created() {
-    // customerModule.getAllCustomers();
+    this.communityBadRecord()
   }
 
   mounted() {}

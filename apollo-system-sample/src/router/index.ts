@@ -7,6 +7,7 @@ import Login from "@/components/Login.vue";
 import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
 import PatientForm from "@/pages/PatientForm.vue";
+import CommunityRecords from "@/pages/CommunityRecords.vue";
 import CheckPatients from "@/pages/CheckPatients.vue";
 import ApiToken from "@/pages/ApiToken.vue";
 
@@ -59,6 +60,12 @@ const routes: Array<RouteConfig> = [
     path: "/community",
     component: Community,
     name: '社區狀態顯示表',
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/community/:name/records",
+    component: CommunityRecords,
+    name: "社區紀錄",
     beforeEnter: requireAuth
   },
   { path: "/login", component: Login, name: "Login" },

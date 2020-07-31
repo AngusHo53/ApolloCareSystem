@@ -62,13 +62,13 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12" md="6" sm="6">
-                          <v-text-field v-model="name" label="姓名*" clearable required></v-text-field>
+                          <v-text-field v-model="id_card" label="身分證字號*" clearable required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6" sm="6">
                           <v-text-field v-model="email" label="Email*" clearable required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6" sm="6">
-                          <v-text-field v-model="id_card" label="ID卡*" clearable required></v-text-field>
+                          <v-text-field v-model="name" label="姓名*" clearable required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6" sm="6">
                           <v-text-field v-model="phone" label="手機*" clearable required></v-text-field>
@@ -200,7 +200,7 @@ export default class Login extends Vue {
   }
 
   async created() {
-    if(userModule.isSignedIn) {
+    if (userModule.isSignedIn) {
       userModule.logout();
     }
   }
@@ -224,9 +224,9 @@ export default class Login extends Vue {
           user: data.user
         };
         userModule.signIn(userData);
-        this.$router.push({name: '社區狀態顯示表'}).catch(err => {
-          console.log('catch test');
-          console.log(err)
+        this.$router.push({ name: "社區狀態顯示表" }).catch(err => {
+          console.log("catch test");
+          console.log(err);
         });
       } else {
         // Login Failed
