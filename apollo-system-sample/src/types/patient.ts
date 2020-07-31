@@ -5,7 +5,7 @@ export interface Patient extends Entity {
     record: Record;
   }
 
-  export interface PatientInfo extends Entity {
+  export interface PatientInfo {
     age: number;
     birthday: string;
     created_at: string;
@@ -26,27 +26,48 @@ export interface Patient extends Entity {
     sort: string
   }
 
-  export interface Record extends Entity {
+  export interface RecordOptions {
+    page: number,
+    q: string,
+    order: string,
+    sort: string,
+    uuid: string
+  }
+
+  export interface Record {
     blood_pressure: BloodPressure;
-    blood_glucose: BloodGlucose;
-    metabolic: Metabolic;
-    body_temerature: BodyTemperature;
-    spo2: SpO2;
-    frailty: Frailty;
-    blood: Blood;
-    mental: Mental;
-    bone: Bone;
+    // blood_glucose: MeasureData;
+    // metabolic: MeasureData;
+    // body_temerature: MeasureData;
+    // spo2: MeasureData;
+    // frailty: MeasureData;
+    // blood: MeasureData;
+    // mental: MeasureData;
+    // bone: MeasureData;
+  }
+
+  export interface MeasureData {
+    measure_at: Date,
+    category: string,
+    name: {
+      en: string,
+      zn: string
+    },
+    type: string,
+    unit: any,
+    uuid: any,
+    value: number
   }
 
   export interface BloodPressure {
-    systolic: number;
-    diastolic: number;
-    pulse: number;
-    scene: string;
-    arr: boolean;
-    afib: boolean;
-    pc: boolean;
-    ihb: boolean;
+    systolic: MeasureData;
+    diastolic: MeasureData;
+    pulse: MeasureData;
+    // scene: string;
+    // arr: boolean;
+    // afib: boolean;
+    // pc: boolean;
+    // ihb: boolean;
   }
 
   export interface BloodGlucose {
@@ -108,12 +129,4 @@ export interface Patient extends Entity {
   export interface Bone {
     osteoporosis: number;
     fracture: number;
-  }
-  
-  export interface MeasureData {
-    measure_at: "Tue, 08 Jan 2019 03:35:45 GMT"
-    name: {en: "afib", zh: "心房顫動"}
-    type: "boolean"
-    unit: null
-    value: null
   }

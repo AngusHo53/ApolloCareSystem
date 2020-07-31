@@ -1,18 +1,18 @@
 <template>
   <div>
      <v-card-text>
-       <v-row>
+       <!-- <v-row>
         <v-col
           cols="12"
           md="12"
-        >
+        > -->
         <v-text-field
           v-model="options.q"
           append-icon="mdi-magnify"
           label='關鍵字搜尋'
           @keyup.enter="$emit('updateTableData')"
         ></v-text-field>
-        </v-col>
+        <!-- </v-col> -->
         <!-- <v-col
             cols="12"
             md="4"
@@ -31,7 +31,7 @@
             md="1">
           <v-switch v-model="order" flat :label="order?`升序`:`降序`" @change='fomateOrder(order)'></v-switch>
         </v-col>  -->
-      </v-row>
+      <!-- </v-row> -->
     </v-card-text>
     
     <!--  @click:row="$emit('dataTableClickHandler',$event)"  -->
@@ -42,6 +42,8 @@
       :page.sync="pagination.page"
       :items-per-page="pagination.rowsPerPage"
       hide-default-footer
+      :loading="loading"
+      loading-text="Loading..."
     >
     <template v-slot:item.actions="{ item }">
       <v-btn fab class="indigo mr-2" small dark @click.native="$emit('dataTableClickHandler', item)">
@@ -60,12 +62,11 @@
         </v-icon>
       </v-btn>
     </template>
-
-      <template slot="no-data">
-        <span>
-          <p class="pt-2 blue--text subheading"><v-icon medium class="blue--text">mdi-info</v-icon>查無此資料</p>
-        </span>
-      </template>
+    <template slot="no-data">
+      <span>
+        <p class="pt-2 blue--text subheading"><v-icon medium class="blue--text">mdi-info</v-icon>查無此資料</p>
+      </span>
+    </template>
     </v-data-table>
     <div class="text-xs-center pt-2" v-if="isNotEmpty">
       <v-pagination v-model="pagination.page" :length="pagination.pages"  :total-visible="9"  @input="$emit('updateTableData')" circle></v-pagination>
@@ -84,7 +85,7 @@ export default class Table extends Vue {
   @Prop() readonly items: Entity[];
   @Prop() readonly pagination: Pagination;
   @Prop() readonly options:PatientOptions;
-  
+  @Prop() readonly loading: boolean ;
   //
   order = true;
   sort= '';

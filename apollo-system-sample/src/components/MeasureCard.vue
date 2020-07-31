@@ -8,10 +8,13 @@
       dense
     >
       <v-toolbar-title>
+        <v-icon large>
+          mdi-pause
+        </v-icon>
         <span class="subheading">{{header}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <span>50分鐘前</span>
+      <span>{{new Date(measure_at).toLocaleString()}}</span>
     </v-toolbar>
 
     <v-card-text>
@@ -24,7 +27,7 @@
             class="display-3 font-weight-light"
             v-text="value"
           ></span>
-          <span class="subheading font-weight-light mr-1">mm/hg</span>
+          <span class="subheading font-weight-light mr-1">{{unit}}</span>
           <v-fade-transition>
             <v-avatar
               v-if="isPlaying"
@@ -43,7 +46,7 @@
             dark
             depressed
             fab
-            @click="toggle"
+            @click="false"
           >
             <v-icon large>
               mdi-more
@@ -51,17 +54,17 @@
           </v-btn>
         </v-col>
       </v-row>
-        <v-range-slider
-            :tick-labels="normalRange"
-            :value="[0, 1]"
-            :color="color()"
-            min="0"
-            max="1"
-            ticks="always"
-            tick-size="2"
-            readonly
-            >
-        </v-range-slider>
+      <!-- <v-range-slider
+          :tick-labels="normalRange"
+          :value="[0, 1]"
+          :color="color()"
+          min="0"
+          max="1"
+          ticks="always"
+          tick-size="2"
+          readonly
+          >
+      </v-range-slider> -->
     </v-card-text>
   </v-card>
 </template>
@@ -76,12 +79,15 @@ export default class MeasureCard extends Vue {
     @Prop() header;
     @Prop() normalRange;
     @Prop() value;
+    @Prop() unit;
+    @Prop() measure_at;
+
     interval= null;
     isPlaying= false;
 
     color () {
-        if (this.value < this.normalRange[0]) return '#F0C419'
-        if (this.value > this.normalRange[1]) return '#F0C419'
+        // if (this.value < this.normalRange[0]) return '#F0C419'
+        // if (this.value > this.normalRange[1]) return '#F0C419'
         return '#4FB99F'
     }
     animationDuration () {

@@ -16,8 +16,10 @@
               </v-btn>
             </div>
         </v-card-title>
-        <Table v-if="loading === false" loading loading-text="Loading... Please wait" :headers="headers" :items="items" :pagination="pagination"
+        <v-card-text>
+        <Table :headers="headers" :items="items" :pagination="pagination" :loading="loading"
          :options="patientOptions" @updateTableData = "updateTableData" @dataTableClickHandler="changeToPatientRecordPage"></Table>
+        </v-card-text>
       </v-card>
     </v-flex>
     <confirm-dialog
@@ -31,7 +33,6 @@
       {{ notice }}
       <v-btn dark text @click.native="closeSnackbar">Close</v-btn>
     </v-snackbar>
-    <v-overlay  :value="loading"></v-overlay>
     </v-container>
 </template>
 <script lang="ts">
@@ -73,7 +74,7 @@ export default class PatientList extends Vue {
     { text: '生日',sortable: false, value: 'birthday' },
     { text: '電話',sortable: false, value: 'phone'},
     { text: '信箱',sortable: false, value: 'email' },
-    { text: '', value: 'actions', sortable: false }
+    { text: '其他操作', value: 'actions', sortable: false }
   ];
   private searchFilter = {
     contains: {
@@ -111,8 +112,7 @@ export default class PatientList extends Vue {
   changeToPatientRecordPage($event){
     console.log($event);
     this.$router.push({name:`病人紀錄`, params:{
-      id: $event.iid,
-      patient: $event
+      id: $event.uuid
     }});
   }
 
@@ -188,7 +188,7 @@ export default class PatientList extends Vue {
   }
 
   get loading() {
-    return appModule.loading;
+    return patientModule.loading;
   }
   get mode() {
     return appModule.mode;

@@ -10,8 +10,8 @@ export function getDefaultPagination(): Pagination {
   };
 }
 
-export function getPagination(items: Entity[],pages: number, page: number) {
+export function getPagination(items: Entity[],pages: number, page: number, rowsPerPage: number = DEFAULT_ROW_PER_PAGE) {
   const totalItems = items ? items.length : 0;
   // const pages = Math.ceil(totalItems / DEFAULT_ROW_PER_PAGE);
-  return { totalItems, pages, page, rowsPerPage: DEFAULT_ROW_PER_PAGE };
+  return { totalItems, pages, page, rowsPerPage};
 }
