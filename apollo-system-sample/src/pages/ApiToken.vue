@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-card>
         <v-container fluid>
-          <v-data-table :headers="headers" :items="api_list" class="elevation-1">
+          <v-data-table :headers="headers" :items="api_list" :loading="loading" loading-text="請稍後..." class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-toolbar-title>API token列表</v-toolbar-title>
@@ -46,7 +46,8 @@
             </template>
             <template v-slot:item.actions="{ item }">
               <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-              <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+              <v-icon small class="mr-2" @click="deleteItem(item)">mdi-delete</v-icon>
+              <v-icon small class="mr-2" @click="resetItem(item)">mdi-cached</v-icon>
             </template>
           </v-data-table>
         </v-container>
@@ -61,6 +62,7 @@ import http from "@/http/axios";
 @Component
 export default class CustomerList extends Vue {
   public dialog = false;
+  public loading = true;
   public headers = [
     {
       text: "API name",
@@ -115,6 +117,25 @@ export default class CustomerList extends Vue {
     } else {
       confirm("刪除失敗");
     }
+    this.apiList();
+  }
+
+  public async resetItem(item) {
+    const index = this.api_list.indexOf(item);
+    console.log(this.api_list[index].uuid);
+    if (confirm("確定要重置API key嗎?") == true) {
+      const result = await http.post("/apikey/" + this.api_list[index].uuid);
+      if (result) {
+        if (result.data.status === "Success") {
+          confirm("重置成功");
+        } else {
+          confirm("重置失敗");
+        }
+      }
+    } else {
+      confirm("重置失敗");
+    }
+    this.apiList();
   }
 
   close() {
@@ -165,6 +186,7 @@ export default class CustomerList extends Vue {
       if (result.data.status === "Success") {
         this.api_list = result.data.data.clients;
         console.log(result);
+        this.loading = false;
       } else {
         console.log("error");
       }

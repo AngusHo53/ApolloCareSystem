@@ -126,7 +126,7 @@ export default class PatientList extends Vue {
     }
     console.log(this.patientOptions);
     patientModule.getPatientsByPages(this.patientOptions);
-  } 
+  }
 
   onConfirm() {
     // patientModule.deleteCustomer(this.itemId);
