@@ -6,6 +6,7 @@ import Community from "@/pages/Community.vue";
 import Login from "@/components/Login.vue";
 import PatientList from "@/pages/PatientList.vue";
 import PatientRecords from "@/pages/PatientRecords.vue";
+import RecordChart from "@/pages/RecordChart.vue";
 import PatientForm from "@/pages/PatientForm.vue";
 import CommunityRecords from "@/pages/CommunityRecords.vue";
 import CheckPatients from "@/pages/CheckPatients.vue";
@@ -36,6 +37,12 @@ const routes: Array<RouteConfig> = [
     path: "/patients/:id/records",
     component: PatientRecords,
     name: "病人紀錄",
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/patients/:id/records/chart",
+    component: RecordChart,
+    name: "病人紀錄圖表",
     beforeEnter: requireAuth
   },
   {
