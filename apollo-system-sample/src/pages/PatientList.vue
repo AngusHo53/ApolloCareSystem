@@ -46,6 +46,7 @@ import { Component } from 'vue-property-decorator';
 import Vue from 'vue';
 import { patientModule } from '@/store/modules/patients';
 import { appModule } from '@/store/modules/app';
+import { getDefaultPagination } from '@/utils/store-util';
 
 @Component({
   components: {
@@ -98,6 +99,7 @@ export default class PatientList extends Vue {
   }
   private lastSearch = '';
   created() {
+    patientModule.setPagination(getDefaultPagination());
     this.updateTableData();
   }
 

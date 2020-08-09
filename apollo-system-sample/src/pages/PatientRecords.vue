@@ -7,6 +7,10 @@
           <v-toolbar flat>
             <!-- <div class='blue rounded-circle d-inline-flex pa-2' style='width:16px;height:16px;'></div> -->
             <v-toolbar-title class='text-h4 pa-2 ont-weight-bold '>最新測量記錄</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn class="blue darken-2  mr-2" fab small dark @click.native="changeToChartPage()">
+              <v-icon>mdi-chart-bar</v-icon>
+            </v-btn>
           </v-toolbar>
         </v-card-title>
         <v-card-text v-if="patient && patient.user">
@@ -101,6 +105,7 @@ import { Component } from 'vue-property-decorator';
 import Vue from 'vue';
 import { patientModule } from '@/store/modules/patients';
 import { recordModule } from '@/store/modules/records';
+import { getDefaultPagination } from '@/utils/store-util';
 
 import BarChart from "@/components/chart/Bar";
 import DoughnutChart from "@/components/chart/Doughnut";
@@ -203,6 +208,7 @@ export default class PatientRecords extends Vue {
   }
 
   async created() {
+    recordModule.setPagination(getDefaultPagination());
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
     patientModule.getPatientByUuid(this.recordsOptions.uuid);
     this.updateTableData();
@@ -210,9 +216,12 @@ export default class PatientRecords extends Vue {
 
   updateTableData() {
     recordModule.clearRecords();
-    
     this.recordsOptions.page = this.pagination.page;
     recordModule.getPatientRecordByUuid(this.recordsOptions);
+  }
+
+  changeToChartPage() {
+    this.$router.push({ name: "病人紀錄圖表" });
   }
   
   test() {

@@ -22,9 +22,9 @@
         class="mb-4"
         justify="space-between"
       >
-        <v-col class="text-left">
+        <v-col class="text-right">
           <span
-            class="display-3 font-weight-light"
+            class="display-3 font-weight-light red--text"
             v-text="value"
           ></span>
           <span class="subheading font-weight-light mr-1">{{unit}}</span>
@@ -40,9 +40,8 @@
             ></v-avatar>
           </v-fade-transition>
         </v-col>
-        <v-col class="text-right">
+        <!-- <v-col class="text-right">
           <v-btn
-            :color="color()"
             dark
             depressed
             fab
@@ -52,7 +51,7 @@
               mdi-more
             </v-icon>
           </v-btn>
-        </v-col>
+        </v-col> -->
       </v-row>
       <!-- <v-range-slider
           :tick-labels="normalRange"

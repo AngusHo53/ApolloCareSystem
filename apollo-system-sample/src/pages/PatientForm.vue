@@ -24,7 +24,7 @@
                     <v-flex md8 sm12 xs12 class="mx-1 px-0">
                       <v-text-field
                         name="firstName"
-                        label="姓名"
+                        label="*姓名"
                         hint="Last name is required"
                         value="Input text"
                         v-model="customer.firstName"
@@ -39,7 +39,7 @@
                         v-model="customer.gender"
                         :rules="[() => !!customer.gender || 'This field is required']"
                         :items="['男', '女']"
-                        label="性別"
+                        label="*性別"
                         placeholder=""
                         required
                       ></v-autocomplete>
@@ -59,7 +59,7 @@
                       <v-text-field
                         name="birthday"
                         type="date"
-                        label="生日"
+                        label="*生日"
                         v-model="customer.birthday"
                         class="input-group--focused"
                         required
@@ -69,11 +69,42 @@
                       <v-text-field
                         name="mobile"
                         type="phone"
-                        label="電話"
+                        label="*電話"
                         v-model="customer.mobile"
                         class="input-group--focused"
                         required
                       ></v-text-field>
+                    </v-flex>
+                    <v-flex md4 sm12 xs12 class="mx-1 px-0">
+                      <v-autocomplete
+                        ref="area"
+                        v-model="customer.country"
+                        :rules="[() => !!country || 'This field is required']"
+                        :items="countries"
+                        label="*縣市"
+                        placeholder=""
+                        required
+                      ></v-autocomplete>
+                    </v-flex>
+                    <v-flex md4 sm12 xs12 class="mx-1 px-0">
+                      <v-autocomplete
+                        ref="area"
+                        v-model="customer.country"
+                        :rules="[() => !!country || 'This field is required']"
+                        :items="countries"
+                        label="*鄉鎮[市]區"
+                        placeholder=""
+                        required
+                      ></v-autocomplete>
+                    </v-flex>
+                    <v-flex md8 sm12 xs12 class="mx-1 px-0">
+                      <v-text-field
+                        name="area"
+                        type="text"
+                        label="*縣市/鄉鎮[市]區"
+                        v-model="customer.mobile"
+                        class="input-group--focused"
+                        required ></v-text-field>
                     </v-flex>
                     <v-flex md4 sm12 xs12 class="mx-1 px-0">
                       <v-autocomplete

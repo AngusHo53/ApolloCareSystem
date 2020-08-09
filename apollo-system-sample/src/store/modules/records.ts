@@ -62,7 +62,6 @@ class RecordModule extends VuexModule implements RecordState{
         this.setTotalRecords(0);
         this.setRecords([]);
         this.setItems([]);
-        this.setPagination(getDefaultPagination());
     }
 
     @Mutation setTotalPages(totalPages: number): void {

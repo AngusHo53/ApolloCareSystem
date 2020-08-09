@@ -88,7 +88,7 @@ class PatientModule extends VuexModule implements PatientState {
     const result = await http.get(`/user/${uuid}?with=record&record=mode:full|field:systolic,diastolic,pulse`);
     if(result.data.data){
       const data = result.data.data;
-      const gender = {1: '男', '2': '女'};
+      const gender = {1: '男', 0: '女'};
       data.user.gender = gender[data.user.gender];
 
       this.setPatient(data);
