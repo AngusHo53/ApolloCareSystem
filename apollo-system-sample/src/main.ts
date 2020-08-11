@@ -2,17 +2,16 @@ import Vue from 'vue';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
-import config from '../config/dev.env';
 import store from './store';
 import vuetify from './plugins/vuetify';
 import http from './http/axios';
 
 import VueProgressBar from 'vue-progressbar';
 Vue.prototype.$http = http;
-Vue.prototype.config = config;
-Vue.prototype.baseURL = Vue.prototype.config.BASE_URL;
+Vue.prototype.baseURL = process.env.VUE_APP_ROOT_API;
+
 const options = {
-  color: 'blue', // '#bffaf3',
+  color: 'blue', // '#bffaf3',∂
   failedColor: '#874b4b',
   thickness: '3px',
   transition: {
