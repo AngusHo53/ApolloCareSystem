@@ -9,8 +9,10 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "predeploy": "npm run build",
-    "deploy": "aws s3 sync --profile wmega ./dist s3://apollo.kui.im/ --delete"
+    "predeploy": "npm run build -- --mode development",
+    "deploy": "aws s3 sync --profile wmega ./dist s3://admin.apollocare.com.tw/ --delete",
+    "predeploy:dev": "npm run build -- --mode development",
+    "deploy:dev": "aws s3 sync --profile wmega ./dist s3://apollo.kui.im/ --delete"
   },
   "dependencies": {
     "apexcharts": "^3.20.0",
