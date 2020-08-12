@@ -28,7 +28,7 @@ const options = {
 Vue.config.productionTip = false;
 
 Vue.use(VueProgressBar, options);
-Vue.use(VueClipboard);
+Vue.use(VueClipboard)
 new Vue({
   router,
   store,

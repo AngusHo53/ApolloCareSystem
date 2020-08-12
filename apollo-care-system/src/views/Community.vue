@@ -94,17 +94,9 @@
   </v-container>
 </template>
 <script lang="ts">
-import { debounce } from 'lodash'
-import {
-  buildSearchFilters,
-  buildJsonServerQuery,
-  clearSearchFilters
-} from '@/utils/app-util'
 import { Component } from 'vue-property-decorator'
 import Vue from 'vue'
-import { Entity } from '../types'
 import http from '@/http/axios'
-import { customerModule } from '@/store/modules/customers'
 import { appModule } from '@/store/modules/app'
 
 @Component({

@@ -75,7 +75,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import http from "@/http/axios";
+import http from "../http/axios";
 
 @Component
 export default class ApiToken extends Vue {

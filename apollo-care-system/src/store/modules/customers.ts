@@ -1,7 +1,7 @@
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
 import { Customer, Order, Entity } from '@/types';
 import { appModule } from './app';
-import { getDefaultPagination, getPagination } from '@/utils/store-util';
+import { getDefaultPagination } from '@/utils/store-util';
 import { get } from 'lodash';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
@@ -93,7 +93,7 @@ class CustomerModule extends VuexModule implements CustomerState {
     //   });
   }
 
-  @Action searchCustomers(searchQuery: string): void {
+  @Action searchCustomers(): void {
     this.setLoading(true);
     axios({
       method: 'get',
@@ -139,49 +139,6 @@ class CustomerModule extends VuexModule implements CustomerState {
       this.setDataTable(customers);
       this.setLoading(false);
     });
-  }
-
-  @Action deleteCustomer(id: number): void {
-    deleteData(`customers/${id.toString()}`)
-      .then(_res => {
-        this.getAllCustomers();
-        appModule.sendSuccessNotice('Operation is done.');
-      })
-      .catch((err: TODO) => {
-        console.log(err);
-        appModule.sendErrorNotice('Operation failed! Please try again later. ');
-        appModule.closeNoticeWithDelay(1500);
-      });
-  }
-
-  @Action saveCustomer(customer: Customer): void {
-    if (!customer.id) {
-      postData('customers/', customer)
-        .then(res => {
-          const customer = res.data;
-          this.setCustomer(customer);
-          appModule.sendSuccessNotice('New customer has been added.');
-          appModule.closeNoticeWithDelay(1500);
-        })
-        .catch((err: TODO) => {
-          console.log(err);
-          appModule.sendErrorNotice('Operation failed! Please try again later. ');
-          appModule.closeNoticeWithDelay(1500);
-        });
-    } else {
-      putData('customers/' + customer.id.toString(), customer)
-        .then(res => {
-          const customer = res.data;
-          this.setCustomer(customer);
-          appModule.sendSuccessNotice('Customer has been updated.');
-          appModule.closeNoticeWithDelay(1500);
-        })
-        .catch((err: TODO) => {
-          console.log(err);
-          appModule.sendErrorNotice('Operation failed! Please try again later. ');
-          appModule.closeNoticeWithDelay(1500);
-        });
-    }
   }
 
   @Action setDataTable(items: Customer[]) {
