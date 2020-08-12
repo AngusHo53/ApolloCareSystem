@@ -5,6 +5,7 @@ import router from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 import http from './http/axios';
+import VueClipboard from 'vue-clipboard2';
 
 import VueProgressBar from 'vue-progressbar';
 Vue.prototype.$http = http;
@@ -27,7 +28,7 @@ const options = {
 Vue.config.productionTip = false;
 
 Vue.use(VueProgressBar, options);
-
+Vue.use(VueClipboard);
 new Vue({
   router,
   store,

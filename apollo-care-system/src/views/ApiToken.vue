@@ -3,7 +3,17 @@
     <v-flex xs12>
       <v-card>
         <v-container fluid>
-          <v-data-table :headers="headers" :items="api_list" :loading="loading" loading-text="請稍後..." class="elevation-1">
+          <v-data-table
+            :headers="headers"
+            :items="api_list"
+            :single-expand="singleExpand"
+            :expanded.sync="expanded"
+            :loading="loading"
+            loading-text="請稍後..."
+            show-expand
+            item-key="name"
+            class="elevation-1"
+          >
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-toolbar-title>API token列表</v-toolbar-title>
@@ -45,9 +55,17 @@
               </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-              <v-icon small class="mr-2" @click="deleteItem(item)">mdi-delete</v-icon>
-              <v-icon small class="mr-2" @click="resetItem(item)">mdi-cached</v-icon>
+              <v-icon class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+              <v-icon class="mr-2" @click="deleteItem(item)">mdi-delete</v-icon>
+              <v-icon class="mr-2" @click="resetItem(item)">mdi-cached</v-icon>
+            </template>
+            <template v-slot:expanded-item="{ headers, item }">
+              <td>
+                <v-icon class="mr-2" @click="copyApi(item.api_key)">mdi-content-copy</v-icon>
+              </td>
+              <td :colspan="headers.length">
+                <p id="api-key">API Key: {{ item.api_key }}</p>
+              </td>
             </template>
           </v-data-table>
         </v-container>
@@ -60,7 +78,7 @@ import { Vue, Component } from "vue-property-decorator";
 import http from "@/http/axios";
 
 @Component
-export default class CustomerList extends Vue {
+export default class ApiToken extends Vue {
   public dialog = false;
   public loading = true;
   public headers = [
@@ -70,11 +88,12 @@ export default class CustomerList extends Vue {
       value: "name"
     },
     { text: "API type", value: "api_type" },
-    { text: "API key", value: "api_key" },
     { text: "uuid", value: "uuid" },
     { text: "Actions", value: "actions", sortable: false }
   ];
-
+  public expanded = [];
+  public singleExpand = true;
+  public copyBtn = null;
   public api_list = [];
   public editedIndex = -1;
   public editedItem = {
@@ -102,6 +121,18 @@ export default class CustomerList extends Vue {
     this.dialog = true;
   }
 
+  public copyApi(api_key) {
+    this.$copyText(api_key).then(
+      function(e) {
+        alert("複製成功");
+        console.log(e);
+      },
+      function(e) {
+        alert("複製失敗");
+        console.log(e);
+      }
+    );
+  }
   public async deleteItem(item) {
     const index = this.api_list.indexOf(item);
     console.log(this.api_list[index].uuid);

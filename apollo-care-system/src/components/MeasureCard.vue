@@ -70,7 +70,7 @@
 
 <script>
 import Vue from 'vue';
-import { Entity, PatientOptions } from '@/types';
+import { PatientOptions } from '@/types';
 import { Component, Prop } from 'vue-property-decorator';
 import { Mutation } from 'vuex-module-decorators';
 @Component

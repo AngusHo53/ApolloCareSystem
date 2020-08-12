@@ -10,7 +10,7 @@
           v-model="options.q"
           append-icon="mdi-magnify"
           label='關鍵字搜尋'
-          @keyup.enter="$emit('updateTableData')"
+          @keyup.enter="$emit('update-table-data')"
         ></v-text-field>
         <!-- </v-col> -->
         <!-- <v-col
@@ -46,7 +46,7 @@
       loading-text="Loading..."
     >
     <template v-slot:item.actions="{ item }">
-      <v-btn fab class="indigo mr-2" small dark @click.native="$emit('dataTableClickHandler', item)">
+      <v-btn fab class="indigo mr-2" small dark @click.native="$emit('data-table-click-handler', item)">
         <v-icon>
           mdi-account
         </v-icon>
@@ -69,7 +69,7 @@
     </template>
     </v-data-table>
     <div class="text-xs-center pt-2" v-if="isNotEmpty">
-      <v-pagination v-model="pagination.page" :length="pagination.pages"  :total-visible="9"  @input="$emit('updateTableData')" circle></v-pagination>
+      <v-pagination v-model="pagination.page" :length="pagination.pages"  :total-visible="9"  @input="$emit('update-table-data')" circle></v-pagination>
     </div>
   </div>
 </template>
@@ -123,7 +123,7 @@ export default class Table extends Vue {
     }else {
       this.options.order = `desc`;
     }
-    this.$emit('updateTableData');
+    this.$emit('update-table-data');
   }
 
   fomateSort() {
@@ -134,7 +134,7 @@ export default class Table extends Vue {
       '信箱': 'email'
     }
     this.options.sort = sortDir[this.sort];
-    this.$emit('updateTableData');
+    this.$emit('update-table-data');
   }
 
   recoverySort(key: string) {

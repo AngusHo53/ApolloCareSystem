@@ -6,10 +6,10 @@
       </v-list-item>
       <slot></slot>
       <v-layout class="pl-1 pt-3 ml-1" row>
-        <v-btn class="purple mr-2" fab small dark @click.native="$emit('searchData')">
+        <v-btn class="purple mr-2" fab small dark @click.native="$emit('search-data')">
           <v-icon dark="">mdi-magnify</v-icon>
         </v-btn>
-        <v-btn class="grey" fab small dark @click.native="$emit('cancelSearch')">
+        <v-btn class="grey" fab small dark @click.native="$emit('cancel-search')">
           <v-icon dark="">mdi-close-circle-outline</v-icon>
         </v-btn>
       </v-layout>

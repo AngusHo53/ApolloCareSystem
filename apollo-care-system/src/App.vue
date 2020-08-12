@@ -75,11 +75,11 @@
         <v-app-bar-nav-icon @click.native.stop="drawer = !drawer" light></v-app-bar-nav-icon>
         <v-spacer></v-spacer>
       </v-app-bar>
-      <v-content>
+      <v-main>
         <v-container fluid>
           <router-view></router-view>
         </v-container>
-      </v-content>
+      </v-main>
     </template>
   </v-app>
 </template>
