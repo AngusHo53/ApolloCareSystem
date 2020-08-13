@@ -191,7 +191,7 @@ export default class App extends Vue {
 }
 </script>
 <style scoped>
-@import "/assets/font/fstyle.css";
+@import "/assets/font/style.css";
 .avatar {
   border-radius: 50%;
 }
