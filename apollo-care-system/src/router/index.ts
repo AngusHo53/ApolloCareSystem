@@ -9,7 +9,7 @@ import PatientRecords from "@/views/PatientRecords.vue";
 import RecordChart from "@/views/RecordChart.vue";
 import PatientForm from "@/views/PatientForm.vue";
 import CommunityRecords from "@/views/CommunityRecords.vue";
-import CheckPatients from "@/views/CheckPatients.vue";
+import VerifyPatients from "@/views/VerifyPatients.vue";
 import ApiToken from "@/views/ApiToken.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
@@ -46,8 +46,8 @@ const routes: Array<RouteConfig> = [
     beforeEnter: requireAuth
   },
   {
-    path: "/checkPatients",
-    component: CheckPatients,
+    path: "/verifyPatients",
+    component: VerifyPatients,
     name: '病人審核',
     beforeEnter: requireAuth
   },

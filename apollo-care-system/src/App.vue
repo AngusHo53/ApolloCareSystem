@@ -112,8 +112,8 @@ export default class App extends Vue {
     {
       icon: "mdi-check",
       title: "病人審核",
-      vertical: "checkPatients",
-      link: "checkPatients"
+      vertical: "verifyPatients",
+      link: "verifyPatients"
     },
     {
       icon: "mdi-account-group",
@@ -126,7 +126,7 @@ export default class App extends Vue {
       title: "API列表",
       vertical: "apiList",
       link: "apilist"
-    },
+    }
   ];
 
   private userMenus: AppMenu[] = [
@@ -159,7 +159,7 @@ export default class App extends Vue {
       next();
     });
     //  hook the progress bar to finish after we've finished moving router-view
-    this.$router.afterEach((to) => {
+    this.$router.afterEach(to => {
       if (to.name !== "ErrorPage") {
         this.menuItem = to.name;
       }

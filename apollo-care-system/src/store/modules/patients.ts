@@ -1,6 +1,6 @@
 
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
-import { Patient, Order, Entity, PatientInfo, PatientOptions,RecordOptions, MeasureData, Record } from '@/types';
+import { Patient, Order, Entity, PatientInfo, PatientOptions, RecordOptions, MeasureData, Record } from '@/types';
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
@@ -21,23 +21,19 @@ class PatientModule extends VuexModule implements PatientState {
   public pagination = getDefaultPagination();
   public loading = true;
   measureDataInit: MeasureData = {
-    measure_at: new Date,
-    category:'',
-    name: {
-      en: '',
-      zn: ''
-    },
+    measure_at: '',
+    category: '',
     type: '',
     unit: '',
     uuid: '',
     value: 0
   };
-  public patient :Patient = {
-    user:{
+  public patient: Patient = {
+    user: {
       age: 0,
       birthday: '',
       created_at: '',
-      gender:'',
+      gender: '',
       health_state: 0,
       id: 0,
       id_card: '',
@@ -47,7 +43,7 @@ class PatientModule extends VuexModule implements PatientState {
       uuid: ''
     },
     id: 0,
-    record:{
+    record: {
       blood_pressure: {
         systolic: this.measureDataInit,
         diastolic: this.measureDataInit,
@@ -55,18 +51,18 @@ class PatientModule extends VuexModule implements PatientState {
       }
     }
   };
-  public patientRecords= undefined;
+  public patientRecords = undefined;
   public patients: Patient[] = [];
   public totalPatients = 0;
   public totalPages = 0;
   public currentPage = 1;
-  public items :PatientInfo[] = []
+  public items: PatientInfo[] = [];
 
   @Action async getPatientsByPages(options: PatientOptions): Promise<TODO> {
     this.setLoading(true);
     const result = await http.get(`/user?q=${options.q}&page=${options.page}&limit=10`);
     // (`/patient/list/${patientOptions.page}?q=${patientOptions.q}&&order=${patientOptions.order}&&sort=${patientOptions.sort}`);
-    if(result){
+    if (result) {
       const data = result.data.data;
       console.log(data);
       this.setTotalPatients(data.total_users);
@@ -77,23 +73,27 @@ class PatientModule extends VuexModule implements PatientState {
       await this.extractPatientInfo(data.users);
       this.setDataTable(this.items);
       this.setLoading(false);
-    }else{
+    } else {
       console.error(result);
     }
   }
 
-  @Action async getPatientByUuid(uuid: number): Promise<TODO> {
+  @Action async getPatientByUuid(uuid: string): Promise<TODO> {
     this.setLoading(true);
     this.setPatient(undefined);
-    const result = await http.get(`/user/${uuid}?with=record&record=mode:full|field:systolic,diastolic,pulse`);
-    if(result.data.data){
+    console.log(uuid);
+    const result = await http.get(`/user/${uuid}?with=record&record=mode%3Abasic%7Cfield%3Aall`);
+    console.log('test');
+    console.log(result);
+    if (result.data.data) {
       const data = result.data.data;
-      const gender = {1: '男', 0: '女'};
+      const gender = { 1: '男', 2: '女' };
       data.user.gender = gender[data.user.gender];
-
+      console.log('test');
+      console.log(data);
       this.setPatient(data);
       this.setLoading(false);
-    }else{
+    } else {
       console.error(result);
     }
   }
@@ -101,10 +101,10 @@ class PatientModule extends VuexModule implements PatientState {
   @Action({ rawError: true })
   async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
-      if(element.user){
-        if(element.user.birthday){
+      if (element.user) {
+        if (element.user.birthday) {
           const timestamp = Date.parse(element.user.birthday);
-          if(isNaN(timestamp) === false){
+          if (isNaN(timestamp) === false) {
             const date = new Date(element.user.birthday).toLocaleString();
             element.user.birthday = date;
           }
