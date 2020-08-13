@@ -7,6 +7,13 @@
           <h2 style="color:white">阿波羅照護系統</h2>
           <h4 style="color:white">Apollo Care Systems</h4>
         </v-card-title>
+        <v-progress-linear
+        :active="loading"
+        :indeterminate="loading"
+        absolute
+        bottom
+        color="deep-purple accent-4"
+      ></v-progress-linear>
         <v-card-text>
           <v-form @submit.prevent="login" :lazy-validation="true" v-model="valid">
             <v-layout row wrap>
