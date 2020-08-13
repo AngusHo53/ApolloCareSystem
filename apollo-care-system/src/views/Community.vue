@@ -9,6 +9,8 @@
             :items-per-page.sync="itemsPerPage"
             :search="search"
             hide-default-footer
+            :loading="loading"
+            loading-text="請稍候..."
           >
             <template v-slot:header>
               <v-card-title>
@@ -94,88 +96,88 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
-import Vue from 'vue'
-import http from '@/http/axios'
-import { appModule } from '@/store/modules/app'
+import { Component } from "vue-property-decorator";
+import Vue from "vue";
+import http from "@/http/axios";
+import { appModule } from "@/store/modules/app";
 
 @Component({
   components: {}
 })
 export default class Community extends Vue {
-  private loading = false
-  public errorMsg = ''
-  public search = ''
-  public page = 1
-  public itemsPerPage = 6
-  private customerId = ''
-  private query = ''
-  private color = ''
-  private quickSearchFilter = ''
-  private itemId = -1
-  private communityList = []
-  private communityRecord = []
+  private loading = true;
+  public errorMsg = "";
+  public search = "";
+  public page = 1;
+  public itemsPerPage = 6;
+  private customerId = "";
+  private query = "";
+  private color = "";
+  private quickSearchFilter = "";
+  private itemId = -1;
+  private communityList = [];
+  private communityRecord = [];
 
   nextPage() {
-    if (this.page + 1 <= this.numberOfPages) this.page += 1
+    if (this.page + 1 <= this.numberOfPages) this.page += 1;
   }
   formerPage() {
-    if (this.page - 1 >= 1) this.page -= 1
+    if (this.page - 1 >= 1) this.page -= 1;
   }
 
   closeSnackbar() {
-    appModule.closeNotice()
+    appModule.closeNotice();
   }
 
   changeToCommunityRecordPage($event) {
-    console.log($event)
+    console.log($event);
     this.$router.push({
       name: `社區紀錄`,
       params: {
         name: $event
       }
-    })
+    });
   }
 
   get numberOfPages() {
-    return Math.ceil(this.communityList.length / this.itemsPerPage)
+    return Math.ceil(this.communityList.length / this.itemsPerPage);
   }
 
   public async communityBadRecord() {
-    this.loading = true
-    this.$Progress.start()
+    this.loading = true;
+    this.$Progress.start();
 
-    const result = await http.get('/place')
+    const result = await http.get("/place");
     if (result) {
-      if (result.data.status === 'Success') {
+      if (result.data.status === "Success") {
         // Login Successful
-        this.communityList = result.data.data.place
+        this.communityList = result.data.data.place;
       } else {
         // Login Failed
-        this.errorMsg = result.data.message
-        console.log(this.errorMsg)
+        this.errorMsg = result.data.message;
+        console.log(this.errorMsg);
       }
     } else {
-      this.errorMsg = result.data.message
-      console.log(this.errorMsg)
+      this.errorMsg = result.data.message;
+      console.log(this.errorMsg);
     }
-    this.loading = false
+    this.loading = false;
   }
 
   get mode() {
-    return appModule.mode
+    return appModule.mode;
   }
 
   get snackbar() {
-    return appModule.snackbar
+    return appModule.snackbar;
   }
 
   get notice() {
-    return appModule.notice
+    return appModule.notice;
   }
 
   created() {
-    this.communityBadRecord()
+    this.communityBadRecord();
   }
 
   mounted() {}

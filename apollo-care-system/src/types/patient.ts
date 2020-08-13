@@ -34,6 +34,11 @@ export interface RecordOptions {
   uuid: string
 }
 
+export interface VerifyPatients {
+  patients: PatientInfo[],
+  status: boolean
+}
+
 export interface Record {
   blood_pressure: BloodPressure;
   // blood_glucose: MeasureData;
