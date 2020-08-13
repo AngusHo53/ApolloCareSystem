@@ -7,11 +7,11 @@
           :items="items"
           class="elevation-1"
           show-select
-          :single-select="singleSelect"
-          item-key="index"
+          :single-select="false"
+          item-key="uuid"
           :loading="loading"
           loading-text="請稍候..."
-          v-model="verifySelect.selected"
+          v-model="verifySelect.patients"
           hide-default-footer
         >
           <template v-slot:top>
@@ -57,14 +57,14 @@
         </v-data-table>
       </v-card>-->
     </v-flex>
-    <v-dialog v-model="dialog" max-width="500px">
+    <v-dialog v-if="verifySelect.patients" v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">{{dialogTitle}}({{verifySelect.selected.length}})</span>
+          <span class="headline">{{dialogTitle}}({{verifySelect.patients.length}})</span>
         </v-card-title>
         <v-card-text>
           <v-divider></v-divider>
-          <v-list-item two-line v-for="item in verifySelect.selected" :key="item.name">
+          <v-list-item two-line v-for="item in verifySelect.patients" :key="item.uuid">
             <v-list-item-avatar class="grey lighten-1 white--text">
               <v-icon>mdi-account</v-icon>
             </v-list-item-avatar>
@@ -87,12 +87,12 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { verifyPatientModule } from "@/store/modules/verifyPatients";
+import { VerifyPatientsOptions } from "@/types";
 
 @Component
 export default class VerifyPatients extends Vue {
   public dialog = false;
   public snackbar = true;
-  public singleSelect = false;
   public dialogTitle = "";
   public headers = [
     {
@@ -129,9 +129,10 @@ export default class VerifyPatients extends Vue {
     sort: ""
   };
 
-  public verifySelect = {
-    selected : [],
-    status : true
+  public verifySelect: VerifyPatientsOptions = {
+    // eslint-disable-next-line no-undef
+    patients: [],
+    status: true
   };
 
   showDialog(title) {
@@ -150,7 +151,7 @@ export default class VerifyPatients extends Vue {
 
   close() {
     this.dialog = false;
-    this.verifySelect.selected = [];
+    this.verifySelect.patients = [];
   }
 
   public async save() {
@@ -160,11 +161,12 @@ export default class VerifyPatients extends Vue {
   }
 
   created() {
-    verifyPatientModule.getVerifyPatients(this.verifyPatientOptions);
+    this.updateTableData();
   }
 
   updateTableData() {
-    verifyPatientModule.clearPatients();
+    console.log("test");
+    verifyPatientModule.clearVerifyPatients();
     // this.verifyPatientOptions.page = this.pagination.page;
     // console.log(this.verifyPatientOptions.page);
     verifyPatientModule.getVerifyPatients(this.verifyPatientOptions);
@@ -181,7 +183,7 @@ export default class VerifyPatients extends Vue {
   }
 
   get items() {
-    return verifyPatientModule.items;
+    return verifyPatientModule.verifyItems;
   }
 
   get totalVerifyPatients() {

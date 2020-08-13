@@ -34,7 +34,7 @@ export interface RecordOptions {
   uuid: string
 }
 
-export interface VerifyPatients {
+export interface VerifyPatientsOptions {
   patients: PatientInfo[],
   status: boolean
 }

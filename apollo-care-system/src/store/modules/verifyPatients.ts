@@ -1,6 +1,6 @@
 
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
-import { Patient, Order, Entity, PatientInfo, PatientOptions, VerifyPatients, RecordOptions, MeasureData, Record } from '@/types';
+import { Patient, Order, Entity, PatientInfo, PatientOptions, VerifyPatientsOptions, RecordOptions, MeasureData, Record } from '@/types';
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
@@ -12,7 +12,7 @@ export interface PatientState {
   pagination: Pagination;
   loading: boolean;
   verifyPatients: Patient[];
-  items: PatientInfo[];
+  verifyItems: PatientInfo[];
 }
 @Module({ store, dynamic: true, name: 'verifyPatientModule' })
 class VerifyPatientModule extends VuexModule implements PatientState {
@@ -24,28 +24,28 @@ class VerifyPatientModule extends VuexModule implements PatientState {
   status = true;
   loading = true;
   verifyPatients: Patient[] = [];
-  items: PatientInfo[] = [];
+  verifyItems: PatientInfo[] = [];
 
   @Action async getVerifyPatients(options: PatientOptions): Promise<TODO> {
     this.setLoading(true);
     const result = await http.get(`/user?verify=-1&page=${options.page}&limit=10`);
     if (result.data.data) {
       const data = result.data.data;
-
       this.setTotalVerifyPatients(data.total_users);
       this.setTotalPages(data.total_page);
       this.setVerifyPatients(data.users);
       this.setCurrentPage(options.page);
 
-      await this.extractPatientInfo(data.users);
-      this.setDataTable(this.items);
+      await this.extractVerifyPatientInfo(data.users);
+      this.setDataTable(this.verifyItems);
+
       this.setLoading(false);
     } else {
       console.error(result);
     }
   }
 
-  @Action async verifyPatientsByUuid(verifySelects:VerifyPatients): Promise<TODO> {
+  @Action async verifyPatientsByUuid(verifySelects: VerifyPatientsOptions): Promise<TODO> {
     this.setLoading(true);
     const patients = verifySelects.patients;
     const params = {
@@ -63,9 +63,10 @@ class VerifyPatientModule extends VuexModule implements PatientState {
   }
 
   @Action({ rawError: true })
-  async extractPatientInfo(patients: Patient[]) {
+  async extractVerifyPatientInfo(verifyPatients: Patient[]) {
+    console.log(this.verifyItems);
     const gender = { 1: '男', 2: '女' };
-    patients.forEach(element => {
+    verifyPatients.forEach(element => {
       if (element.user) {
         // if (element.user.birthday) {
         //     const timestamp = Date.parse(element.user.birthday);
@@ -76,7 +77,7 @@ class VerifyPatientModule extends VuexModule implements PatientState {
         // }
         // element.user.phone = 'xxxx-xxx-xxx';
         element.user.gender = gender[element.user.gender];
-        this.items.push(element.user);
+        this.verifyItems.push(element.user);
       }
     });
   }
@@ -86,9 +87,10 @@ class VerifyPatientModule extends VuexModule implements PatientState {
     this.setPagination(pagination);
   }
 
-  @Action clearPatients() {
+  @Action async clearVerifyPatients() {
     this.setVerifyPatients([]);
     this.setItems([]);
+    console.log(this.verifyItems);
     this.setTotalPages(0);
     this.setTotalVerifyPatients(0);
     this.setPagination(getDefaultPagination());
@@ -117,7 +119,7 @@ class VerifyPatientModule extends VuexModule implements PatientState {
     this.currentPage = page;
   }
   @Mutation setItems(items: PatientInfo[]): void {
-    this.items = items;
+    this.verifyItems = items;
   }
 
 }
