@@ -79,7 +79,7 @@ class UserModule extends VuexModule implements UserState {
 
   @Action({ rawError: true })
   async logout() {
-    await http.post(`/user/logout`, null);
+    await http.delete(`/auth`, null);
     this.setToken("");
     this.setUser({} as User);
     cleanSession();

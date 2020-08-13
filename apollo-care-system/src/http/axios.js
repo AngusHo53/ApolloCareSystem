@@ -23,15 +23,26 @@ axios.interceptors.response.use((response) => {
   return Promise.resolve(value);
 });
 
-const http_headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  "Access-Control-Allow-Origin": "*",
-  'Authorization': getToken() === '' ? '' : `Bearer ${getToken()}`,
-  'x-api-key': process.env.VUE_APP_API_KEY
-};
+
 
 export default {
+  http_headers : {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    'Authorization': getToken() === '' ? '' : `Bearer ${getToken()}`,
+    'x-api-key': process.env.VUE_APP_API_KEY
+  },
+
+  refreshHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Access-Control-Allow-Origin": "*",
+      'Authorization': getToken() === '' ? '' : `Bearer ${getToken()}`,
+      'x-api-key': process.env.VUE_APP_API_KEY
+    };
+  },
   post(url, value) {
     const params = {
       method: 'POST',
@@ -39,7 +50,7 @@ export default {
       url,
       data: value,
       timeout: 30000,
-      headers: http_headers
+      headers: this.refreshHeaders(),
     };
     return axios(params).then((response) => {
       // console.log(url)
@@ -54,7 +65,7 @@ export default {
       url,
       data: value,
       timeout: 10000,
-      headers: http_headers
+      headers: this.refreshHeaders(),
     };
     return axios(params).then((response) => {
       // console.log(url)
@@ -71,7 +82,7 @@ export default {
       baseURL: Vue.prototype.baseURL,
       url,
       timeout: 10000,
-      headers: http_headers
+      headers: this.refreshHeaders(),
     };
     return axios(params).then((response) => {
       // console.log(url)
@@ -88,7 +99,7 @@ export default {
       baseURL: Vue.prototype.baseURL,
       url,
       timeout: 10000,
-      headers: http_headers
+      headers: this.refreshHeaders(),
     };
     return axios(params).then((response) => {
       // console.log(url)
