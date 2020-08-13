@@ -152,12 +152,13 @@ export default class VerifyPatients extends Vue {
   close() {
     this.dialog = false;
     this.verifySelect.patients = [];
+    this.updateTableData();
   }
 
   public async save() {
     this.dialog = false;
     this.saveVerifyPatients();
-    this.created;
+    this.updateTableData();
   }
 
   created() {

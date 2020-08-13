@@ -98,5 +98,5 @@ export default {
       const res = response;
       return res;
     });
-  },
+  }
 };
