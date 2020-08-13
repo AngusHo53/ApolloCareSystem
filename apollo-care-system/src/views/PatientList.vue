@@ -3,22 +3,27 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <span class="title"
-            >病人名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}
-          </span>
+          <span class="title">病人名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</span>
           <v-spacer></v-spacer>
-            <div>
-              <v-btn class="blue darken-2  mr-2" fab small dark @click.native="createPatient()">
+          <div>
+            <v-btn class="blue darken-2 mr-2" fab small dark @click.native="createPatient()">
               <v-icon>mdi-account-plus</v-icon>
-              </v-btn>
-              <v-btn class="teal darken-2  mr-2" fab small dark @click.native="test()">
+            </v-btn>
+            <v-btn class="teal darken-2 mr-2" fab small dark @click.native="test()">
               <v-icon>mdi-printer</v-icon>
-              </v-btn>
-            </div>
+            </v-btn>
+          </div>
         </v-card-title>
         <v-card-text>
-        <Table :headers="headers" :items="items" :pagination="pagination" :loading="loading"
-        :options="patientOptions" @updateTableData = "updateTableData" @dataTableClickHandler="changeToPatientRecordPage"></Table>
+          <Table
+            :headers="headers"
+            :items="items"
+            :pagination="pagination"
+            :loading="loading"
+            :options="patientOptions"
+            @updateTableData="updateTableData"
+            @dataTableClickHandler="changeToPatientRecordPage"
+          ></Table>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -29,24 +34,34 @@
       @onConfirm="onConfirm"
       @onCancel="onCancel"
     ></confirm-dialog>
-    <v-snackbar v-if="loading === false" :right="true" :timeout="2000" :color="mode" v-model="snackbar">
+    <v-snackbar
+      v-if="loading === false"
+      :right="true"
+      :timeout="2000"
+      :color="mode"
+      v-model="snackbar"
+    >
       {{ notice }}
       <v-btn dark text @click.native="closeSnackbar">Close</v-btn>
     </v-snackbar>
-    </v-container>
+  </v-container>
 </template>
 <script lang="ts">
-import Table from '@/components/Table.vue';
-import TableHeaderButtons from '@/components/TableHeaderButtons.vue'
-import SearchPanel from '@/components/SearchPanel.vue';
-import ConfirmDialog from '@/components/ConfirmDialog.vue';
-import { debounce } from 'lodash';
-import { buildSearchFilters, buildJsonServerQuery, clearSearchFilters } from '@/utils/app-util';
-import { Component } from 'vue-property-decorator';
-import Vue from 'vue';
-import { patientModule } from '@/store/modules/patients';
-import { appModule } from '@/store/modules/app';
-import { getDefaultPagination } from '@/utils/store-util';
+import Table from "@/components/Table.vue";
+import TableHeaderButtons from "@/components/TableHeaderButtons.vue";
+import SearchPanel from "@/components/SearchPanel.vue";
+import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import { debounce } from "lodash";
+import {
+  buildSearchFilters,
+  buildJsonServerQuery,
+  clearSearchFilters
+} from "@/utils/app-util";
+import { Component } from "vue-property-decorator";
+import Vue from "vue";
+import { patientModule } from "@/store/modules/patients";
+import { appModule } from "@/store/modules/app";
+import { getDefaultPagination } from "@/utils/store-util";
 
 @Component({
   components: {
@@ -58,73 +73,74 @@ import { getDefaultPagination } from '@/utils/store-util';
 })
 export default class PatientList extends Vue {
   public dialog = false;
-  public dialogTitle = 'Patient Delete Dialog';
-  public dialogText = 'Do you want to delete this patient?';
+  public dialogTitle = "Patient Delete Dialog";
+  public dialogText = "Do you want to delete this patient?";
   private showSearchPanel = false;
   public right = true;
   public headers = [
     {
-      text: '名稱',
+      text: "名稱",
       left: true,
       sortable: false,
-      value: 'name'
+      value: "name"
     },
-    { text: 'ID',sortable: false, value: 'iid' },
-    { text: '性別',sortable: false, value: 'gender' },
-    { text: '年齡',sortable: false, value: 'age' },
-    { text: '生日',sortable: false, value: 'birthday' },
-    { text: '電話',sortable: false, value: 'phone'},
-    { text: '信箱',sortable: false, value: 'email' },
-    { text: '其他操作', value: 'actions', sortable: false }
+    { text: "ID", sortable: false, value: "iid" },
+    { text: "性別", sortable: false, value: "gender" },
+    { text: "年齡", sortable: false, value: "age" },
+    { text: "生日", sortable: false, value: "birthday" },
+    { text: "電話", sortable: false, value: "phone" },
+    { text: "信箱", sortable: false, value: "email" },
+    { text: "其他操作", value: "actions", sortable: false }
   ];
   private searchFilter = {
     contains: {
-      firstName: '',
-      lastName: ''
+      firstName: "",
+      lastName: ""
     },
     between: {
       rewards: { former: 0, latter: 0 }
     }
   };
-  private customerId = '';
-  private query = '';
-  private color = '';
-  private quickSearchFilter = '';
+  private customerId = "";
+  private query = "";
+  private color = "";
+  private quickSearchFilter = "";
   private itemId = -1;
   private patientOptions = {
-      page: 1,
-      q: '',
-      order: 'asc',
-      sort: ''
-  }
-  private lastSearch = '';
+    page: 1,
+    q: "",
+    order: "asc",
+    sort: ""
+  };
+  private lastSearch = "";
   created() {
     patientModule.setPagination(getDefaultPagination());
     this.updateTableData();
   }
 
   test() {
-      console.log('test');
+    console.log("test");
   }
 
   createPatient() {
-    this.$router.push('newPatient');
+    this.$router.push("newPatient");
   }
 
-  changeToPatientRecordPage($event){
+  changeToPatientRecordPage($event) {
     console.log($event);
-    this.$router.push({name:`病人紀錄`, params:{
-      id: $event.uuid
-    }});
+    this.$router.push({
+      name: `病人紀錄`,
+      params: {
+        id: $event.uuid
+      }
+    });
   }
 
   updateTableData() {
     patientModule.clearPatients();
-    if(this.patientOptions.q !== this.lastSearch) {
+    if (this.patientOptions.q !== this.lastSearch) {
       this.patientOptions.page = 1;
       this.lastSearch = this.patientOptions.q;
-    } else {
-      this.patientOptions.page = this.pagination.page;
     }
     console.log(this.patientOptions);
     patientModule.getPatientsByPages(this.patientOptions);
@@ -135,14 +151,14 @@ export default class PatientList extends Vue {
     this.dialog = false;
   }
   onCancel() {
-    this.customerId = '';
+    this.customerId = "";
     this.dialog = false;
   }
 
   searchCustomers() {
     buildSearchFilters(this.searchFilter);
     this.query = buildJsonServerQuery(this.searchFilter);
-    this.quickSearch = '';
+    this.quickSearch = "";
     // patientModule.searchCustomers(this.query);
     this.showSearchPanel = false;
   }
@@ -154,12 +170,12 @@ export default class PatientList extends Vue {
   }
 
   reloadData() {
-    this.query = '';
+    this.query = "";
     //patientModule.getAllCustomers();
   }
 
-  updateSearchPanel(){
-    this.rightDrawer=!this.rightDrawer;
+  updateSearchPanel() {
+    this.rightDrawer = !this.rightDrawer;
   }
 
   cancelSearch() {
@@ -220,7 +236,6 @@ export default class PatientList extends Vue {
     this.quickSearchFilter && this.quickSearchCustomers();
   }
 
-  mounted() {
-  }
+  mounted() {}
 }
 </script>
