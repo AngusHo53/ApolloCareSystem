@@ -1,41 +1,7 @@
 <template>
   <div>
-    <v-card-text>
-      <!-- <v-row>
-        <v-col
-          cols="12"
-          md="12"
-      >-->
-      <v-text-field
-        v-model="options.q"
-        append-icon="mdi-magnify"
-        label="關鍵字搜尋"
-        @keyup.enter="$emit('updateTableData')"
-      ></v-text-field>
-      <!-- </v-col> -->
-      <!-- <v-col
-            cols="12"
-            md="4"
-          >
-          <v-select
-            v-model="sort"
-            :items="['名稱','ID', '性別', '年齡', '電話']"
-            label="排序"
-            @change="fomateSort()"
-            @keyup.enter="$emit('updateTableData')"
-            required
-          ></v-select>
-        </v-col>
-        <v-col
-            cols="1"
-            md="1">
-          <v-switch v-model="order" flat :label="order?`升序`:`降序`" @change='fomateOrder(order)'></v-switch>
-      </v-col>-->
-      <!-- </v-row> -->
-    </v-card-text>
-
-    <!--  @click:row="$emit('dataTableClickHandler',$event)"  -->
     <v-data-table
+      v-if="!showSelect"
       class="elevation-1"
       :headers="headers"
       :items="items"
@@ -43,6 +9,7 @@
       :items-per-page="pagination.rowsPerPage"
       hide-default-footer
       :loading="loading"
+      item-key="uuid"
       loading-text="Loading..."
     >
       <template v-slot:item.actions="{ item }">
@@ -55,6 +22,37 @@
         >
           <v-icon>mdi-account</v-icon>
         </v-btn>
+        <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn fab class="cyan" small @click.native="$emit('remove', item)">
+          <v-icon>mdi-trash-can-outline</v-icon>
+        </v-btn>
+      </template>
+      <template slot="no-data">
+        <span>
+          <p class="pt-2 blue--text subheading">
+            <v-icon medium class="blue--text">mdi-info</v-icon>查無此資料
+          </p>
+        </span>
+      </template>
+    </v-data-table>
+    <v-data-table
+      v-if="showSelect"
+      v-model="select.patients"
+      class="elevation-1"
+      :headers="headers"
+      :items="items"
+      :page.sync="options.page"
+      :items-per-page="pagination.rowsPerPage"
+      hide-default-footer
+      :loading="loading"
+      loading-text="Loading..."
+      item-key="uuid"
+      :show-select="true"
+      :single-select="false"
+    >
+      <template v-slot:item.actions="{ item }">
         <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
@@ -84,7 +82,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Entity, PatientOptions } from "@/types";
+import { Entity, PatientOptions, VerifyPatientsOptions } from "@/types";
 import { Component, Prop } from "vue-property-decorator";
 
 @Component
@@ -94,6 +92,8 @@ export default class Table extends Vue {
   @Prop() readonly pagination: Pagination;
   @Prop() readonly options: PatientOptions;
   @Prop() readonly loading: boolean;
+  @Prop() readonly showSelect: boolean;
+  @Prop() readonly select: VerifyPatientsOptions;
   //
   order = true;
   sort = "";
@@ -104,6 +104,7 @@ export default class Table extends Vue {
       this.sort = this.recoverySort(this.options.sort);
     }
   }
+
   renderData = (item: TODO, header: TODO) => {
     let val = "";
     if (header.value.includes(".")) {

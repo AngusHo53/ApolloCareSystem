@@ -15,6 +15,12 @@
           </div>
         </v-card-title>
         <v-card-text>
+          <v-text-field
+            v-model="patientOptions.q"
+            append-icon="mdi-magnify"
+            label="關鍵字搜尋"
+            @keyup.enter="updateTableData()"
+          ></v-text-field>
           <Table
             :headers="headers"
             :items="items"
@@ -34,16 +40,6 @@
       @onConfirm="onConfirm"
       @onCancel="onCancel"
     ></confirm-dialog>
-    <v-snackbar
-      v-if="loading === false"
-      :right="true"
-      :timeout="2000"
-      :color="mode"
-      v-model="snackbar"
-    >
-      {{ notice }}
-      <v-btn dark text @click.native="closeSnackbar">Close</v-btn>
-    </v-snackbar>
   </v-container>
 </template>
 <script lang="ts">
@@ -115,6 +111,9 @@ export default class PatientList extends Vue {
   private lastSearch = "";
   created() {
     patientModule.setPagination(getDefaultPagination());
+  }
+
+  mounted() {
     this.updateTableData();
   }
 
@@ -182,10 +181,6 @@ export default class PatientList extends Vue {
     this.showSearchPanel = false;
   }
 
-  closeSnackbar() {
-    appModule.closeNotice();
-  }
-
   quickSearchCustomers = debounce(function() {
     // patientModule.quickSearch(this.headers, this.quickSearchFilter);
   }, 500);
@@ -208,17 +203,6 @@ export default class PatientList extends Vue {
   get loading() {
     return patientModule.loading;
   }
-  get mode() {
-    return appModule.mode;
-  }
-
-  get snackbar() {
-    return appModule.snackbar;
-  }
-
-  get notice() {
-    return appModule.notice;
-  }
 
   get rightDrawer() {
     return this.showSearchPanel;
@@ -235,7 +219,5 @@ export default class PatientList extends Vue {
     this.quickSearchFilter = val;
     this.quickSearchFilter && this.quickSearchCustomers();
   }
-
-  mounted() {}
 }
 </script>

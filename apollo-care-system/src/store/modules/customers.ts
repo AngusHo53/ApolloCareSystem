@@ -100,10 +100,10 @@ class CustomerModule extends VuexModule implements CustomerState {
       baseURL: Vue.prototype.baseURL,
       url: '/user',
       headers: {
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
-        "Access-Control-Allow-Origin" : "*",
-        'Authorization' : 'Bearer ' + getToken()
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        "Access-Control-Allow-Origin": "*",
+        'Authorization': 'Bearer ' + getToken()
       }
     }).then(res => {
       const customers = res.data;
