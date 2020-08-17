@@ -64,7 +64,6 @@ class VerifyPatientModule extends VuexModule implements PatientState {
 
   @Action({ rawError: true })
   async extractVerifyPatientInfo(verifyPatients: Patient[]) {
-    console.log(this.verifyItems);
     const gender = { 1: '男', 2: '女' };
     verifyPatients.forEach(element => {
       if (element.user) {
@@ -90,7 +89,6 @@ class VerifyPatientModule extends VuexModule implements PatientState {
   @Action async clearVerifyPatients() {
     this.setVerifyPatients([]);
     this.setItems([]);
-    console.log(this.verifyItems);
     this.setTotalPages(0);
     this.setTotalVerifyPatients(0);
     this.setPagination(getDefaultPagination());

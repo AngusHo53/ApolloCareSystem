@@ -2,60 +2,48 @@
   <v-container fluid>
     <v-flex xs12>
       <v-card style="margin-bottom:10px">
-        <v-data-table
-          :headers="headers"
-          :items="items"
-          class="elevation-1"
-          show-select
-          :single-select="false"
-          item-key="uuid"
-          :loading="loading"
-          loading-text="請稍候..."
-          v-model="verifySelect.patients"
-          hide-default-footer
-        >
-          <template v-slot:top>
-            <v-toolbar flat color="white">
-              <v-toolbar-title>審核病人列表({{totalVerifyPatients}})</v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-col cols="12" md="2">
-                <v-btn class="mb-3 blue" @click="showDialog('通過名單')">通過</v-btn>
-              </v-col>
-              <v-col cols="12" md="2">
-                <v-btn class="mb-3 red" @click="showDialog('不通過名單')">不通過</v-btn>
-              </v-col>
-            </v-toolbar>
-          </template>
-        </v-data-table>
+        <v-card-title>
+          <v-toolbar flat color="white">
+            <v-toolbar-title>審核病人列表 {{ totalVerifyPatients ? '(' + totalVerifyPatients + ')' : '' }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-col cols="12" md="2">
+              <v-btn class="mb-3 blue" @click="showDialog('通過名單')">通過</v-btn>
+            </v-col>
+            <v-col cols="12" md="2">
+              <v-btn class="mb-3 red" @click="showDialog('不通過名單')">不通過</v-btn>
+            </v-col>
+          </v-toolbar>
+        </v-card-title>
+        <v-card-text>
+          <Table
+            :headers="headers"
+            :items="items"
+            :pagination="pagination"
+            :loading="loading"
+            :showSelect="true"
+            :select="verifySelect"
+            :options="verifyPatientOptions"
+            @updateTableData="updateTableData"
+          ></Table>
+        </v-card-text>
+        <!-- <v-card-title>
+          <v-toolbar flat color="white">
+            <v-toolbar-title>未通過審核病人列表({{totalVerifyPatients}})</v-toolbar-title>
+          </v-toolbar>
+        </v-card-title>
+        <v-card-text>
+          <Table
+            :headers="headers"
+            :items="items"
+            :pagination="pagination"
+            :loading="loading"
+            :showSelect="true"
+            :select="verifySelect"
+            :options="verifyPatientOptions"
+            @updateTableData="updateTableData"
+          ></Table>
+        </v-card-text>-->
       </v-card>
-      <div class="text-xs-center pt-2" v-if="true">
-        <v-pagination
-          v-model="verifyPatientOptions.page"
-          :length="pagination.pages"
-          :total-visible="9"
-          @input="updateTableData()"
-          circle
-        ></v-pagination>
-      </div>
-      <!-- <v-card>
-        <v-data-table
-          :headers="headers"
-          :items="checkPatients"
-          class="elevation-1"
-          show-select
-          :single-select="singleSelect"
-          item-key="name"
-          :loading="!checkPatients"
-          loading-text="請稍等..."
-          v-model="selected"
-        >
-          <template v-slot:top>
-            <v-toolbar flat color="white">
-              <v-toolbar-title>已取消病人列表({{checkPatients.length}})</v-toolbar-title>
-            </v-toolbar>
-          </template>
-        </v-data-table>
-      </v-card>-->
     </v-flex>
     <v-dialog v-if="verifySelect.patients" v-model="dialog" max-width="500px">
       <v-card>
@@ -88,11 +76,15 @@
 import { Vue, Component } from "vue-property-decorator";
 import { verifyPatientModule } from "@/store/modules/verifyPatients";
 import { VerifyPatientsOptions } from "@/types";
+import Table from "@/components/Table.vue";
 
-@Component
+@Component({
+  components: {
+    Table
+  }
+})
 export default class VerifyPatients extends Vue {
   public dialog = false;
-  public snackbar = true;
   public dialogTitle = "";
   public headers = [
     {
@@ -135,6 +127,12 @@ export default class VerifyPatients extends Vue {
     status: true
   };
 
+  created() {}
+
+  mounted() {
+    this.updateTableData();
+  }
+
   showDialog(title) {
     this.dialog = true;
     this.dialogTitle = title;
@@ -147,12 +145,9 @@ export default class VerifyPatients extends Vue {
     verifyPatientModule.verifyPatientsByUuid(this.verifySelect);
   }
 
-  deleteCheckingPatients() {}
-
   close() {
     this.dialog = false;
-    this.verifySelect.patients = [];
-    this.updateTableData();
+    // this.updateTableData();
   }
 
   public async save() {
@@ -161,19 +156,12 @@ export default class VerifyPatients extends Vue {
     this.updateTableData();
   }
 
-  created() {
-    this.updateTableData();
-  }
-
   updateTableData() {
-    console.log("test");
     verifyPatientModule.clearVerifyPatients();
     // this.verifyPatientOptions.page = this.pagination.page;
     // console.log(this.verifyPatientOptions.page);
     verifyPatientModule.getVerifyPatients(this.verifyPatientOptions);
   }
-
-  mounted() {}
 
   get verifyPatients() {
     return verifyPatientModule.verifyPatients;

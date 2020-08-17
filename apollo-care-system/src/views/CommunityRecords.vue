@@ -233,10 +233,6 @@ export default class CommunityRecords extends Vue {
 
   private c_items = [];
 
-  closeSnackbar() {
-    appModule.closeNotice();
-  }
-
   cTableList() {
     console.log(this.c_select.name_zn);
     if (this.c_select.name_zn == "oneMonth") {
@@ -359,19 +355,6 @@ export default class CommunityRecords extends Vue {
       ];
     }
   }
-
-  get mode() {
-    return appModule.mode;
-  }
-
-  get snackbar() {
-    return appModule.snackbar;
-  }
-
-  get notice() {
-    return appModule.notice;
-  }
-
   created() {
     const param = this.$route.params.name;
     this.communtiyName = param;

@@ -1,7 +1,7 @@
 
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
 import { Patient, Order, Entity, PatientInfo, PatientOptions, RecordOptions, MeasureData, Record } from '@/types';
-import { getDefaultPagination, getPagination } from '@/utils/store-util';
+import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
 import Vue from 'vue';
@@ -64,7 +64,6 @@ class PatientModule extends VuexModule implements PatientState {
     // (`/patient/list/${patientOptions.page}?q=${patientOptions.q}&&order=${patientOptions.order}&&sort=${patientOptions.sort}`);
     if (result) {
       const data = result.data.data;
-      console.log(data);
       this.setTotalPatients(data.total_users);
       this.setTotalPages(data.total_page);
       this.setPatients(data.users);
@@ -81,16 +80,10 @@ class PatientModule extends VuexModule implements PatientState {
   @Action async getPatientByUuid(uuid: string): Promise<TODO> {
     this.setLoading(true);
     this.setPatient(undefined);
-    console.log(uuid);
     const result = await http.get(`/user/${uuid}?with=record&record=mode%3Abasic%7Cfield%3Aall`);
-    console.log('test');
-    console.log(result);
     if (result.data.data) {
       const data = result.data.data;
-      const gender = { 1: '男', 2: '女' };
-      data.user.gender = gender[data.user.gender];
-      console.log('test');
-      console.log(data);
+      data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
       this.setLoading(false);
     } else {
@@ -102,14 +95,14 @@ class PatientModule extends VuexModule implements PatientState {
   async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
       if (element.user) {
-        if (element.user.birthday) {
-          const timestamp = Date.parse(element.user.birthday);
-          if (isNaN(timestamp) === false) {
-            const date = new Date(element.user.birthday).toLocaleString();
-            element.user.birthday = date;
-          }
-        }
-        element.user.phone = 'xxxx-xxx-xxx';
+        // if (element.user.birthday) {
+        //   const timestamp = Date.parse(element.user.birthday);
+        //   if (isNaN(timestamp) === false) {
+        //     const date = new Date(element.user.birthday).toLocaleString();
+        //     element.user.birthday = date;
+        //   }
+        // }
+        // element.user.phone = 'xxxx-xxx-xxx';
         this.items.push(element.user);
       }
     });

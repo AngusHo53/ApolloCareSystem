@@ -105,7 +105,6 @@ import { appModule } from "@/store/modules/app";
   components: {}
 })
 export default class Community extends Vue {
-  private loading = true;
   public errorMsg = "";
   public search = "";
   public page = 1;
@@ -125,10 +124,6 @@ export default class Community extends Vue {
     if (this.page - 1 >= 1) this.page -= 1;
   }
 
-  closeSnackbar() {
-    appModule.closeNotice();
-  }
-
   changeToCommunityRecordPage($event) {
     console.log($event);
     this.$router.push({
@@ -144,7 +139,7 @@ export default class Community extends Vue {
   }
 
   public async communityBadRecord() {
-    this.loading = true;
+    appModule.setLoading(true);
     this.$Progress.start();
 
     const result = await http.get("/place");
@@ -161,19 +156,11 @@ export default class Community extends Vue {
       this.errorMsg = result.data.message;
       console.log(this.errorMsg);
     }
-    this.loading = false;
+    appModule.setLoading(false);
   }
 
-  get mode() {
-    return appModule.mode;
-  }
-
-  get snackbar() {
-    return appModule.snackbar;
-  }
-
-  get notice() {
-    return appModule.notice;
+  get loading() {
+    return appModule.loading;
   }
 
   created() {

@@ -77,6 +77,10 @@
       </v-app-bar>
       <v-main>
         <v-container fluid>
+          <v-snackbar v-model="snackbar" :top="true" :timeout="2000" :color="mode">
+            {{ notice }}
+            <!-- <v-btn dark text @click.native="closeSnackbar">取消</v-btn> -->
+          </v-snackbar>
           <router-view></router-view>
         </v-container>
       </v-main>
@@ -87,6 +91,7 @@
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import { userModule } from "@/store/modules/user";
+import { appModule } from "./store/modules/app";
 
 @Component
 export default class App extends Vue {
@@ -172,11 +177,33 @@ export default class App extends Vue {
     return this.menuItem;
   }
 
+  get loading() {
+    return appModule.loading;
+  }
+
+  get snackbar() {
+    return appModule.snackbar;
+  }
+
+  get notice() {
+    return appModule.notice;
+  }
+
+  get mode() {
+    return appModule.mode;
+  }
+
+  closeSnackbar() {
+    appModule.closeNotice();
+  }
+
   handleNavigtiion(item: TODO) {
-    this.menuItem = item.title;
-    this.$router.push({
-      name: item.title
-    });
+    if (!this.loading) {
+      this.menuItem = item.title;
+      this.$router.push({
+        name: item.title
+      });
+    }
   }
 
   async handleUserActions(item: TODO) {
