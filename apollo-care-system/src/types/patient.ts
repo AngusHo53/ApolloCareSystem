@@ -40,15 +40,15 @@ export interface VerifyPatientsOptions {
 }
 
 export interface Record {
+  blood: Blood;
+  blood_glucose: BloodGlucose;
   blood_pressure: BloodPressure;
-  // blood_glucose: MeasureData;
-  // metabolic: MeasureData;
-  // body_temerature: MeasureData;
-  // spo2: MeasureData;
-  // frailty: MeasureData;
-  // blood: MeasureData;
-  // mental: MeasureData;
-  // bone: MeasureData;
+  body_temperature: BodyTemperature;
+  bone: Bone;
+  frailty: Frailty;
+  mental: Mental;
+  metabolic: Metabolic;
+  spo2: SpO2;
 }
 
 export interface MeasureData {
@@ -64,11 +64,11 @@ export interface BloodPressure {
   systolic: MeasureData;
   diastolic: MeasureData;
   pulse: MeasureData;
-  // scene: string;
-  // arr: boolean;
-  // afib: boolean;
-  // pc: boolean;
-  // ihb: boolean;
+  scene: string;
+  arr: boolean;
+  afib: boolean;
+  pc: boolean;
+  ihb: boolean;
 }
 
 export interface BloodGlucose {

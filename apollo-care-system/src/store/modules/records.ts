@@ -1,5 +1,5 @@
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
-import { Entity, MeasureData, RecordOptions  } from '@/types';
+import { Entity, MeasureData, RecordOptions } from '@/types';
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
@@ -10,10 +10,10 @@ export interface RecordState {
     pagination: Pagination;
     loading: boolean;
     items;
-  }
+}
 
 @Module({ store, dynamic: true, name: 'recordModule' })
-class RecordModule extends VuexModule implements RecordState{
+class RecordModule extends VuexModule implements RecordState {
     public records: MeasureData[] = []
     public totalRecords = 0;
     public loading = false;
@@ -22,12 +22,13 @@ class RecordModule extends VuexModule implements RecordState{
 
     public currentPage = 1;
     public totalPages = 0;
+    public measurementType = {};
 
     @Action async getPatientRecordByUuid(options: RecordOptions): Promise<TODO> {
         this.setLoading(true);
         const result = await http.get(`/user/${options.uuid}/record?limit=10&page=${options.page}`);
 
-        if(result.data.data){
+        if (result.data.data) {
             console.log(result);
             const data = result.data.data;
             // this.setPatient(result.data.data);
@@ -39,13 +40,13 @@ class RecordModule extends VuexModule implements RecordState{
 
             this.setRecordDataTable(data.records);
             this.setLoading(false);
-            }else{
+        } else {
             console.error(result);
-            }
-      }
+        }
+    }
     @Action async formateMearsureAt(data: any) {
         data.forEach(element => {
-            if(element){
+            if (element) {
                 element.measure_at = new Date(element.measure_at).toLocaleString();
             }
             this.items.push(element);
@@ -55,13 +56,28 @@ class RecordModule extends VuexModule implements RecordState{
     @Action async setRecordDataTable(data: Entity[]) {
         const pagination = getPagination(data, this.totalPages, this.currentPage, data.length);
         this.setPagination(pagination);
-      }
+    }
 
     @Action clearRecords() {
         this.setTotalPages(0);
         this.setTotalRecords(0);
         this.setRecords([]);
         this.setItems([]);
+    }
+
+    @Action async getMeasurementType(): Promise<TODO> {
+        const result = await http.get(`/measurements/types`);
+        if (result) {
+            this.setMeasurementType(result.data.measurement_type);
+            console.log(result);
+        } else {
+            console.error(result);
+        }
+    }
+
+
+    @Mutation setMeasurementType(measurementType: any) {
+        this.measurementType = measurementType;
     }
 
     @Mutation setTotalPages(totalPages: number): void {
@@ -79,7 +95,7 @@ class RecordModule extends VuexModule implements RecordState{
 
     @Mutation setCurrentPage(page: number): void {
         this.currentPage = page;
-      }
+    }
 
     @Mutation setTotalRecords(totalRecords: number): void {
         this.totalRecords = totalRecords;

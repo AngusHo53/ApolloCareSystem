@@ -50,14 +50,15 @@
                     <v-card-title></v-card-title>
                     <template v-for="(data, name) in patient.record[item.name_zn]">
                       <v-card-text :key="name">
-                        <!-- <MeasureCard
-                          :header="data"
+                        <MeasureCard
+                          v-if="data"
+                          :header="name"
                           :normalRange="data.normalRange"
                           :measure_at="data.measure_at"
+                          :state="data.state"
                           :unit="data.unit"
                           :value="data.value"
-                        ></MeasureCard>-->
-                        <MeasureCard :header="name"></MeasureCard>
+                        ></MeasureCard>
                       </v-card-text>
                     </template>
                   </v-card>
@@ -153,11 +154,15 @@ export default class PatientRecords extends Vue {
   };
   measureTab = null;
   measureItem = [
+    { name_zn: "blood", name_ch: "血液" },
     { name_zn: "blood_pressure", name_ch: "血壓" },
     { name_zn: "blood_glucose", name_ch: "血糖" },
+    { name_zn: "body_temperature", name_ch: "體溫" },
+    { name_zn: "bone", name_ch: "骨質" },
+    { name_zn: "frailty", name_ch: "體質" },
+    { name_zn: "mental", name_ch: "心理" },
     { name_zn: "metabolic", name_ch: "新陳代謝" },
-    { name_zn: "blood_glucose1", name_ch: "血糖1" },
-    { name_zn: "blood_glucose2", name_ch: "血糖2" }
+    { name_zn: "spo2", name_ch: "血氧" }
   ];
   headers = [
     // {
@@ -192,12 +197,12 @@ export default class PatientRecords extends Vue {
     recordModule.setPagination(getDefaultPagination());
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
     patientModule.getPatientByUuid(this.recordsOptions.uuid);
+    // this.recordModule.getMeasurementType();
     this.updateTableData();
   }
 
   updateTableData() {
     recordModule.clearRecords();
-    this.recordsOptions.page = this.pagination.page;
     recordModule.getPatientRecordByUuid(this.recordsOptions);
   }
 

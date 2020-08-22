@@ -44,11 +44,15 @@ class PatientModule extends VuexModule implements PatientState {
     },
     id: 0,
     record: {
-      blood_pressure: {
-        systolic: this.measureDataInit,
-        diastolic: this.measureDataInit,
-        pulse: this.measureDataInit
-      }
+      blood: null,
+      blood_glucose: null,
+      blood_pressure: null,
+      body_temperature: null,
+      bone: null,
+      frailty: null,
+      mental: null,
+      metabolic: null,
+      spo2: null
     }
   };
   public patientRecords = undefined;
@@ -83,6 +87,7 @@ class PatientModule extends VuexModule implements PatientState {
     const result = await http.get(`/user/${uuid}?with=record&record=mode%3Abasic%7Cfield%3Aall`);
     if (result.data.data) {
       const data = result.data.data;
+      console.log(data);
       data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
       this.setLoading(false);

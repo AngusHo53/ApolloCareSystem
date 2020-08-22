@@ -1,16 +1,8 @@
 <template>
-  <v-card if='value'
-    class="mx-auto"
-    max-width="600"
-  >
-    <v-toolbar
-      flat
-      dense
-    >
+  <v-card if="value" class="mx-auto" max-width="600">
+    <v-toolbar flat dense>
       <v-toolbar-title>
-        <v-icon large>
-          mdi-pause
-        </v-icon>
+        <v-icon large>mdi-pause</v-icon>
         <span class="subheading">{{header}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -18,15 +10,9 @@
     </v-toolbar>
 
     <v-card-text>
-      <v-row
-        class="mb-4"
-        justify="space-between"
-      >
+      <v-row class="mb-4" justify="space-between">
         <v-col class="text-right">
-          <span
-            class="display-3 font-weight-light red--text"
-            v-text="value"
-          ></span>
+          <span class="display-3 font-weight-light" v-bind:style="{color:color()}" v-text="value"></span>
           <span class="subheading font-weight-light mr-1">{{unit}}</span>
           <v-fade-transition>
             <v-avatar
@@ -51,7 +37,7 @@
               mdi-more
             </v-icon>
           </v-btn>
-        </v-col> -->
+        </v-col>-->
       </v-row>
       <!-- <v-range-slider
           :tick-labels="normalRange"
@@ -63,52 +49,71 @@
           tick-size="2"
           readonly
           >
-      </v-range-slider> -->
+      </v-range-slider>-->
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import Vue from 'vue';
-import { PatientOptions } from '@/types';
-import { Component, Prop } from 'vue-property-decorator';
-import { Mutation } from 'vuex-module-decorators';
+import Vue from "vue";
+import { PatientOptions } from "@/types";
+import { Component, Prop } from "vue-property-decorator";
+import { Mutation } from "vuex-module-decorators";
 @Component
 export default class MeasureCard extends Vue {
-    @Prop() header;
-    @Prop() normalRange;
-    @Prop() value;
-    @Prop() unit;
-    @Prop() measure_at;
+  @Prop() header;
+  @Prop() normalRange;
+  @Prop() value;
+  @Prop() state;
+  @Prop() unit;
+  @Prop() measure_at;
 
-    interval= null;
-    isPlaying= false;
+  interval = null;
+  isPlaying = false;
+  create() {}
 
-    color () {
-        // if (this.value < this.normalRange[0]) return '#F0C419'
-        // if (this.value > this.normalRange[1]) return '#F0C419'
-        return '#4FB99F'
+  color() {
+    switch (this.state) {
+      case 0: {
+        // good
+        return "#4FB99F";
+      }
+      case 1: {
+        // warning
+        return "#F0C419";
+      }
+      case 2: {
+        // bad
+        return "#C44F4B";
+      }
+      case 3: {
+        // unknown
+        return "#000000";
+      }
+      default:
+        return "#000000";
     }
-    animationDuration () {
-        return `${60 / this.value}s`
-    }
+  }
+  animationDuration() {
+    return `${60 / this.value}s`;
+  }
 }
 </script>
 
 <style>
-  @keyframes metronome-example {
-    from {
-      transform: scale(.5);
-    }
-
-    to {
-      transform: scale(1);
-    }
+@keyframes metronome-example {
+  from {
+    transform: scale(0.5);
   }
 
-  .v-avatar--metronome {
-    animation-name: metronome-example;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
+  to {
+    transform: scale(1);
   }
+}
+
+.v-avatar--metronome {
+  animation-name: metronome-example;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
 </style>
