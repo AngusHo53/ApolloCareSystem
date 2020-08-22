@@ -42,7 +42,7 @@
             </v-col>
             <v-col>
               <v-tabs v-model="measureTab" centered background-color="blue" dark grow>
-                <v-tab v-for="item  in measureItem" :key="item.name_zn">{{ item.name_ch }}</v-tab>
+                <v-tab v-for="item  in measureItem" :key="item.name_zn">{{ item.name }}</v-tab>
               </v-tabs>
               <v-tabs-items v-model="measureTab">
                 <v-tab-item v-for="(item) in measureItem" :key="item.name_zn">
@@ -99,7 +99,7 @@ import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import { patientModule } from "@/store/modules/patients";
 import { recordModule } from "@/store/modules/records";
-import { getDefaultPagination } from "@/utils/store-util";
+import { getDefaultPagination, MEASUREITEM } from "@/utils/store-util";
 
 @Component({
   components: {
@@ -116,17 +116,7 @@ export default class PatientRecords extends Vue {
   patientInfo = {};
 
   measureTab = null;
-  measureItem = [
-    { name_zn: "blood", name_ch: "血液" },
-    { name_zn: "blood_pressure", name_ch: "血壓" },
-    { name_zn: "blood_glucose", name_ch: "血糖" },
-    { name_zn: "body_temperature", name_ch: "體溫" },
-    { name_zn: "bone", name_ch: "骨質" },
-    { name_zn: "frailty", name_ch: "體質" },
-    { name_zn: "mental", name_ch: "心理" },
-    { name_zn: "metabolic", name_ch: "新陳代謝" },
-    { name_zn: "spo2", name_ch: "血氧" }
-  ];
+  measureItem = MEASUREITEM;
   headers = [
     { text: "類別", sortable: false, value: "category" },
     { text: "測量時間", sortable: false, value: "measure_at" },
