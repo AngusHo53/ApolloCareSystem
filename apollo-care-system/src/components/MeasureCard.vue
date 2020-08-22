@@ -6,7 +6,7 @@
         <span class="subheading">{{header}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <span>{{new Date(measure_at).toLocaleString()}}</span>
+      <span v-if="measure_at">{{new Date(measure_at).toLocaleString()}}</span>
     </v-toolbar>
 
     <v-card-text>
