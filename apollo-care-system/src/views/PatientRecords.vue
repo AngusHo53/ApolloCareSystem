@@ -42,28 +42,24 @@
             </v-col>
             <v-col>
               <v-tabs v-model="measureTab" centered background-color="blue" dark grow>
-                <v-tab v-for="item  in measureItem" :key="item.name_zn">{{ item.name }}</v-tab>
+                <v-tab v-for="item  in measureItem" :key="item.name">{{ item.name_ch }}</v-tab>
               </v-tabs>
               <v-tabs-items v-model="measureTab">
-                <v-tab-item v-for="(item) in measureItem" :key="item.name_zn">
+                <v-tab-item v-for="(item) in measureItem" :key="item.name">
                   <v-card color="basil" flat>
                     <v-card-title></v-card-title>
-                    <template v-for="(data, name) in patient.record[item.name_zn]">
+                    <template v-for="(data, name) in patient.record[item.name]">
                       <v-card-text :key="name">
                         <MeasureCard
                           v-if="data"
-                          :header="changeDataToCH(item, name)"
+                          :header="name"
                           :normalRange="data.normalRange"
                           :measure_at="data.measure_at"
                           :state="data.state"
                           :unit="data.unit"
                           :value="data.value"
                         ></MeasureCard>
-                        <MeasureCard
-                          v-if="!data"
-                          :header="changeDataToCH(item, name)"
-                          :value="'無量測資料'"
-                        ></MeasureCard>
+                        <MeasureCard v-if="!data" :header="name" :value="'無量測資料'"></MeasureCard>
                       </v-card-text>
                     </template>
                   </v-card>
@@ -124,7 +120,7 @@ export default class PatientRecords extends Vue {
   headers = [
     { text: "類別", sortable: false, value: "category" },
     { text: "測量時間", sortable: false, value: "measure_at" },
-    { text: "型態", sortable: false, value: "type" },
+    { text: "關鍵字", sortable: false, value: "key" },
     { text: "值", sortable: false, value: "value" }
   ];
 
