@@ -129,7 +129,8 @@ export default class PatientRecords extends Vue {
     q: "",
     order: "asc",
     sort: "",
-    uuid: ""
+    uuid: "",
+    limit: 10
   };
 
   async created() {

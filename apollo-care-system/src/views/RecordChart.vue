@@ -70,10 +70,32 @@ export default class RecordChart extends Vue {
 
   measureType = MEASUREITEM;
 
-  async created() {
-    const data = this.getDataByCategory("metabolic");
-    this.text = "left";
+  recordsOptions = {
+    page: 1,
+    q: "",
+    order: "asc",
+    sort: "",
+    uuid: "",
+    limit: -1
+  };
 
+  async created() {
+    this.recordsOptions.uuid = this.$router.currentRoute.params.id;
+    recordModule.getPatientRecordByUuid(this.recordsOptions).then(() => {
+      this.update();
+    });
+    // Initial
+
+    this.text = "left";
+  }
+
+  update() {
+    if (!this.selected.length) this.getDataByCategory("metabolic");
+    else this.getDataByCategory(this.selected[0].name_zn);
+    this.updataChart();
+  }
+
+  updataChart() {
     this.series = [
       {
         name: "標準最高值",
@@ -106,9 +128,7 @@ export default class RecordChart extends Vue {
       yaxis: {
         labels: {
           minWidth: 10
-        },
-        min: 0,
-        max: 120
+        }
       },
       zoom: {
         enabled: false
@@ -135,17 +155,16 @@ export default class RecordChart extends Vue {
     this.loading = false;
   }
 
-  update() {
-    if (!this.selected.length) return undefined;
-    console.log(this.selected);
-  }
-
-  getDataByCategory(name: string) {
+  async getDataByCategory(name: string) {
     const data = this.items.filter(data => data.category === name);
     this.mearsumentAt = data.map(d => d.measure_at.replace("下午", ""));
+    console.log(this.mearsumentAt);
     this.mearsumentValue = data.map(d => d.value);
+    console.log(this.mearsumentValue);
     this.mearsumentMaxValue = data.map(d => 100);
+    console.log(this.mearsumentMaxValue);
     this.mearsumentMinValue = data.map(d => 20);
+    console.log(this.mearsumentMinValue);
   }
   getRandomInt(min, max) {
     min = Math.ceil(min);

@@ -31,7 +31,8 @@ export interface RecordOptions {
   q: string,
   order: string,
   sort: string,
-  uuid: string
+  uuid: string,
+  limit: number
 }
 
 export interface VerifyPatientsOptions {

@@ -26,7 +26,7 @@ class RecordModule extends VuexModule implements RecordState {
 
     @Action async getPatientRecordByUuid(options: RecordOptions): Promise<TODO> {
         this.setLoading(true);
-        const result = await http.get(`/user/${options.uuid}/record?limit=10&page=${options.page}`);
+        const result = await http.get(`/user/${options.uuid}/record?limit=${options.limit}&page=${options.page}`);
 
         if (result.data.data) {
             console.log(result);
