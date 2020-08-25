@@ -17,6 +17,7 @@ export interface PatientInfo {
   phone: string;
   updated_at: string;
   uuid: string;
+  email: string;
 }
 
 export interface PatientOptions {
@@ -24,6 +25,17 @@ export interface PatientOptions {
   q: string,
   order: string,
   sort: string
+}
+
+export interface PatientFormData {
+  birthday: string;
+  gender: string;
+  phone: string;
+  name: string;
+  email: string;
+  iid: string;
+  role: string;
+  place: string;
 }
 
 export interface RecordOptions {

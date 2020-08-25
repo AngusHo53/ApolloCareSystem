@@ -97,7 +97,6 @@ export default class PatientList extends Vue {
       rewards: { former: 0, latter: 0 }
     }
   };
-  private customerId = "";
   private query = "";
   private color = "";
   private quickSearchFilter = "";
@@ -150,7 +149,6 @@ export default class PatientList extends Vue {
     this.dialog = false;
   }
   onCancel() {
-    this.customerId = "";
     this.dialog = false;
   }
 

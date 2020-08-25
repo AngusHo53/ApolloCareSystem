@@ -1,6 +1,6 @@
 
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
-import { Patient, Order, Entity, PatientInfo, PatientOptions, RecordOptions, MeasureData, Record } from '@/types';
+import { Patient, Order, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormData } from '@/types';
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
@@ -40,7 +40,8 @@ class PatientModule extends VuexModule implements PatientState {
       name: '',
       phone: '',
       updated_at: '',
-      uuid: ''
+      uuid: '',
+      email: ''
     },
     id: 0,
     record: {
@@ -94,6 +95,20 @@ class PatientModule extends VuexModule implements PatientState {
     } else {
       console.error(result);
     }
+  }
+
+  @Action async createPatient(info: PatientFormData): Promise<TODO> {
+    this.setLoading(true);
+    this.setPatient(undefined);
+    const result = await http.post(`/user`, info);
+    if (result.data.data) {
+
+      console.log(result);
+      this.setLoading(false);
+    } else {
+      console.error(result);
+    }
+    return result;
   }
 
   @Action({ rawError: true })
