@@ -8,11 +8,13 @@
             <v-treeview
               activatable
               open-on-click
+              :multiple-active="false"
               transition
               :items="measureType"
               :active.sync="selected"
               return-object
-              @update:active="update()"
+              rounded
+              @update:active="update();"
             >
               <template v-slot:prepend="{ item }">
                 <v-icon v-if="!item.children">mdi-account</v-icon>
@@ -91,7 +93,7 @@ export default class RecordChart extends Vue {
 
   update() {
     if (!this.selected.length) this.getDataByCategory("metabolic");
-    else this.getDataByCategory(this.selected[0].name_zn);
+    else this.getDataByCategory(this.selected[0].name);
     this.updataChart();
   }
 
@@ -156,15 +158,11 @@ export default class RecordChart extends Vue {
   }
 
   async getDataByCategory(name: string) {
-    const data = this.items.filter(data => data.category === name);
+    const data = this.items.filter(data => data.key === name);
     this.mearsumentAt = data.map(d => d.measure_at.replace("下午", ""));
-    console.log(this.mearsumentAt);
     this.mearsumentValue = data.map(d => d.value);
-    console.log(this.mearsumentValue);
     this.mearsumentMaxValue = data.map(d => 100);
-    console.log(this.mearsumentMaxValue);
     this.mearsumentMinValue = data.map(d => 20);
-    console.log(this.mearsumentMinValue);
   }
   getRandomInt(min, max) {
     min = Math.ceil(min);
