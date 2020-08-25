@@ -1,6 +1,6 @@
 
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
-import { Patient, Order, Entity, PatientInfo, PatientOptions, RecordOptions, MeasureData, Record } from '@/types';
+import { Patient, Order, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormData } from '@/types';
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
@@ -40,15 +40,20 @@ class PatientModule extends VuexModule implements PatientState {
       name: '',
       phone: '',
       updated_at: '',
-      uuid: ''
+      uuid: '',
+      email: ''
     },
     id: 0,
     record: {
-      blood_pressure: {
-        systolic: this.measureDataInit,
-        diastolic: this.measureDataInit,
-        pulse: this.measureDataInit
-      }
+      blood: null,
+      blood_glucose: null,
+      blood_pressure: null,
+      body_temperature: null,
+      bone: null,
+      frailty: null,
+      mental: null,
+      metabolic: null,
+      spo2: null
     }
   };
   public patientRecords = undefined;
@@ -83,12 +88,25 @@ class PatientModule extends VuexModule implements PatientState {
     const result = await http.get(`/user/${uuid}?with=record&record=mode%3Abasic%7Cfield%3Aall`);
     if (result.data.data) {
       const data = result.data.data;
+      console.log(data);
       data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
       this.setLoading(false);
     } else {
       console.error(result);
     }
+  }
+
+  @Action async createPatient(info: PatientFormData): Promise<TODO> {
+    this.setLoading(true);
+    this.setPatient(undefined);
+    const result = await http.post(`/user`, info);
+    if (result.data.status === "Success") {
+      this.setLoading(false);
+    } else {
+      console.error(result);
+    }
+    return result;
   }
 
   @Action({ rawError: true })
