@@ -14,17 +14,6 @@
         <v-col class="text-right">
           <span class="display-3 font-weight-light" v-bind:style="{color:color()}" v-text="value"></span>
           <span class="subheading font-weight-light mr-1">{{unit}}</span>
-          <v-fade-transition>
-            <v-avatar
-              v-if="isPlaying"
-              :color="color"
-              :style="{
-                animationDuration: animationDuration
-              }"
-              class="mb-1 v-avatar--metronome"
-              size="12"
-            ></v-avatar>
-          </v-fade-transition>
         </v-col>
         <!-- <v-col class="text-right">
           <v-btn

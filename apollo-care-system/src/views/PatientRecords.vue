@@ -52,14 +52,18 @@
                       <v-card-text :key="name">
                         <MeasureCard
                           v-if="data"
-                          :header="name"
+                          :header="changeDataToCH(item, name)"
                           :normalRange="data.normalRange"
                           :measure_at="data.measure_at"
                           :state="data.state"
                           :unit="data.unit"
                           :value="data.value"
                         ></MeasureCard>
-                        <MeasureCard v-if="!data" :header="name" :value="'無量測資料'"></MeasureCard>
+                        <MeasureCard
+                          v-if="!data"
+                          :header="changeDataToCH(item, name)"
+                          :value="'無量測資料'"
+                        ></MeasureCard>
                       </v-card-text>
                     </template>
                   </v-card>
@@ -148,6 +152,13 @@ export default class PatientRecords extends Vue {
 
   changeToChartPage() {
     this.$router.push({ name: "病人紀錄圖表" });
+  }
+
+  changeDataToCH(item, name) {
+    const data = item.children.find(obj => {
+      return obj.name_zn === name;
+    });
+    if (data) return data.name;
   }
 
   test() {}

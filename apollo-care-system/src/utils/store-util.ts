@@ -58,7 +58,7 @@ export const MEASUREITEM = [
         id: 33, name_zn: "bmi", name: "BMI",
       },
       {
-        id: 34, name_zn: "nuscle_mass", name: "肌肉量",
+        id: 34, name_zn: "muscle_mass", name: "肌肉量",
       },
       {
         id: 35, name_zn: "body_fat", name: "脂肪率",
@@ -103,16 +103,19 @@ export const MEASUREITEM = [
         id: 61, name_zn: "handness", name: "慣用手",
       },
       {
-        id: 62, name_zn: "grip", name: "握力",
+        id: 62, name_zn: "left_grip", name: "左手握力",
       },
       {
-        id: 63, name_zn: "walktime", name: "走路時間",
+        id: 63, name_zn: "right_grip", name: "右手握力",
       },
       {
-        id: 64, name_zn: "walkspeed", name: "走路速度",
+        id: 64, name_zn: "walktime", name: "走路時間",
       },
       {
-        id: 65, name_zn: "ftsst", name: "五次坐站時間",
+        id: 65, name_zn: "walkspeed", name: "走路速度",
+      },
+      {
+        id: 66, name_zn: "ftsst", name: "五次坐站時間",
       }
     ]
   },
