@@ -92,7 +92,7 @@ export default class RecordChart extends Vue {
   }
 
   update() {
-    if (!this.selected.length) this.getDataByCategory("metabolic");
+    if (!this.selected.length) this.getDataByCategory("systolic");
     else this.getDataByCategory(this.selected[0].name);
     this.updataChart();
   }
@@ -116,16 +116,6 @@ export default class RecordChart extends Vue {
       xaxis: {
         type: "datetime",
         categories: this.mearsumentAt
-
-        // [
-        //   "2019-01-01",
-        //   "2019-01-02",
-        //   "2019-01-03",
-        //   "2019-01-04",
-        //   "2019-01-05",
-        //   "2019-01-06",
-        //   "2019-01-07"
-        // ]
       },
       yaxis: {
         labels: {
@@ -158,8 +148,12 @@ export default class RecordChart extends Vue {
   }
 
   async getDataByCategory(name: string) {
+    console.log(this.items);
     const data = this.items.filter(data => data.key === name);
-    this.mearsumentAt = data.map(d => d.measure_at.replace("下午", ""));
+    this.mearsumentAt = data.map(d =>
+      d.measure_at.replace("下午", "").replace("上午", "")
+    );
+    console.log(this.mearsumentAt);
     this.mearsumentValue = data.map(d => d.value);
     this.mearsumentMaxValue = data.map(d => 100);
     this.mearsumentMinValue = data.map(d => 20);
