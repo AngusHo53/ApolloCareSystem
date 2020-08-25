@@ -189,7 +189,13 @@ export default class PatientForm extends Vue {
 
     // this.place.country + this.place.township + this.place.areaDetail;
     console.log(this.patientFormData);
-    patientModule.createPatient(this.patientFormData);
+    patientModule.createPatient(this.patientFormData).then(result => {
+      if (result.data.status === "Success") {
+        appModule.sendSuccessNotice("新增成功");
+      } else {
+        appModule.sendErrorNotice("新增失敗" + result.data.message);
+      }
+    });
   }
 
   resetForm() {
@@ -209,6 +215,7 @@ export default class PatientForm extends Vue {
       township: "",
       areaDetail: ""
     };
+    appModule.setSnackbar;
   }
 
   cancel() {

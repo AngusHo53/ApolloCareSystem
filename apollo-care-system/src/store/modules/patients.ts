@@ -101,9 +101,7 @@ class PatientModule extends VuexModule implements PatientState {
     this.setLoading(true);
     this.setPatient(undefined);
     const result = await http.post(`/user`, info);
-    if (result.data.data) {
-
-      console.log(result);
+    if (result.data.status === "Success") {
       this.setLoading(false);
     } else {
       console.error(result);
