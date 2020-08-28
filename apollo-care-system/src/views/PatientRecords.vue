@@ -42,26 +42,29 @@
             </v-col>
             <v-col>
               <v-tabs v-model="measureTab" centered background-color="blue" dark grow>
-                <v-tab v-for="item  in measureItem" :key="item.name">{{ item.name_ch }}</v-tab>
+                <v-tab v-for="item  in measureItem" :key="item.name_en">{{ item.name }}</v-tab>
               </v-tabs>
               <v-tabs-items v-model="measureTab">
-                <v-tab-item v-for="(item) in measureItem" :key="item.name">
+                <v-tab-item v-for="(item) in measureItem" :key="item.name_en">
                   <v-card color="basil" flat>
                     <v-card-title></v-card-title>
-                    <template v-for="(data, name) in patient.record[item.name]">
-                      <v-card-text :key="name">
-                        <MeasureCard
-                          v-if="data"
-                          :header="name"
-                          :normalRange="data.normalRange"
-                          :measure_at="data.measure_at"
-                          :state="data.state"
-                          :unit="data.unit"
-                          :value="data.value"
-                        ></MeasureCard>
-                        <MeasureCard v-if="!data" :header="name" :value="'無量測資料'"></MeasureCard>
-                      </v-card-text>
-                    </template>
+                    <v-row>
+                      <template v-for="(data, name, index) in patient.record[item.name_en]">
+                        <v-col cols="6" md="6" lg="6" :key="index">
+                          <v-card-text :key="name">
+                            <MeasureCard
+                              v-if="data && data.value !== null"
+                              :header="data.name.zh"
+                              :measure_at="data.measure_at"
+                              :state="data.state"
+                              :unit="data.unit"
+                              :value="data.value"
+                            ></MeasureCard>
+                            <MeasureCard v-else :header="data.name.zh" :value="'無量測資料'"></MeasureCard>
+                          </v-card-text>
+                        </v-col>
+                      </template>
+                    </v-row>
                   </v-card>
                 </v-tab-item>
               </v-tabs-items>
@@ -82,6 +85,7 @@
             :pagination="pagination"
             :loading="loading"
             :options="recordsOptions"
+            :groupBy="'measure_at'"
             @updateTableData="updateTableData"
           ></Table>
         </v-card-text>
@@ -120,7 +124,7 @@ export default class PatientRecords extends Vue {
   headers = [
     { text: "類別", sortable: false, value: "category" },
     { text: "測量時間", sortable: false, value: "measure_at" },
-    { text: "關鍵字", sortable: false, value: "key" },
+    { text: "關鍵字", sortable: false, value: "zh" },
     { text: "值", sortable: false, value: "value" }
   ];
 
@@ -130,7 +134,7 @@ export default class PatientRecords extends Vue {
     order: "asc",
     sort: "",
     uuid: "",
-    limit: 10
+    limit: -1
   };
 
   async created() {

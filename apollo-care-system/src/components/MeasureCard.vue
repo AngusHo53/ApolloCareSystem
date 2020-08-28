@@ -6,7 +6,7 @@
         <span class="subheading">{{header}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <span v-if="measure_at">{{new Date(measure_at).toLocaleString()}}</span>
+      <span v-if="measure_at">{{new Date(measure_at * 1000).toLocaleString()}}</span>
     </v-toolbar>
 
     <v-card-text>
@@ -15,30 +15,7 @@
           <span class="display-3 font-weight-light" v-bind:style="{color:color()}" v-text="value"></span>
           <span class="subheading font-weight-light mr-1">{{unit}}</span>
         </v-col>
-        <!-- <v-col class="text-right">
-          <v-btn
-            dark
-            depressed
-            fab
-            @click="false"
-          >
-            <v-icon large>
-              mdi-more
-            </v-icon>
-          </v-btn>
-        </v-col>-->
       </v-row>
-      <!-- <v-range-slider
-          :tick-labels="normalRange"
-          :value="[0, 1]"
-          :color="color()"
-          min="0"
-          max="1"
-          ticks="always"
-          tick-size="2"
-          readonly
-          >
-      </v-range-slider>-->
     </v-card-text>
   </v-card>
 </template>
@@ -48,40 +25,23 @@ import Vue from "vue";
 import { PatientOptions } from "@/types";
 import { Component, Prop } from "vue-property-decorator";
 import { Mutation } from "vuex-module-decorators";
+import { MEASUREMENT_STATUS, MEASUREMENT_COLORS } from "@/utils/store-util";
 @Component
 export default class MeasureCard extends Vue {
   @Prop() header;
-  @Prop() normalRange;
   @Prop() value;
   @Prop() state;
   @Prop() unit;
   @Prop() measure_at;
 
-  interval = null;
-  isPlaying = false;
   create() {}
 
   color() {
-    switch (this.state) {
-      case 0: {
-        // good
-        return "#4FB99F";
-      }
-      case 1: {
-        // warning
-        return "#F0C419";
-      }
-      case 2: {
-        // bad
-        return "#C44F4B";
-      }
-      case 3: {
-        // unknown
-        return "#000000";
-      }
-      default:
-        return "#000000";
+    if (this.state) {
+      return MEASUREMENT_COLORS[this.state];
     }
+
+    return MEASUREMENT_COLORS[3];
   }
   animationDuration() {
     return `${60 / this.value}s`;

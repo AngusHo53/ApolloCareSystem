@@ -3,6 +3,7 @@
     <v-row justify="center">
       <v-col cols="12" sm="12" md="8" lg="6">
         <v-flex xs12>
+          <v-progress-linear v-if="loading" indeterminate></v-progress-linear>
           <v-card class="lighten-4 elevation-0">
             <v-card-title class="title">
               <v-icon>mdi-account</v-icon>
@@ -84,37 +85,16 @@
                             required
                           ></v-text-field>
                         </v-flex>
-                        <v-flex md4 sm12 xs12 class="mx-1 px-0">
-                          <v-autocomplete
-                            ref="area"
-                            v-model="place.country"
-                            :rules="[() => !!place.country || 'This field is required']"
-                            :items="countries"
-                            label="*縣市"
-                            placeholder
-                            required
-                          ></v-autocomplete>
-                        </v-flex>
-                        <v-flex md4 sm12 xs12 class="mx-1 px-0">
-                          <v-autocomplete
-                            ref="area"
-                            v-model="place.township"
-                            :rules="[() => !!place.township || 'This field is required']"
-                            :items="townships"
-                            label="*鄉鎮[市]區"
-                            placeholder
-                            required
-                          ></v-autocomplete>
-                        </v-flex>
                         <v-flex md8 sm12 xs12 class="mx-1 px-0">
-                          <v-text-field
-                            name="area"
-                            type="text"
-                            label="*詳細地址"
-                            v-model="place.areaDetail"
-                            class="input-group--focused"
+                          <v-autocomplete
+                            ref="place"
+                            v-model="patientFormData.place"
+                            :rules="[() => !!patientFormData.place || 'This field is required']"
+                            :items="countries"
+                            label="*地區"
+                            placeholder
                             required
-                          ></v-text-field>
+                          ></v-autocomplete>
                         </v-flex>
                       </v-layout>
                     </v-container>
@@ -156,13 +136,13 @@ import { GENDER } from "@/utils/store-util";
 @Component
 export default class PatientForm extends Vue {
   title = "";
+  loading = false;
   rules = {
     email: [() => isValidEmail(this.patientFormData.email)]
   };
 
   avatar = "";
-  countries = ["台北市", "台中市", "台南市"];
-  townships = ["西屯區", "北區", "沙鹿區"];
+  countries = ["DN,1", "台中市", "台南市"];
   patientFormData: PatientFormData = {
     birthday: "",
     gender: "",
@@ -174,27 +154,19 @@ export default class PatientForm extends Vue {
     place: ""
   };
 
-  place = {
-    country: "",
-    township: "",
-    areaDetail: ""
-  };
-
   save() {
-    this.patientFormData.place = "DN,1";
-
     this.patientFormData.gender = Object.keys(GENDER).find(
       key => GENDER[key] === this.patientFormData.gender
     );
-
+    this.loading = true;
     // this.place.country + this.place.township + this.place.areaDetail;
-    console.log(this.patientFormData);
     patientModule.createPatient(this.patientFormData).then(result => {
       if (result.data.status === "Success") {
         appModule.sendSuccessNotice("新增成功");
       } else {
         appModule.sendErrorNotice("新增失敗" + result.data.message);
       }
+      this.loading = false;
     });
   }
 
@@ -208,12 +180,6 @@ export default class PatientForm extends Vue {
       iid: "",
       role: "Patient",
       place: ""
-    };
-
-    this.place = {
-      country: "",
-      township: "",
-      areaDetail: ""
     };
     appModule.setSnackbar;
   }

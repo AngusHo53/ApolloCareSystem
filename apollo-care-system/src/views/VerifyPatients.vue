@@ -142,7 +142,9 @@ export default class VerifyPatients extends Vue {
   }
 
   saveVerifyPatients() {
-    verifyPatientModule.verifyPatientsByUuid(this.verifySelect);
+    verifyPatientModule.verifyPatientsByUuid(this.verifySelect).then(() => {
+      this.updateTableData();
+    });
   }
 
   close() {
@@ -153,14 +155,13 @@ export default class VerifyPatients extends Vue {
   public async save() {
     this.dialog = false;
     this.saveVerifyPatients();
-    this.updateTableData();
   }
 
-  updateTableData() {
-    verifyPatientModule.clearVerifyPatients();
+  async updateTableData() {
+    await verifyPatientModule.clearVerifyPatients();
     // this.verifyPatientOptions.page = this.pagination.page;
     // console.log(this.verifyPatientOptions.page);
-    verifyPatientModule.getVerifyPatients(this.verifyPatientOptions);
+    await verifyPatientModule.getVerifyPatients(this.verifyPatientOptions);
   }
 
   get verifyPatients() {
