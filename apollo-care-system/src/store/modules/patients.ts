@@ -85,7 +85,7 @@ class PatientModule extends VuexModule implements PatientState {
   @Action async getPatientByUuid(uuid: string): Promise<TODO> {
     this.setLoading(true);
     this.setPatient(undefined);
-    const result = await http.get(`/user/${uuid}?with=record&record=mode%3Abasic%7Cfield%3Aall`);
+    const result = await http.get(`/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`);
     if (result.data.data) {
       const data = result.data.data;
       console.log(data);
@@ -113,14 +113,7 @@ class PatientModule extends VuexModule implements PatientState {
   async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
       if (element.user) {
-        // if (element.user.birthday) {
-        //   const timestamp = Date.parse(element.user.birthday);
-        //   if (isNaN(timestamp) === false) {
-        //     const date = new Date(element.user.birthday).toLocaleString();
-        //     element.user.birthday = date;
-        //   }
-        // }
-        // element.user.phone = 'xxxx-xxx-xxx';
+        element.user.gender = GENDER[element.user.gender];
         this.items.push(element.user);
       }
     });

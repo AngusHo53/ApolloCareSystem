@@ -22,7 +22,7 @@ class RecordModule extends VuexModule implements RecordState {
 
     public currentPage = 1;
     public totalPages = 0;
-    public measurementType = {};
+    public measurementTypes = {};
 
     @Action async getPatientRecordByUuid(options: RecordOptions): Promise<TODO> {
         this.setLoading(true);
@@ -33,24 +33,33 @@ class RecordModule extends VuexModule implements RecordState {
             const data = result.data.data;
             // this.setPatient(result.data.data);
             this.setTotalPages(data.total_page);
-            this.setTotalRecords(data.total_records);
             this.setCurrentPage(data.current_page);
             this.setRecords(data.records);
-            await this.formateMearsureAt(data.records);
+            await this.getMeasurementTypes();
+            await this.formateData(data.records);
 
             this.setRecordDataTable(data.records);
-            this.setLoading(false);
         } else {
             console.error(result);
         }
+        this.setLoading(false);
     }
-    @Action async formateMearsureAt(data: any) {
+    @Action async formateData(data: any) {
+        const total = new Set();
         data.forEach(element => {
             if (element) {
-                element.measure_at = new Date(element.measure_at).toLocaleString();
+                element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
+                // Calculate the total records
+                total.add(element.measure_at);
+                element.zh = this.measurementTypes[element.key].i18n.zh;
+                if (this.measurementTypes[element.category]) {
+                    element.category = this.measurementTypes[element.category].i18n.zh;
+                }
             }
             this.items.push(element);
         })
+
+        this.setTotalRecords(total.size);
     }
 
     @Action async setRecordDataTable(data: Entity[]) {
@@ -65,19 +74,19 @@ class RecordModule extends VuexModule implements RecordState {
         this.setItems([]);
     }
 
-    @Action async getMeasurementType(): Promise<TODO> {
+    @Action async getMeasurementTypes(): Promise<TODO> {
         const result = await http.get(`/measurements/types`);
         if (result) {
-            this.setMeasurementType(result.data.measurement_type);
-            console.log(result);
+            console.log(result.data.data.measurement_type)
+            this.setMeasurementTypes(result.data.data.measurement_type);
         } else {
             console.error(result);
         }
     }
 
 
-    @Mutation setMeasurementType(measurementType: any) {
-        this.measurementType = measurementType;
+    @Mutation setMeasurementTypes(measurementTypes: any) {
+        this.measurementTypes = measurementTypes;
     }
 
     @Mutation setTotalPages(totalPages: number): void {

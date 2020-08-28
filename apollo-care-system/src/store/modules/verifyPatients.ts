@@ -1,7 +1,7 @@
 
 import { getData, putData, postData, deleteData } from '@/utils/demo-api';
 import { Patient, Order, Entity, PatientInfo, PatientOptions, VerifyPatientsOptions, RecordOptions, MeasureData, Record } from '@/types';
-import { getDefaultPagination, getPagination } from '@/utils/store-util';
+import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
 import Vue from 'vue';
@@ -64,7 +64,6 @@ class VerifyPatientModule extends VuexModule implements PatientState {
 
   @Action({ rawError: true })
   async extractVerifyPatientInfo(verifyPatients: Patient[]) {
-    const gender = { 1: '男', 2: '女' };
     verifyPatients.forEach(element => {
       if (element.user) {
         // if (element.user.birthday) {
@@ -75,7 +74,7 @@ class VerifyPatientModule extends VuexModule implements PatientState {
         //     }
         // }
         // element.user.phone = 'xxxx-xxx-xxx';
-        element.user.gender = gender[element.user.gender];
+        element.user.gender = GENDER[element.user.gender];
         this.verifyItems.push(element.user);
       }
     });

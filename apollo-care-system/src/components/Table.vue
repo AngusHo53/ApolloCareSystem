@@ -11,6 +11,8 @@
       :loading="loading"
       item-key="uuid"
       loading-text="Loading..."
+      :group-by="groupBy"
+      :group-desc="true"
     >
       <template v-slot:item.actions="{ item }">
         <v-btn
@@ -94,6 +96,7 @@ export default class Table extends Vue {
   @Prop() readonly loading: boolean;
   @Prop() readonly showSelect: boolean;
   @Prop() readonly select: VerifyPatientsOptions;
+  @Prop() readonly groupBy: string;
   //
   order = true;
   sort = "";
