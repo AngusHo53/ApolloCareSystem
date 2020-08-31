@@ -12,7 +12,7 @@
     <v-card-text>
       <v-row class="mb-4" justify="space-between">
         <v-col class="text-right">
-          <span class="display-3 font-weight-light" v-bind:style="{color:color()}" v-text="value"></span>
+          <span class="text-h4 font-weight-light" v-bind:style="{color:color()}" v-text="value"></span>
           <span class="subheading font-weight-light mr-1">{{unit}}</span>
         </v-col>
       </v-row>

@@ -220,7 +220,6 @@ export default class RecordChart extends Vue {
       d.measure_at.replace("下午", "").replace("上午", "")
     );
     this.mearsumentValue = data.map(d => d.value);
-    console.log(this.mearsumentValue);
 
     // GOOD
     this.STATUS_GOOD = this.measurementTypes[name].rule.find(r => {
@@ -229,8 +228,6 @@ export default class RecordChart extends Vue {
 
     if (this.STATUS_GOOD) {
       this.mearsumentGoodValue = data.map(() => this.STATUS_GOOD.value);
-      console.log("STATUS_GOOD");
-      console.log(this.STATUS_GOOD);
     }
 
     // WARNING
@@ -239,8 +236,6 @@ export default class RecordChart extends Vue {
     });
     if (this.STATUS_WARNING) {
       this.mearsumentWarningValue = data.map(() => this.STATUS_WARNING.value);
-      console.log("STATUS_WARNING");
-      console.log(this.STATUS_WARNING);
     }
 
     // BAD
@@ -249,8 +244,6 @@ export default class RecordChart extends Vue {
     });
     if (this.STATUS_BAD) {
       this.mearsumentBadValue = data.map(() => this.STATUS_BAD.value);
-      console.log("STATUS_BAD");
-      console.log(this.STATUS_BAD);
     }
   }
   getRandomInt(min, max) {
