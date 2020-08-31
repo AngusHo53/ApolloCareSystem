@@ -14,6 +14,12 @@
       :group-by="groupBy"
       :group-desc="true"
     >
+      <template v-slot:group.header="{items, isOpen, toggle}">
+        <th colspan="3">
+          <v-icon @click="toggle">{{ isOpen ? 'mdi-minus' : 'mdi-plus' }}</v-icon>
+          測量時間: {{ items[0].measure_at }}
+        </th>
+      </template>
       <template v-slot:item.actions="{ item }">
         <v-btn
           fab

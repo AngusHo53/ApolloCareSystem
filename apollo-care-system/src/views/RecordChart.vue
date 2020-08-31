@@ -1,12 +1,15 @@
 <template>
   <v-container fluid>
-    <v-card>
-      <v-card-title class="indigo white--text">
-        圖表
-        <v-spacer></v-spacer>
-        <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
-          <v-icon>mdi-close-circle-outline</v-icon>
-        </v-btn>
+    <v-card :loading="loading">
+      <v-card-title class="title">
+        <v-toolbar flat>
+          <!-- <div class='blue rounded-circle d-inline-flex pa-2' style='width:16px;height:16px;'></div> -->
+          <v-toolbar-title class="text-h4 pa-2 ont-weight-bold">圖表</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
+            <v-icon>mdi-close-circle-outline</v-icon>
+          </v-btn>
+        </v-toolbar>
       </v-card-title>
 
       <v-row class="pa-4" justify="space-between">
@@ -60,7 +63,7 @@
               <v-btn value="justify">一年</v-btn>
             </v-btn-toggle>
           </v-card-title>
-          <v-card-text>
+          <v-card-text v-if="chartOptions">
             <VueApexCharts :height="300" :type="'line'" :options="chartOptions" :series="series" />
           </v-card-text>
         </v-col>
@@ -74,15 +77,19 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import VueApexCharts from "vue-apexcharts";
-import colors from "vuetify/es5/util/colors";
 import { recordModule } from "@/store/modules/records";
 import {
   MEASUREITEM,
   MEASUREMENT_STATUS,
   MEASUREMENT_COLORS
 } from "@/utils/store-util";
-
+import { appModule } from "@/store/modules/app";
 Vue.use(VueApexCharts);
+
+interface STASUS {
+  value: number;
+}
+
 @Component({
   components: {
     VueApexCharts
@@ -90,9 +97,8 @@ Vue.use(VueApexCharts);
 })
 export default class RecordChart extends Vue {
   text;
-  loading = true;
-  chartOptions;
-  series;
+  chartOptions = {};
+  series = [];
   mearsumentAt = [];
   mearsumentValue = [];
   mearsumentGoodValue = [];
@@ -105,9 +111,15 @@ export default class RecordChart extends Vue {
     return this.measureTypeShow.includes(item.name_en);
   });
 
-  STATUS_GOOD = {};
-  STATUS_WARNING = {};
-  STATUS_BAD = {};
+  STATUS_GOOD: STASUS = {
+    value: 0
+  };
+  STATUS_WARNING: STASUS = {
+    value: 0
+  };
+  STATUS_BAD: STASUS = {
+    value: 0
+  };
 
   recordsOptions = {
     page: 1,
@@ -121,7 +133,6 @@ export default class RecordChart extends Vue {
   async created() {
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
     recordModule.getPatientRecordByUuid(this.recordsOptions).then(() => {
-      console.log(this.items);
       this.update();
     });
     // Initial
@@ -132,11 +143,13 @@ export default class RecordChart extends Vue {
     return MEASUREMENT_COLORS[status];
   }
 
-  update() {
+  async update() {
     let measurementName = "systolic";
     if (this.selected.length) {
       measurementName = this.selected[0].name_en;
     }
+    console.log(this.mearsumentAt);
+    await this.resetChart();
     this.getDataByCategory(measurementName);
     this.updataChart();
   }
@@ -174,8 +187,7 @@ export default class RecordChart extends Vue {
       },
       stroke: {
         width: [3, 3, 3, 5],
-        curve: "straight",
-        dashArray: [10, 10, 10, 0]
+        curve: "straight"
         // colors: ['#EF5350', '#2196F3', '#EF5350']
       },
       markers: {
@@ -193,7 +205,13 @@ export default class RecordChart extends Vue {
         MEASUREMENT_COLORS[2]
       ]
     };
-    this.loading = false;
+  }
+
+  resetChart() {
+    this.mearsumentValue = [];
+    this.mearsumentGoodValue = [];
+    this.mearsumentWarningValue = [];
+    this.mearsumentBadValue = [];
   }
 
   async getDataByCategory(name: string) {
@@ -210,7 +228,7 @@ export default class RecordChart extends Vue {
     });
 
     if (this.STATUS_GOOD) {
-      this.mearsumentGoodValue = data.map(d => this.STATUS_GOOD.value);
+      this.mearsumentGoodValue = data.map(() => this.STATUS_GOOD.value);
       console.log("STATUS_GOOD");
       console.log(this.STATUS_GOOD);
     }
@@ -220,7 +238,7 @@ export default class RecordChart extends Vue {
       return r.result === MEASUREMENT_STATUS.WARNING;
     });
     if (this.STATUS_WARNING) {
-      this.mearsumentWarningValue = data.map(d => this.STATUS_WARNING.value);
+      this.mearsumentWarningValue = data.map(() => this.STATUS_WARNING.value);
       console.log("STATUS_WARNING");
       console.log(this.STATUS_WARNING);
     }
@@ -230,7 +248,7 @@ export default class RecordChart extends Vue {
       return r.result === MEASUREMENT_STATUS.BAD;
     });
     if (this.STATUS_BAD) {
-      this.mearsumentBadValue = data.map(d => this.STATUS_BAD.value);
+      this.mearsumentBadValue = data.map(() => this.STATUS_BAD.value);
       console.log("STATUS_BAD");
       console.log(this.STATUS_BAD);
     }
@@ -251,6 +269,10 @@ export default class RecordChart extends Vue {
 
   get measurementTypes() {
     return recordModule.measurementTypes;
+  }
+
+  get loading() {
+    return appModule.loading;
   }
 }
 </script>

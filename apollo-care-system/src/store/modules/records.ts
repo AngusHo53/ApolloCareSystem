@@ -37,12 +37,11 @@ class RecordModule extends VuexModule implements RecordState {
             this.setRecords(data.records);
             await this.getMeasurementTypes();
             await this.formateData(data.records);
-
             this.setRecordDataTable(data.records);
+            this.setLoading(false);
         } else {
             console.error(result);
         }
-        this.setLoading(false);
     }
     @Action async formateData(data: any) {
         const total = new Set();
@@ -109,7 +108,6 @@ class RecordModule extends VuexModule implements RecordState {
     @Mutation setTotalRecords(totalRecords: number): void {
         this.totalRecords = totalRecords;
     }
-
 
     @Mutation setPagination(pagination: TODO): void {
         this.pagination = pagination;
