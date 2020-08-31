@@ -1,4 +1,4 @@
-import { getData, putData, postData, deleteData } from '@/utils/demo-api';
+import { formatValue } from '@/utils/app-util';
 import { Entity, MeasureData, RecordOptions } from '@/types';
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
@@ -37,15 +37,21 @@ class RecordModule extends VuexModule implements RecordState {
             this.setRecords(data.records);
             await this.getMeasurementTypes();
             await this.formateData(data.records);
-            this.setRecordDataTable(data.records);
+
+            await this.setRecordDataTable(data.records);
             this.setLoading(false);
         } else {
             console.error(result);
         }
+
     }
     @Action async formateData(data: any) {
         const total = new Set();
-        data.forEach(element => {
+
+        await data.sort((a, b) => {
+            return (a.measure_at > b.measure_at) ? 1 : ((b.measure_at > a.measure_at) ? -1 : 0);
+        });
+        await data.forEach(element => {
             if (element) {
                 element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
                 // Calculate the total records
@@ -54,6 +60,7 @@ class RecordModule extends VuexModule implements RecordState {
                 if (this.measurementTypes[element.category]) {
                     element.category = this.measurementTypes[element.category].i18n.zh;
                 }
+                element.value = formatValue(element.value);
             }
             this.items.push(element);
         })
@@ -108,6 +115,7 @@ class RecordModule extends VuexModule implements RecordState {
     @Mutation setTotalRecords(totalRecords: number): void {
         this.totalRecords = totalRecords;
     }
+
 
     @Mutation setPagination(pagination: TODO): void {
         this.pagination = pagination;

@@ -52,13 +52,14 @@
                       <template v-for="(data, name, index) in patient.record[item.name_en]">
                         <v-col cols="6" md="6" lg="6" :key="index">
                           <v-card-text :key="name">
+                            {{data.value}}
                             <MeasureCard
                               v-if="data && data.value !== null"
                               :header="data.name.zh"
                               :measure_at="data.measure_at"
                               :state="data.state"
                               :unit="data.unit"
-                              :value="data.value"
+                              :value="data.value | formatValue"
                             ></MeasureCard>
                             <MeasureCard v-else :header="data.name.zh" :value="'無量測資料'"></MeasureCard>
                           </v-card-text>
@@ -104,6 +105,11 @@ import Vue from "vue";
 import { patientModule } from "@/store/modules/patients";
 import { recordModule } from "@/store/modules/records";
 import { getDefaultPagination, MEASUREITEM } from "@/utils/store-util";
+import { formatValue } from "@/utils/app-util";
+
+Vue.filter("formatValue", function(value) {
+  return formatValue(value);
+});
 
 @Component({
   components: {

@@ -81,7 +81,7 @@ export function buildSearchFilters(searchFilter: SearchFilter) {
   if (searchFilter) {
     searchFilter.filters = [];
 
-    Object.keys(searchFilter).forEach(filter=> {
+    Object.keys(searchFilter).forEach(filter => {
       if (filter === "between") {
         Object.keys(searchFilter[filter]).forEach(propName => {
           if (
@@ -152,4 +152,13 @@ export function isValidEmail(email: string) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (email && !re.test(email)) return "Email is invalid.";
   return true;
+}
+
+export function formatValue(value) {
+  if (value === "true" || value === true) {
+    return "有";
+  } else if (value === "false" || value === false) {
+    return "無";
+  }
+  return value;
 }

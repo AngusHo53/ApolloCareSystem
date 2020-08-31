@@ -1,5 +1,5 @@
 
-import { getData, putData, postData, deleteData } from '@/utils/demo-api';
+import { formatValue } from '@/utils/app-util';
 import { Patient, Order, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormData } from '@/types';
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
