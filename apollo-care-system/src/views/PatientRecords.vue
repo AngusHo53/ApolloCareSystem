@@ -160,9 +160,6 @@ export default class PatientRecords extends Vue {
     });
     if (data) return data.name;
   }
-
-  test() {}
-
   get pagination() {
     return recordModule.pagination;
   }

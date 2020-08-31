@@ -83,7 +83,6 @@ class PatientModule extends VuexModule implements PatientState {
   }
 
   @Action async getPatientByUuid(uuid: string): Promise<TODO> {
-    this.setLoading(true);
     this.setPatient(undefined);
     const result = await http.get(`/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`);
     if (result.data.data) {
@@ -91,7 +90,6 @@ class PatientModule extends VuexModule implements PatientState {
       console.log(data);
       data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
-      this.setLoading(false);
     } else {
       console.error(result);
     }
