@@ -1,13 +1,7 @@
 <template>
   <v-container id="dashboard" fluid grid-list-lg class="mx-0 pa-0">
     <v-layout row wrap>
-      <v-flex
-        md3
-        sm6
-        xs12
-        v-for="(stat, index) in monthlyStats"
-        v-bind:key="index"
-      >
+      <v-flex md3 sm6 xs12 v-for="(stat, index) in monthlyStats" v-bind:key="index">
         <v-card :class="stat.bgColor" dark>
           <v-container fluid grid-list-sm dark>
             <v-layout class="mt-0 mb-0 mx-1" row wrap>
@@ -28,8 +22,7 @@
                       right
                       text
                       small
-                      >{{ stat.action.label }}</v-btn
-                    >
+                    >{{ stat.action.label }}</v-btn>
                   </v-flex>
                 </v-layout>
               </v-flex>
@@ -38,7 +31,7 @@
         </v-card>
       </v-flex>
     </v-layout>
-    <v-layout class="" row wrap>
+    <v-layout class row wrap>
       <v-flex md4 xs12>
         <v-card light>
           <doughnut-chart></doughnut-chart>
@@ -63,8 +56,7 @@ import Vue from "vue";
 
 @Component({
   name: "Dashboard",
-  components: {
-  }
+  components: {}
 })
 export default class Dashboard extends Vue {
   monthlyStats = [
@@ -109,6 +101,5 @@ export default class Dashboard extends Vue {
       }
     }
   ];
-
 }
 </script>

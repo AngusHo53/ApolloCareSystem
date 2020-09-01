@@ -4,13 +4,16 @@
       <v-card style="margin-bottom:10px">
         <v-card-title>
           <v-toolbar flat color="white">
-            <v-toolbar-title>審核病人列表 {{ totalVerifyPatients ? '(' + totalVerifyPatients + ')' : '' }}</v-toolbar-title>
+            <v-toolbar-title>
+              <v-awesome-icon icon="user-check" size="lg" />
+              審核病人列表 {{ totalVerifyPatients ? '(' + totalVerifyPatients + ')' : '' }}
+            </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-col cols="12" md="2">
-              <v-btn class="mb-3 blue" @click="showDialog('通過名單')">通過</v-btn>
+              <v-btn class="mb-3 blue white--text" @click="showDialog('通過名單')">通過</v-btn>
             </v-col>
             <v-col cols="12" md="2">
-              <v-btn class="mb-3 red" @click="showDialog('不通過名單')">不通過</v-btn>
+              <v-btn class="mb-3 red white--text" @click="showDialog('不通過名單')">不通過</v-btn>
             </v-col>
           </v-toolbar>
         </v-card-title>
@@ -54,7 +57,7 @@
           <v-divider></v-divider>
           <v-list-item two-line v-for="item in verifySelect.patients" :key="item.uuid">
             <v-list-item-avatar class="grey lighten-1 white--text">
-              <v-icon>mdi-account</v-icon>
+              <v-awesome-icon icon="user" size="lg" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>名稱: {{item.name}}</v-list-item-title>

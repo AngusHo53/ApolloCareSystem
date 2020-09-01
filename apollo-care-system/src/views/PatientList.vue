@@ -7,10 +7,10 @@
           <v-spacer></v-spacer>
           <div>
             <v-btn class="blue darken-2 mr-2" fab small dark @click.native="createPatient()">
-              <v-icon>mdi-account-plus</v-icon>
+              <v-awesome-icon icon="user-plus" size="lg" />
             </v-btn>
             <v-btn class="teal darken-2 mr-2" fab small dark @click.native="test()">
-              <v-icon>mdi-printer</v-icon>
+              <v-awesome-icon icon="print" size="lg" />
             </v-btn>
           </div>
         </v-card-title>

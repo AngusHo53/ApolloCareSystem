@@ -7,7 +7,7 @@
           <v-toolbar-title class="text-h4 pa-2 ont-weight-bold">圖表</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
-            <v-icon>mdi-close-circle-outline</v-icon>
+            <v-awesome-icon icon="times-circle" size="lg" />
           </v-btn>
         </v-toolbar>
       </v-card-title>
@@ -25,11 +25,7 @@
               return-object
               rounded
               @update:active="update();"
-            >
-              <template v-slot:prepend="{ item }">
-                <v-icon v-if="!item.children">mdi-account</v-icon>
-              </template>
-            </v-treeview>
+            ></v-treeview>
           </v-card-text>
         </v-col>
 
@@ -186,8 +182,9 @@ export default class RecordChart extends Vue {
         enabled: false
       },
       stroke: {
-        width: [3, 3, 3, 5],
-        curve: "straight"
+        width: [6, 3, 3],
+        curve: "straight",
+        dashArray: [0, 3, 3]
         // colors: ['#EF5350', '#2196F3', '#EF5350']
       },
       markers: {

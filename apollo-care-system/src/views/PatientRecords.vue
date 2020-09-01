@@ -9,7 +9,7 @@
             <v-toolbar-title class="text-h4 pa-2 ont-weight-bold">最新測量記錄</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn class="blue darken-2 mr-2" fab small dark @click.native="changeToChartPage()">
-              <v-icon>mdi-chart-bar</v-icon>
+              <v-awesome-icon icon="chart-line" size="lg" />
             </v-btn>
           </v-toolbar>
         </v-card-title>
@@ -45,14 +45,17 @@
                 <v-tab v-for="item  in measureItem" :key="item.name_en">{{ item.name }}</v-tab>
               </v-tabs>
               <v-tabs-items v-model="measureTab">
-                <v-tab-item v-for="(item) in measureItem" :key="item.name_en">
+                <v-tab-item
+                  v-for="(item) in measureItem"
+                  :key="item.name_en"
+                  style="transition: none;"
+                >
                   <v-card color="basil" flat>
                     <v-card-title></v-card-title>
                     <v-row>
                       <template v-for="(data, name, index) in patient.record[item.name_en]">
                         <v-col cols="6" md="6" lg="6" :key="index">
                           <v-card-text :key="name">
-                            {{data.value}}
                             <MeasureCard
                               v-if="data && data.value !== null"
                               :header="data.name.zh"
@@ -61,7 +64,7 @@
                               :unit="data.unit"
                               :value="data.value | formatValue"
                             ></MeasureCard>
-                            <MeasureCard v-else :header="data.name.zh" :value="'無量測資料'"></MeasureCard>
+                            <MeasureCard v-else :header="data.name.zh" :value="'--'"></MeasureCard>
                           </v-card-text>
                         </v-col>
                       </template>
