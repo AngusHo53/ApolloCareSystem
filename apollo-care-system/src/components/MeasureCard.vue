@@ -1,9 +1,14 @@
 <template>
-  <v-card if="value" class="mx-auto" max-width="600">
-    <v-toolbar flat dense>
+  <v-card
+    if="value"
+    class="mx-auto rounded-card"
+    max-width="600"
+    outlined
+    style="border-radius:30px;"
+  >
+    <v-toolbar flat>
       <v-toolbar-title>
-        <v-icon large>mdi-pause</v-icon>
-        <span class="subheading">{{header}}</span>
+        <span class="text-h4 font-weight-bold">{{header}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <span v-if="measure_at">{{new Date(measure_at * 1000).toLocaleString()}}</span>
@@ -12,14 +17,17 @@
     <v-card-text>
       <v-row class="mb-4" justify="space-between">
         <v-col class="text-right">
-          <span class="text-h4 font-weight-light" v-bind:style="{color:color()}" v-text="value"></span>
+          <span
+            class="text-h4 font-weight-light"
+            v-bind:style="{color:color()}"
+            v-text="value + ' '"
+          ></span>
           <span class="subheading font-weight-light mr-1">{{unit}}</span>
         </v-col>
       </v-row>
     </v-card-text>
   </v-card>
 </template>
-
 <script>
 import Vue from "vue";
 import { PatientOptions } from "@/types";

@@ -10,7 +10,7 @@
               {{ title }}
               <v-spacer></v-spacer>
               <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
-                <v-icon dark>mdi-close-circle-outline</v-icon>
+                <v-awesome-icon icon="times-circle" size="lg" />
               </v-btn>
             </v-card-title>
             <v-card-text v-if="patientFormData">

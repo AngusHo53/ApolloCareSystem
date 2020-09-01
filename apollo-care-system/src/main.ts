@@ -7,7 +7,13 @@ import vuetify from './plugins/vuetify';
 import http from './http/axios';
 import VueClipboard from 'vue-clipboard2';
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import VueProgressBar from 'vue-progressbar';
+
+
 Vue.prototype.$http = http;
 Vue.prototype.baseURL = process.env.VUE_APP_ROOT_API;
 
@@ -29,6 +35,9 @@ Vue.config.productionTip = false;
 
 Vue.use(VueProgressBar, options);
 Vue.use(VueClipboard)
+
+library.add(fas);
+Vue.component('v-awesome-icon', FontAwesomeIcon)
 new Vue({
   router,
   store,

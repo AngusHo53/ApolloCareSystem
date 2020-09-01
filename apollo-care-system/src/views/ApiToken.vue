@@ -55,9 +55,9 @@
               </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-              <v-icon class="mr-2" @click="deleteItem(item)">mdi-delete</v-icon>
-              <v-icon class="mr-2" @click="resetItem(item)">mdi-cached</v-icon>
+              <v-awesome-icon class="mr-2" @click="editItem(item)" icon="edit" size="lg" />
+              <v-awesome-icon class="mr-2" @click="deleteItem(item)" icon="trash" size="lg" />
+              <v-awesome-icon class="mr-2" @click="resetItem(item)" icon="sync-alt" size="lg" />
             </template>
             <template v-slot:expanded-item="{ headers, item }">
               <td>

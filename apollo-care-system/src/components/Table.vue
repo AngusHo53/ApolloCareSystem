@@ -16,7 +16,7 @@
     >
       <template v-slot:group.header="{items, isOpen, toggle}">
         <th colspan="3">
-          <v-icon @click="toggle">{{ isOpen ? 'mdi-minus' : 'mdi-plus' }}</v-icon>
+          <v-awesome-icon @click="toggle" :icon="isOpen ? 'minus' : 'plus' " size="lg" />
           測量時間: {{ items[0].measure_at }}
         </th>
       </template>
@@ -28,13 +28,13 @@
           dark
           @click.native="$emit('dataTableClickHandler', item)"
         >
-          <v-icon>mdi-account</v-icon>
+          <v-awesome-icon icon="user" size="lg" />
         </v-btn>
         <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
-          <v-icon>mdi-pencil</v-icon>
+          <v-awesome-icon icon="edit" size="lg" />
         </v-btn>
         <v-btn fab class="cyan" small @click.native="$emit('remove', item)">
-          <v-icon>mdi-trash-can-outline</v-icon>
+          <v-awesome-icon icon="trash" size="lg" />
         </v-btn>
       </template>
       <template slot="no-data">
@@ -62,10 +62,10 @@
     >
       <template v-slot:item.actions="{ item }">
         <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
-          <v-icon>mdi-pencil</v-icon>
+          <v-awesome-icon icon="edit" size="lg" />
         </v-btn>
         <v-btn fab class="cyan" small @click.native="$emit('remove', item)">
-          <v-icon>mdi-trash-can-outline</v-icon>
+          <v-awesome-icon icon="trash" size="lg" />
         </v-btn>
       </template>
       <template slot="no-data">

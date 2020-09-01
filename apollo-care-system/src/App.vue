@@ -60,10 +60,7 @@
             router
           >
             <v-list-item-action class="pr-1 pl-2 mr-1">
-              <v-icon
-                :class="activeMenuItem.includes(item.title) ? 'blue--text' : ''"
-                :title="item.title"
-              >{{ item.icon }}</v-icon>
+              <v-awesome-icon :title="item.title" :icon="item.icon" />
             </v-list-item-action>
             <v-list-item-content :class="activeMenuItem.includes(item.title) ? 'blue--text' : ''">
               <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -109,25 +106,25 @@ export default class App extends Vue {
   private fixed = false;
   private items: AppMenu[] = [
     {
-      icon: "mdi-home-group",
+      icon: "home",
       title: "社區狀態顯示表",
       vertical: "community",
       link: "communities"
     },
     {
-      icon: "mdi-check",
+      icon: "check",
       title: "病人審核",
       vertical: "verifyPatients",
       link: "verifyPatients"
     },
     {
-      icon: "mdi-account-group",
+      icon: "users",
       title: "病人名單",
       vertical: "Patient",
       link: "patients"
     },
     {
-      icon: "mdi-api",
+      icon: "key",
       title: "API列表",
       vertical: "apiList",
       link: "apilist"
