@@ -8,7 +8,14 @@
             <!-- <div class='blue rounded-circle d-inline-flex pa-2' style='width:16px;height:16px;'></div> -->
             <v-toolbar-title class="text-h4 pa-2 ont-weight-bold">最新測量記錄</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn class="blue darken-2 mr-2" fab small dark @click.native="changeToChartPage()">
+            <v-btn
+              v-if="!loading"
+              class="blue darken-2 mr-2"
+              fab
+              small
+              dark
+              @click.native="changeToChartPage()"
+            >
               <v-awesome-icon icon="chart-line" size="lg" />
             </v-btn>
           </v-toolbar>
