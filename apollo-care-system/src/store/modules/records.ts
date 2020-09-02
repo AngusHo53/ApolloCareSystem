@@ -27,7 +27,6 @@ class RecordModule extends VuexModule implements RecordState {
     @Action async getPatientRecordByUuid(options: RecordOptions): Promise<TODO> {
         this.setLoading(true);
         const result = await http.get(`/user/${options.uuid}/record?limit=${options.limit}&page=${options.page}`);
-
         if (result.data.data) {
             console.log(result);
             const data = result.data.data;
@@ -37,7 +36,6 @@ class RecordModule extends VuexModule implements RecordState {
             this.setRecords(data.records);
             await this.getMeasurementTypes();
             await this.formateData(data.records);
-
             await this.setRecordDataTable(data.records);
             this.setLoading(false);
         } else {
@@ -49,7 +47,8 @@ class RecordModule extends VuexModule implements RecordState {
         const total = new Set();
 
         await data.sort((a, b) => {
-            return (a.measure_at > b.measure_at) ? 1 : ((b.measure_at > a.measure_at) ? -1 : 0);
+            console.log();
+            return (new Date(a.measure_at).getTime() > new Date(b.measure_at).getTime()) ? 1 : ((new Date(b.measure_at).getTime() > new Date(a.measure_at).getTime()) ? -1 : 0);
         });
         await data.forEach(element => {
             if (element) {
@@ -64,7 +63,6 @@ class RecordModule extends VuexModule implements RecordState {
             }
             this.items.push(element);
         })
-
         this.setTotalRecords(total.size);
     }
 

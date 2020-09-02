@@ -51,12 +51,12 @@
             </div>
             <v-spacer></v-spacer>
             <v-btn-toggle v-model="text" tile color="deep-purple accent-3" group>
-              <v-btn value="left">一周</v-btn>
-              <v-btn value="center">一個月</v-btn>
+              <v-btn value="week">一周</v-btn>
+              <v-btn value="month">一個月</v-btn>
 
-              <v-btn value="right">半年</v-btn>
+              <v-btn value="halfyear">半年</v-btn>
 
-              <v-btn value="justify">一年</v-btn>
+              <v-btn value="yaer">一年</v-btn>
             </v-btn-toggle>
           </v-card-title>
           <v-card-text v-if="chartOptions">
@@ -92,7 +92,7 @@ interface STASUS {
   }
 })
 export default class RecordChart extends Vue {
-  text;
+  text = "week";
   chartOptions = {};
   series = [];
   mearsumentAt = [];
@@ -127,12 +127,12 @@ export default class RecordChart extends Vue {
   };
 
   async created() {
+    await this.resetChart();
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
+    recordModule.clearRecords();
     recordModule.getPatientRecordByUuid(this.recordsOptions).then(() => {
       this.update();
     });
-    // Initial
-    this.text = "left";
   }
 
   color(status) {
@@ -144,13 +144,13 @@ export default class RecordChart extends Vue {
     if (this.selected.length) {
       measurementName = this.selected[0].name_en;
     }
-    console.log(this.mearsumentAt);
     await this.resetChart();
-    this.getDataByCategory(measurementName);
-    this.updataChart();
+    await this.getDataByCategory(measurementName);
+    await this.updataChart();
   }
 
   updataChart() {
+    console.log(this.mearsumentAt);
     this.series = [
       {
         name: "目前測量值",
@@ -205,18 +205,20 @@ export default class RecordChart extends Vue {
   }
 
   resetChart() {
+    this.mearsumentAt = [];
     this.mearsumentValue = [];
     this.mearsumentGoodValue = [];
     this.mearsumentWarningValue = [];
     this.mearsumentBadValue = [];
+    console.log("reset");
   }
 
   async getDataByCategory(name: string) {
     const data = this.items.filter(data => data.key === name);
-    this.mearsumentAt = data.map(d =>
-      d.measure_at.replace("下午", "").replace("上午", "")
-    );
-    this.mearsumentValue = data.map(d => d.value);
+    for (const d of data) {
+      this.mearsumentAt.push(d.measure_at);
+      this.mearsumentValue.push(d.value);
+    }
 
     // GOOD
     this.STATUS_GOOD = this.measurementTypes[name].rule.find(r => {
@@ -242,11 +244,6 @@ export default class RecordChart extends Vue {
     if (this.STATUS_BAD) {
       this.mearsumentBadValue = data.map(() => this.STATUS_BAD.value);
     }
-  }
-  getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   cancel() {

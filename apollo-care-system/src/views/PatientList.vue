@@ -135,13 +135,15 @@ export default class PatientList extends Vue {
   }
 
   updateTableData() {
-    patientModule.clearPatients();
-    if (this.patientOptions.q !== this.lastSearch) {
-      this.patientOptions.page = 1;
-      this.lastSearch = this.patientOptions.q;
+    if (!this.loading) {
+      patientModule.clearPatients();
+      if (this.patientOptions.q !== this.lastSearch) {
+        this.patientOptions.page = 1;
+        this.lastSearch = this.patientOptions.q;
+      }
+      console.log(this.patientOptions);
+      patientModule.getPatientsByPages(this.patientOptions);
     }
-    console.log(this.patientOptions);
-    patientModule.getPatientsByPages(this.patientOptions);
   }
 
   onConfirm() {

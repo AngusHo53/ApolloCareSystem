@@ -4,10 +4,7 @@
       <v-card style="margin-bottom:10px">
         <v-card-title>
           <v-toolbar flat color="white">
-            <v-toolbar-title>
-              <v-awesome-icon icon="user-check" size="lg" />
-              審核病人列表 {{ totalVerifyPatients ? '(' + totalVerifyPatients + ')' : '' }}
-            </v-toolbar-title>
+            <v-toolbar-title>審核病人列表 {{ totalVerifyPatients ? '(' + totalVerifyPatients + ')' : '' }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-col cols="12" md="2">
               <v-btn class="mb-3 blue white--text" @click="showDialog('通過名單')">通過</v-btn>
@@ -80,6 +77,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { verifyPatientModule } from "@/store/modules/verifyPatients";
 import { VerifyPatientsOptions } from "@/types";
 import Table from "@/components/Table.vue";
+import { appModule } from "@/store/modules/app";
 
 @Component({
   components: {
@@ -147,6 +145,7 @@ export default class VerifyPatients extends Vue {
   saveVerifyPatients() {
     verifyPatientModule.verifyPatientsByUuid(this.verifySelect).then(() => {
       this.updateTableData();
+      appModule.sendSuccessNotice("新增成功");
     });
   }
 

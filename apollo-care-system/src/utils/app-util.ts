@@ -162,3 +162,26 @@ export function formatValue(value) {
   }
   return value;
 }
+
+export function formatMeasureAt(timestamp: number) {
+  const now = new Date();
+  const preTime = new Date(timestamp * 1000).getTime();
+  const preLocaleTime = new Date(timestamp * 1000);
+  const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  const todayTime = new Date(today).getTime();
+  const oneDayTime = 1000 * 24 * 60 * 60;
+
+  const yesterdayTime = new Date(todayTime - oneDayTime).getTime();
+  const twoDaysAgo = new Date(todayTime - (oneDayTime * 2)).getTime();
+
+  if (preTime >= todayTime) {
+    return '今天 ' + preLocaleTime.toLocaleTimeString();
+  }
+  else if (preTime < todayTime && yesterdayTime <= preTime) {
+    return '昨天 ' + preLocaleTime.toLocaleTimeString();
+  }
+  else if (preTime < yesterdayTime && twoDaysAgo <= preTime) {
+    return '前天 ' + preLocaleTime.toLocaleTimeString();
+  }
+  return preLocaleTime.toLocaleString();
+}
