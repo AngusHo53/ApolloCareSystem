@@ -53,9 +53,7 @@ class RecordModule extends VuexModule implements RecordState {
         });
         await obj.data.forEach(element => {
             if (element) {
-                if (obj.formatTime) {
-                    element.measure_at = formatMeasureAt(element.measure_at);
-                } else {
+                if (!obj.formatTime) {
                     element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
                 }
                 // Calculate the total records
