@@ -66,7 +66,7 @@
                             <MeasureCard
                               v-if="data && data.value !== null"
                               :header="data.name.zh"
-                              :measure_at="data.measure_at"
+                              :measure_at="data.measure_at | formatMeasureAt"
                               :state="data.state"
                               :unit="data.unit"
                               :value="data.value | formatValue"
@@ -116,9 +116,15 @@ import { patientModule } from "@/store/modules/patients";
 import { recordModule } from "@/store/modules/records";
 import { getDefaultPagination, MEASUREITEM } from "@/utils/store-util";
 import { formatValue } from "@/utils/app-util";
+import { formatMeasureAt } from "@/utils/app-util";
 
 Vue.filter("formatValue", function(value) {
   return formatValue(value);
+});
+
+Vue.filter("formatMeasureAt", function(value) {
+  // {{new Date(measure_at * 1000).toLocaleString()
+  return formatMeasureAt(value);
 });
 
 @Component({
@@ -150,10 +156,12 @@ export default class PatientRecords extends Vue {
     order: "asc",
     sort: "",
     uuid: "",
-    limit: -1
+    limit: -1,
+    formatMeasureAt: true
   };
 
   async created() {
+    this.recordsOptions.formatMeasureAt = true;
     recordModule.setPagination(getDefaultPagination());
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
     patientModule.getPatientByUuid(this.recordsOptions.uuid);
@@ -163,6 +171,7 @@ export default class PatientRecords extends Vue {
 
   updateTableData() {
     recordModule.clearRecords();
+    console.log(this.recordsOptions);
     recordModule.getPatientRecordByUuid(this.recordsOptions);
   }
 

@@ -5,6 +5,7 @@ import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-dec
 import store from '@/store';
 import Vue from 'vue';
 import http from "@/http/axios";
+import { formatMeasureAt } from "@/utils/app-util";
 
 export interface RecordState {
     pagination: Pagination;
@@ -35,7 +36,8 @@ class RecordModule extends VuexModule implements RecordState {
             this.setCurrentPage(data.current_page);
             this.setRecords(data.records);
             await this.getMeasurementTypes();
-            await this.formateData(data.records);
+
+            await this.formateData({ data: data.records, formatTime: options.formatMeasureAt });
             await this.setRecordDataTable(data.records);
             this.setLoading(false);
         } else {
@@ -43,16 +45,19 @@ class RecordModule extends VuexModule implements RecordState {
         }
 
     }
-    @Action async formateData(data: any) {
+    @Action async formateData(obj: any) {
         const total = new Set();
 
-        await data.sort((a, b) => {
-            console.log();
+        await obj.data.sort((a, b) => {
             return (new Date(a.measure_at).getTime() > new Date(b.measure_at).getTime()) ? 1 : ((new Date(b.measure_at).getTime() > new Date(a.measure_at).getTime()) ? -1 : 0);
         });
-        await data.forEach(element => {
+        await obj.data.forEach(element => {
             if (element) {
-                element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
+                if (obj.formatTime) {
+                    element.measure_at = formatMeasureAt(element.measure_at);
+                } else {
+                    element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
+                }
                 // Calculate the total records
                 total.add(element.measure_at);
                 element.zh = this.measurementTypes[element.key].i18n.zh;

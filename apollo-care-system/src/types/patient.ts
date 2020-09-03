@@ -44,7 +44,8 @@ export interface RecordOptions {
   order: string,
   sort: string,
   uuid: string,
-  limit: number
+  limit: number,
+  formatMeasureAt: boolean
 }
 
 export interface VerifyPatientsOptions {
