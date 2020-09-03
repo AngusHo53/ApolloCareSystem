@@ -17,7 +17,7 @@
       <template v-slot:group.header="{items, isOpen, toggle}">
         <th colspan="3">
           <v-awesome-icon @click="toggle" :icon="isOpen ? 'minus' : 'plus' " size="lg" />
-          測量時間: {{ items[0].measure_at }}
+          測量時間: {{ items[0].measure_at | formatMeasureAt}}
         </th>
       </template>
       <template v-slot:item.actions="{ item }">
