@@ -11,7 +11,7 @@
         <span class="text-h4 font-weight-bold">{{header}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <span v-if="measure_at">{{ measure_at | formatMeasureAt}}</span>
+      <span v-if="measure_at">{{ measure_at}}</span>
     </v-toolbar>
 
     <v-card-text>
@@ -35,11 +35,6 @@ import { Component, Prop } from "vue-property-decorator";
 import { Mutation } from "vuex-module-decorators";
 import { MEASUREMENT_STATUS, MEASUREMENT_COLORS } from "@/utils/store-util";
 import { formatMeasureAt } from "@/utils/app-util";
-
-Vue.filter("formatMeasureAt", function(value) {
-  // {{new Date(measure_at * 1000).toLocaleString()
-  return formatMeasureAt(value);
-});
 
 @Component
 export default class MeasureCard extends Vue {

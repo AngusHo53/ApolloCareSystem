@@ -123,7 +123,8 @@ export default class RecordChart extends Vue {
     order: "asc",
     sort: "",
     uuid: "",
-    limit: -1
+    limit: -1,
+    formatMeasureAt: false
   };
 
   async created() {
