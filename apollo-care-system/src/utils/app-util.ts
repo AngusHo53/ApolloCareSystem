@@ -180,8 +180,5 @@ export function formatMeasureAt(timestamp: number) {
   else if (preTime < todayTime && yesterdayTime <= preTime) {
     return '昨天 ' + preLocaleTime.toLocaleTimeString();
   }
-  else if (preTime < yesterdayTime && twoDaysAgo <= preTime) {
-    return '前天 ' + preLocaleTime.toLocaleTimeString();
-  }
   return preLocaleTime.toLocaleString();
 }
