@@ -80,6 +80,7 @@ class PatientModule extends VuexModule implements PatientState {
     } else {
       console.error(result);
     }
+    return result;
   }
 
   @Action async getPatientByUuid(uuid: string): Promise<TODO> {
@@ -87,12 +88,12 @@ class PatientModule extends VuexModule implements PatientState {
     const result = await http.get(`/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`);
     if (result.data.data) {
       const data = result.data.data;
-      console.log(data);
       data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
     } else {
       console.error(result);
     }
+    return result;
   }
 
   @Action async createPatient(info: PatientFormData): Promise<TODO> {

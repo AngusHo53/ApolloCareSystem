@@ -9,9 +9,6 @@
             <v-btn class="blue darken-2 mr-2" fab small dark @click.native="createPatient()">
               <v-awesome-icon icon="user-plus" size="lg" />
             </v-btn>
-            <v-btn class="teal darken-2 mr-2" fab small dark @click.native="test()">
-              <v-awesome-icon icon="print" size="lg" />
-            </v-btn>
           </div>
         </v-card-title>
         <v-card-text>
@@ -116,16 +113,11 @@ export default class PatientList extends Vue {
     this.updateTableData();
   }
 
-  test() {
-    console.log("test");
-  }
-
   createPatient() {
     this.$router.push("newPatient");
   }
 
   changeToPatientRecordPage($event) {
-    console.log($event);
     this.$router.push({
       name: `病人紀錄`,
       params: {
@@ -141,9 +133,8 @@ export default class PatientList extends Vue {
         this.patientOptions.page = 1;
         this.lastSearch = this.patientOptions.q;
       }
-      console.log(this.patientOptions);
-      patientModule.getPatientsByPages(this.patientOptions);
     }
+    patientModule.getPatientsByPages(this.patientOptions);
   }
 
   onConfirm() {
