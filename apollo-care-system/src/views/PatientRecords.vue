@@ -164,9 +164,12 @@ export default class PatientRecords extends Vue {
     this.recordsOptions.formatMeasureAt = true;
     recordModule.setPagination(getDefaultPagination());
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
-    patientModule.getPatientByUuid(this.recordsOptions.uuid);
     // this.recordModule.getMeasurementType();
     this.updateTableData();
+  }
+
+  mounted() {
+    patientModule.getPatientByUuid(this.recordsOptions.uuid);
   }
 
   updateTableData() {
