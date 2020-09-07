@@ -2,20 +2,13 @@
 <template>
   <v-container fluid>
     <v-flex xs12>
-      <v-card style="margin-bottom:10px">
+      <v-card v-if="!loading" style="margin-bottom:10px">
         <v-card-title>
           <v-toolbar flat>
             <!-- <div class='blue rounded-circle d-inline-flex pa-2' style='width:16px;height:16px;'></div> -->
             <v-toolbar-title class="text-h4 pa-2 ont-weight-bold">最新測量記錄</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn
-              v-if="!loading"
-              class="blue darken-2 mr-2"
-              fab
-              small
-              dark
-              @click.native="changeToChartPage()"
-            >
+            <v-btn class="blue darken-2 mr-2" fab small dark @click.native="changeToChartPage()">
               <v-awesome-icon icon="chart-line" size="lg" />
             </v-btn>
           </v-toolbar>
@@ -64,6 +57,7 @@
                         <v-col cols="6" md="6" lg="6" :key="index">
                           <v-card-text :key="name">
                             <MeasureCard
+                              :key="data.value"
                               v-if="data && data.value !== null"
                               :header="data.name.zh"
                               :measure_at="data.measure_at | formatMeasureAt"
@@ -90,15 +84,34 @@
           </v-toolbar>
         </v-card-title>
         <v-card-text>
-          <Table
+          <v-data-table
+            class="elevation-1"
             :headers="headers"
             :items="items"
-            :pagination="pagination"
+            :page.sync="recordsOptions.page"
+            :items-per-page="pagination.rowsPerPage"
+            hide-default-footer
             :loading="loading"
-            :options="recordsOptions"
-            :groupBy="'measure_at'"
-            @updateTableData="updateTableData"
-          ></Table>
+            loading-text="Loading..."
+            :group-by="'measure_at'"
+            :group-desc="true"
+          >
+            <template v-slot:group.header="{items, isOpen, toggle}">
+              <th colspan="3">
+                <v-awesome-icon @click="toggle" :icon="isOpen ? 'minus' : 'plus' " size="lg" />
+                測量時間: {{ items[0].measure_at | formatMeasureAt}}
+              </th>
+            </template>
+          </v-data-table>
+          <div class="text-xs-center pt-2">
+            <v-pagination
+              v-model="recordsOptions.page"
+              :length="pagination.pages"
+              :total-visible="9"
+              @input="updateTableData()"
+              circle
+            ></v-pagination>
+          </div>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -165,17 +178,20 @@ export default class PatientRecords extends Vue {
     recordModule.setPagination(getDefaultPagination());
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
     // this.recordModule.getMeasurementType();
+    patientModule.getPatientByUuid(this.recordsOptions.uuid);
     this.updateTableData();
   }
 
-  mounted() {
-    patientModule.getPatientByUuid(this.recordsOptions.uuid);
+  mounted() {}
+
+  destroyed() {
+    patientModule.clearPatients();
+    recordModule.clearRecords();
   }
 
-  updateTableData() {
-    recordModule.clearRecords();
-    console.log(this.recordsOptions);
-    recordModule.getPatientRecordByUuid(this.recordsOptions);
+  async updateTableData() {
+    await recordModule.clearRecords();
+    await recordModule.getPatientRecordByUuid(this.recordsOptions);
   }
 
   changeToChartPage() {

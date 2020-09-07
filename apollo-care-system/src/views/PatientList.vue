@@ -135,7 +135,7 @@ export default class PatientList extends Vue {
   }
 
   async updateTableData() {
-    patientModule.clearPatients();
+    await patientModule.clearPatients();
     if (!this.loading) {
       if (this.patientOptions.q !== this.lastSearch) {
         this.patientOptions.page = 1;
