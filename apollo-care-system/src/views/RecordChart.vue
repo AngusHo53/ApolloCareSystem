@@ -148,13 +148,13 @@ export default class RecordChart extends Vue {
     await this.resetChart();
     await this.getDataByCategory(measurementName);
     await this.updataChart();
+    console.log(this.chartOptions);
   }
 
   updataChart() {
-    console.log(this.mearsumentAt);
     this.series = [
       {
-        name: "目前測量值",
+        name: "測量值",
         data: this.mearsumentValue
       },
       {
@@ -183,13 +183,13 @@ export default class RecordChart extends Vue {
         enabled: false
       },
       stroke: {
-        width: [6, 3, 3],
+        width: [3, 3, 3],
         curve: "straight",
         dashArray: [0, 3, 3]
         // colors: ['#EF5350', '#2196F3', '#EF5350']
       },
       markers: {
-        size: 0,
+        size: [6, 0, 0],
         hover: {
           sizeOffset: 10
         }
@@ -197,11 +197,10 @@ export default class RecordChart extends Vue {
       grid: {
         borderColor: "#f1f1f1"
       },
-      colors: [
-        MEASUREMENT_COLORS[0],
-        MEASUREMENT_COLORS[1],
-        MEASUREMENT_COLORS[2]
-      ]
+      colors: ["#757575", MEASUREMENT_COLORS[1], MEASUREMENT_COLORS[2]],
+      tooltip: {
+        enabledOnSeries: [0]
+      }
     };
   }
 
@@ -211,7 +210,6 @@ export default class RecordChart extends Vue {
     this.mearsumentGoodValue = [];
     this.mearsumentWarningValue = [];
     this.mearsumentBadValue = [];
-    console.log("reset");
   }
 
   async getDataByCategory(name: string) {
@@ -248,6 +246,7 @@ export default class RecordChart extends Vue {
   }
 
   cancel() {
+    this.resetChart();
     this.$router.push({ name: "病人紀錄" });
   }
 
