@@ -18,15 +18,38 @@
             label="關鍵字搜尋"
             @keyup.enter="updateTableData()"
           ></v-text-field>
-          <Table
+          <v-data-table
+            item-key="patients.iid"
             :headers="headers"
             :items="items"
-            :pagination="pagination"
-            :loading="loading"
+            :page.sync="patientOptions.page"
+            :items-per-page="pagination.rowsPerPage"
             :options="patientOptions"
-            @updateTableData="updateTableData"
-            @dataTableClickHandler="changeToPatientRecordPage"
-          ></Table>
+            hide-default-footer
+            :loading="loading"
+            loading-text="Loading..."
+          >
+            <template v-slot:item.actions="{ item }">
+              <v-btn fab class="indigo mr-2" small dark @click="changeToPatientRecordPage(item)">
+                <v-awesome-icon icon="user" size="lg" />
+              </v-btn>
+              <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
+                <v-awesome-icon icon="edit" size="lg" />
+              </v-btn>
+              <v-btn fab class="cyan" small @click.native="$emit('remove', item)">
+                <v-awesome-icon icon="trash" size="lg" />
+              </v-btn>
+            </template>
+          </v-data-table>
+          <div class="text-xs-center pt-2">
+            <v-pagination
+              v-model="patientOptions.page"
+              :length="pagination.pages"
+              :total-visible="9"
+              @input="updateTableData"
+              circle
+            ></v-pagination>
+          </div>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -105,36 +128,40 @@ export default class PatientList extends Vue {
     sort: ""
   };
   private lastSearch = "";
+
   created() {
     patientModule.setPagination(getDefaultPagination());
+    this.updateTableData();
   }
 
-  mounted() {
-    this.updateTableData();
+  async updateTableData() {
+    patientModule.clearPatients();
+    if (!this.loading) {
+      if (this.patientOptions.q !== this.lastSearch) {
+        this.patientOptions.page = 1;
+        this.lastSearch = this.patientOptions.q;
+      }
+    }
+    await patientModule.getPatientsByPages(this.patientOptions);
+  }
+
+  mounted() {}
+
+  destroyed() {
+    patientModule.clearPatients();
   }
 
   createPatient() {
     this.$router.push("newPatient");
   }
 
-  changeToPatientRecordPage($event) {
+  changeToPatientRecordPage(item) {
     this.$router.push({
       name: `病人紀錄`,
       params: {
-        id: $event.uuid
+        id: item.uuid
       }
     });
-  }
-
-  updateTableData() {
-    if (!this.loading) {
-      patientModule.clearPatients();
-      if (this.patientOptions.q !== this.lastSearch) {
-        this.patientOptions.page = 1;
-        this.lastSearch = this.patientOptions.q;
-      }
-    }
-    patientModule.getPatientsByPages(this.patientOptions);
   }
 
   onConfirm() {
