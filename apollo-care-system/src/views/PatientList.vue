@@ -33,10 +33,10 @@
               <v-btn fab class="indigo mr-2" small dark @click="changeToPatientRecordPage(item)">
                 <v-awesome-icon icon="user" size="lg" />
               </v-btn>
-              <v-btn fab class="teal mr-2" small dark @click.native="$emit('edit', item)">
+              <v-btn fab class="teal mr-2" small dark @click="edit()">
                 <v-awesome-icon icon="edit" size="lg" />
               </v-btn>
-              <v-btn fab class="cyan" small @click.native="$emit('remove', item)">
+              <v-btn fab class="cyan" small @click="remove()">
                 <v-awesome-icon icon="trash" size="lg" />
               </v-btn>
             </template>
@@ -63,26 +63,36 @@
   </v-container>
 </template>
 <script lang="ts">
-import Table from "@/components/Table.vue";
-import TableHeaderButtons from "@/components/TableHeaderButtons.vue";
 import SearchPanel from "@/components/SearchPanel.vue";
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import { debounce } from "lodash";
+import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import {
   buildSearchFilters,
   buildJsonServerQuery,
   clearSearchFilters
 } from "@/utils/app-util";
+import {
+  Patient,
+  Order,
+  Entity,
+  PatientInfo,
+  PatientOptions,
+  MeasureData,
+  PatientFormData
+} from "@/types";
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import { patientModule } from "@/store/modules/patients";
 import { appModule } from "@/store/modules/app";
-import { getDefaultPagination } from "@/utils/store-util";
+import {
+  getDefaultPagination,
+  getPagination,
+  GENDER
+} from "@/utils/store-util";
+import http from "@/http/axios";
 
 @Component({
   components: {
-    Table,
-    TableHeaderButtons,
     SearchPanel,
     ConfirmDialog
   }
@@ -93,6 +103,7 @@ export default class PatientList extends Vue {
   public dialogText = "Do you want to delete this patient?";
   private showSearchPanel = false;
   public right = true;
+  public loading = true;
   public headers = [
     {
       text: "名稱",
@@ -108,6 +119,15 @@ export default class PatientList extends Vue {
     { text: "信箱", sortable: false, value: "email" },
     { text: "其他操作", value: "actions", sortable: false }
   ];
+
+  public pagination = getDefaultPagination();
+  public totalPages = 0;
+  public currentPage = 1;
+  public patientRecords = undefined;
+  public patients: Patient[] = [];
+  public totalPatients = 0;
+  public items: PatientInfo[] = [];
+
   private searchFilter = {
     contains: {
       firstName: "",
@@ -130,25 +150,54 @@ export default class PatientList extends Vue {
   private lastSearch = "";
 
   created() {
-    patientModule.setPagination(getDefaultPagination());
+    this.setPagination(this.pagination);
     this.updateTableData();
   }
 
   async updateTableData() {
-    await patientModule.clearPatients();
     if (!this.loading) {
       if (this.patientOptions.q !== this.lastSearch) {
         this.patientOptions.page = 1;
         this.lastSearch = this.patientOptions.q;
       }
     }
-    await patientModule.getPatientsByPages(this.patientOptions);
+    this.loading = true;
+    const result = await http.get(
+      `/user?q=${this.patientOptions.q}&page=${this.patientOptions.page}&limit=10`
+    );
+    if (result) {
+      const data = result.data.data;
+      this.totalPatients = data.total_users;
+      this.totalPages = data.total_page;
+      this.patients = data.users;
+      this.currentPage = this.patientOptions.page;
+      // Extract Table Data
+      await this.extractPatientInfo(data.users);
+      const pagination = getPagination(
+        this.items,
+        this.totalPages,
+        this.currentPage
+      );
+      this.setPagination(pagination);
+      this.loading = false;
+    } else {
+      console.error(result);
+    }
+  }
+
+  async extractPatientInfo(patients: Patient[]) {
+    patients.forEach(element => {
+      if (element.user) {
+        element.user.gender = GENDER[element.user.gender];
+        this.items.push(element.user);
+      }
+    });
   }
 
   mounted() {}
 
-  destroyed() {
-    patientModule.clearPatients();
+  setPagination(pagination) {
+    this.pagination = pagination;
   }
 
   createPatient() {
@@ -164,6 +213,15 @@ export default class PatientList extends Vue {
     });
   }
 
+  edit() {
+    appModule.setSnackbar;
+    appModule.sendErrorNotice("編輯未做");
+  }
+
+  remove() {
+    appModule.setSnackbar;
+    appModule.sendErrorNotice("刪除未做");
+  }
   onConfirm() {
     // patientModule.deleteCustomer(this.itemId);
     this.dialog = false;
@@ -202,25 +260,6 @@ export default class PatientList extends Vue {
   quickSearchCustomers = debounce(function() {
     // patientModule.quickSearch(this.headers, this.quickSearchFilter);
   }, 500);
-
-  get patients() {
-    return patientModule.patients;
-  }
-  get pagination() {
-    return patientModule.pagination;
-  }
-
-  get items() {
-    return patientModule.items;
-  }
-
-  get totalPatients() {
-    return patientModule.totalPatients;
-  }
-
-  get loading() {
-    return patientModule.loading;
-  }
 
   get rightDrawer() {
     return this.showSearchPanel;
