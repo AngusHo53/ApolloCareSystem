@@ -8,12 +8,12 @@
           <h4 style="color:white">Apollo Care Systems</h4>
         </v-card-title>
         <v-progress-linear
-        :active="loading"
-        :indeterminate="loading"
-        absolute
-        bottom
-        color="deep-purple accent-4"
-      ></v-progress-linear>
+          :active="loading"
+          :indeterminate="loading"
+          absolute
+          bottom
+          color="deep-purple accent-4"
+        ></v-progress-linear>
         <v-card-text>
           <v-form @submit.prevent="login" :lazy-validation="true" v-model="valid">
             <v-layout row wrap>
@@ -43,6 +43,7 @@
                   v-model="pass"
                   label="password"
                   value="Input text"
+                  @keyup.enter="login()"
                   required
                 ></v-text-field>
               </v-flex>
@@ -69,20 +70,16 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12" md="6" sm="6">
-                          <v-text-field v-model="id_card" label="身分證字號*" clearable required>
-                          </v-text-field>
+                          <v-text-field v-model="id_card" label="身分證字號*" clearable required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6" sm="6">
-                          <v-text-field v-model="email" label="Email*" clearable required>
-                          </v-text-field>
+                          <v-text-field v-model="email" label="Email*" clearable required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6" sm="6">
-                          <v-text-field v-model="name" label="姓名*" clearable required>
-                          </v-text-field>
+                          <v-text-field v-model="name" label="姓名*" clearable required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6" sm="6">
-                          <v-text-field v-model="phone" label="手機*" clearable required>
-                          </v-text-field>
+                          <v-text-field v-model="phone" label="手機*" clearable required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6" sm="6">
                           <v-text-field
@@ -234,7 +231,6 @@ export default class Login extends Vue {
           user: data.user
         };
         userModule.signIn(userData);
-
 
         this.$router.push({ name: "社區狀態顯示表" }).catch(err => {
           console.log("catch test");

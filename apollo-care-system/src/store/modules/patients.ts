@@ -125,6 +125,7 @@ class PatientModule extends VuexModule implements PatientState {
 
   @Action clearPatients() {
     this.setPatients([]);
+    this.setPatient(undefined);
     this.setItems([]);
     this.setTotalPages(0);
     this.setTotalPatients(0);

@@ -135,7 +135,7 @@ export default class App extends Vue {
     {
       icon: "bubble_chart",
       title: "登出",
-      link: "login"
+      link: "Login"
     }
   ];
 

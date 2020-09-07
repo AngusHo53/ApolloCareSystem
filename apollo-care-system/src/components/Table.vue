@@ -9,7 +9,7 @@
       :items-per-page="pagination.rowsPerPage"
       hide-default-footer
       :loading="loading"
-      item-key="uuid"
+      :item-key="itemKey"
       loading-text="Loading..."
       :group-by="groupBy"
       :group-desc="true"
@@ -56,7 +56,7 @@
       hide-default-footer
       :loading="loading"
       loading-text="Loading..."
-      item-key="uuid"
+      :item-key="itemKey"
       :show-select="true"
       :single-select="false"
     >
@@ -100,6 +100,7 @@ export default class Table extends Vue {
   @Prop() readonly pagination: Pagination;
   @Prop() readonly options: PatientOptions;
   @Prop() readonly loading: boolean;
+  @Prop() readonly itemKey: string;
   @Prop() readonly showSelect: boolean;
   @Prop() readonly select: VerifyPatientsOptions;
   @Prop() readonly groupBy: string;

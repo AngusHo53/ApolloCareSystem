@@ -8,6 +8,7 @@ import { CustomerState } from "./modules/customers";
 import { PatientState } from "./modules/patients";
 import { ProductState } from "./modules/products";
 import { AppState } from "./modules/app";
+import {RecordState } from "./modules/records";
 
 Vue.use(Vuex);
 
@@ -18,6 +19,7 @@ interface RootState {
   customerState: CustomerState;
   patientState: PatientState;
   productState: ProductState;
+  recordState: RecordState;
 }
 
 export default new Vuex.Store<RootState>({
