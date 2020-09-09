@@ -46,7 +46,7 @@
               v-model="patientOptions.page"
               :length="pagination.pages"
               :total-visible="9"
-              @input="updateTableData"
+              @input="updateTableData()"
               circle
             ></v-pagination>
           </div>
@@ -158,6 +158,7 @@ export default class PatientList extends Vue {
   }
 
   async updateTableData() {
+    this.clearPatient();
     if (!this.loading) {
       if (this.patientOptions.q !== this.lastSearch) {
         this.patientOptions.page = 1;

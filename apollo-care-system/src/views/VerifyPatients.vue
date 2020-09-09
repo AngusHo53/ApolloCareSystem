@@ -15,34 +15,30 @@
           </v-toolbar>
         </v-card-title>
         <v-card-text>
-          <Table
+          <v-data-table
             :headers="headers"
-            :items="items"
-            :pagination="pagination"
+            v-model="verifySelect.patients"
+            :items="verifyItems"
+            item-key="iid"
+            class="elevation-1"
+            :page.sync="verifyPatientOptions.page"
+            :items-per-page="pagination.rowsPerPage"
+            hide-default-footer
             :loading="loading"
-            :showSelect="true"
-            :select="verifySelect"
-            :options="verifyPatientOptions"
-            @updateTableData="updateTableData"
-          ></Table>
+            loading-text="Loading..."
+            show-select
+            :single-select="false"
+          ></v-data-table>
+          <div class="text-xs-center pt-2">
+            <v-pagination
+              v-model="verifyPatientOptions.page"
+              :length="pagination.pages"
+              :total-visible="9"
+              @input="updateTableData()"
+              circle
+            ></v-pagination>
+          </div>
         </v-card-text>
-        <!-- <v-card-title>
-          <v-toolbar flat color="white">
-            <v-toolbar-title>未通過審核病人列表({{totalVerifyPatients}})</v-toolbar-title>
-          </v-toolbar>
-        </v-card-title>
-        <v-card-text>
-          <Table
-            :headers="headers"
-            :items="items"
-            :pagination="pagination"
-            :loading="loading"
-            :showSelect="true"
-            :select="verifySelect"
-            :options="verifyPatientOptions"
-            @updateTableData="updateTableData"
-          ></Table>
-        </v-card-text>-->
       </v-card>
     </v-flex>
     <v-dialog v-if="verifySelect.patients" v-model="dialog" max-width="500px">
@@ -74,10 +70,15 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { verifyPatientModule } from "@/store/modules/verifyPatients";
-import { VerifyPatientsOptions } from "@/types";
+import { Patient, PatientInfo, Entity, VerifyPatientsOptions } from "@/types";
 import Table from "@/components/Table.vue";
 import { appModule } from "@/store/modules/app";
+import {
+  getDefaultPagination,
+  getPagination,
+  GENDER
+} from "@/utils/store-util";
+import http from "@/http/axios";
 
 @Component({
   components: {
@@ -87,6 +88,13 @@ import { appModule } from "@/store/modules/app";
 export default class VerifyPatients extends Vue {
   public dialog = false;
   public dialogTitle = "";
+  public loading = true;
+  public totalVerifyPatients = 0;
+  public pagination = getDefaultPagination();
+  public totalPages = 0;
+  public currentPage = 1;
+  public verifyPatients: Patient[] = [];
+  public verifyItems: PatientInfo[] = [];
   public headers = [
     {
       text: "名稱",
@@ -132,6 +140,10 @@ export default class VerifyPatients extends Vue {
     this.updateTableData();
   }
 
+  destroyed() {
+    this.clearVerifyPatients();
+  }
+
   showDialog(title) {
     this.dialog = true;
     this.dialogTitle = title;
@@ -141,7 +153,7 @@ export default class VerifyPatients extends Vue {
   }
 
   saveVerifyPatients() {
-    verifyPatientModule.verifyPatientsByUuid(this.verifySelect).then(() => {
+    this.verifyPatientsByUuid(this.verifySelect).then(() => {
       this.updateTableData();
       appModule.sendSuccessNotice("新增成功");
     });
@@ -158,30 +170,80 @@ export default class VerifyPatients extends Vue {
   }
 
   async updateTableData() {
-    await verifyPatientModule.clearVerifyPatients();
+    await this.clearVerifyPatients();
     // this.verifyPatientOptions.page = this.pagination.page;
     // console.log(this.verifyPatientOptions.page);
-    await verifyPatientModule.getVerifyPatients(this.verifyPatientOptions);
+    await this.getVerifyPatients(this.verifyPatientOptions);
   }
 
-  get verifyPatients() {
-    return verifyPatientModule.verifyPatients;
+  async getVerifyPatients(options) {
+    this.loading = true;
+    const result = await http.get(
+      `/user?verify=-1&page=${options.page}&limit=10`
+    );
+    if (result.data.data) {
+      const data = result.data.data;
+      this.totalVerifyPatients = data.total_users;
+      this.totalPages = data.total_page;
+      this.verifyPatients = data.users;
+      this.currentPage = options.page;
+
+      await this.extractVerifyPatientInfo(data.users);
+      this.setDataTable(this.verifyItems);
+
+      this.loading = false;
+    } else {
+      console.error(result);
+    }
   }
 
-  get pagination() {
-    return verifyPatientModule.pagination;
+  async clearVerifyPatients() {
+    this.verifyPatients = [];
+    this.verifyItems = [];
+    this.totalPages = 0;
+    this.totalVerifyPatients = 0;
+    this.pagination = getDefaultPagination();
   }
 
-  get items() {
-    return verifyPatientModule.verifyItems;
+  async extractVerifyPatientInfo(verifyPatients: Patient[]) {
+    verifyPatients.forEach(element => {
+      if (element.user) {
+        // if (element.user.birthday) {
+        //     const timestamp = Date.parse(element.user.birthday);
+        //     if (isNaN(timestamp) === false) {
+        //         const date = new Date(element.user.birthday).toLocaleString();
+        //         element.user.birthday = date;
+        //     }
+        // }
+        // element.user.phone = 'xxxx-xxx-xxx';
+        element.user.gender = GENDER[element.user.gender];
+        this.verifyItems.push(element.user);
+      }
+    });
   }
 
-  get totalVerifyPatients() {
-    return verifyPatientModule.totalVerifyPatients;
+  async verifyPatientsByUuid(
+    verifySelects: VerifyPatientsOptions
+  ): Promise<TODO> {
+    this.loading = true;
+    const patients = verifySelects.patients;
+    const params = {
+      status: verifySelects.status
+    };
+    for (const patient of patients) {
+      const result = await http.post(`/user/${patient.uuid}/verify`, params);
+      if (result) {
+        console.log(result);
+      } else {
+        console.error(result);
+      }
+    }
+    this.loading = false;
   }
 
-  get loading() {
-    return verifyPatientModule.loading;
+  setDataTable(data: Entity[]) {
+    const pagination = getPagination(data, this.totalPages, this.currentPage);
+    this.pagination = pagination;
   }
 }
 </script>
