@@ -216,7 +216,6 @@ export default class ApiToken extends Vue {
     if (result) {
       if (result.data.status === "Success") {
         this.api_list = result.data.data.clients;
-        console.log(result);
         this.loading = false;
       } else {
         console.log("error");

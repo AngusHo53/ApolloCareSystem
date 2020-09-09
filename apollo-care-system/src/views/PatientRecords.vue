@@ -127,8 +127,13 @@ import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import { patientModule } from "@/store/modules/patients";
 import { recordModule } from "@/store/modules/records";
-import { Entity, MeasureData, RecordOptions } from '@/types';
-import { getDefaultPagination, MEASUREITEM,GENDER, getPagination } from "@/utils/store-util";
+import { Entity, MeasureData, RecordOptions } from "@/types";
+import {
+  getDefaultPagination,
+  MEASUREITEM,
+  GENDER,
+  getPagination
+} from "@/utils/store-util";
 import { formatValue } from "@/utils/app-util";
 import { formatMeasureAt } from "@/utils/app-util";
 import http from "@/http/axios";
@@ -167,17 +172,17 @@ export default class PatientRecords extends Vue {
   patient = {
     user: {
       age: 0,
-      birthday: '',
-      created_at: '',
-      gender: '',
+      birthday: "",
+      created_at: "",
+      gender: "",
       health_state: 0,
       id: 0,
-      id_card: '',
-      name: '',
-      phone: '',
-      updated_at: '',
-      uuid: '',
-      email: ''
+      id_card: "",
+      name: "",
+      phone: "",
+      updated_at: "",
+      uuid: "",
+      email: ""
     },
     id: 0,
     record: {
@@ -213,27 +218,28 @@ export default class PatientRecords extends Vue {
   };
 
   async created() {
+    this.clearRecords();
     this.recordsOptions.formatMeasureAt = true;
     this.setPagination(getDefaultPagination());
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
     // this.recordModule.getMeasurementType();
     await this.getPatientByUuid(this.recordsOptions.uuid);
     await this.updateTableData();
-    this.loading = false;
   }
 
-  // destroyed() {
-  //   patientModule.clearPatients();
-  //   this.clearRecords();
-  // }
+  async destroyed() {
+    await this.clearRecords();
+  }
 
-  setPagination(pagination){
+  setPagination(pagination) {
     this.pagination = pagination;
   }
 
-  async getPatientByUuid(uuid){
+  async getPatientByUuid(uuid) {
     this.setPatient(undefined);
-    const result = await http.get(`/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`);
+    const result = await http.get(
+      `/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`
+    );
     if (result.data.data) {
       const data = result.data.data;
       data.user.gender = GENDER[data.user.gender];
@@ -244,7 +250,6 @@ export default class PatientRecords extends Vue {
   }
 
   async updateTableData() {
-    await this.clearRecords();
     await this.getPatientRecordByUuid(this.recordsOptions);
   }
 
@@ -260,15 +265,21 @@ export default class PatientRecords extends Vue {
   }
 
   clearRecords() {
+    this.patient = undefined;
+    this.patientInfo = {};
     this.totalPages = 0;
     this.totalRecords = 0;
     this.records = [];
     this.items = [];
+    this.measurementTypes = {};
+    this.pagination = getDefaultPagination();
   }
 
-  async getPatientRecordByUuid(options){
+  async getPatientRecordByUuid(options) {
     this.loading = true;
-    const result = await http.get(`/user/${options.uuid}/record?limit=${options.limit}&page=${options.page}`);
+    const result = await http.get(
+      `/user/${options.uuid}/record?limit=${options.limit}&page=${options.page}`
+    );
     if (result.data.data) {
       const data = result.data.data;
       // this.setPatient(result.data.data);
@@ -277,7 +288,10 @@ export default class PatientRecords extends Vue {
       this.records = data.records;
       await this.getMeasurementTypes();
 
-      await this.formateData({ data: data.records, formatTime: options.formatMeasureAt });
+      await this.formateData({
+        data: data.records,
+        formatTime: options.formatMeasureAt
+      });
       await this.setRecordDataTable(data.records);
       this.loading = false;
     } else {
@@ -285,7 +299,7 @@ export default class PatientRecords extends Vue {
     }
   }
 
-  async getMeasurementTypes(){
+  async getMeasurementTypes() {
     const result = await http.get(`/measurements/types`);
     if (result) {
       this.measurementTypes = result.data.data.measurement_type;
@@ -299,12 +313,18 @@ export default class PatientRecords extends Vue {
     const total = new Set();
 
     await obj.data.sort((a, b) => {
-      return (new Date(a.measure_at).getTime() > new Date(b.measure_at).getTime()) ? 1 : ((new Date(b.measure_at).getTime() > new Date(a.measure_at).getTime()) ? -1 : 0);
+      return new Date(a.measure_at).getTime() > new Date(b.measure_at).getTime()
+        ? 1
+        : new Date(b.measure_at).getTime() > new Date(a.measure_at).getTime()
+        ? -1
+        : 0;
     });
     await obj.data.forEach(element => {
       if (element) {
         if (!obj.formatTime) {
-          element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
+          element.measure_at = new Date(
+            element.measure_at * 1000
+          ).toLocaleString();
         }
         // Calculate the total records
         total.add(element.measure_at);
@@ -315,16 +335,21 @@ export default class PatientRecords extends Vue {
         element.value = formatValue(element.value);
       }
       this.items.push(element);
-    })
+    });
     this.totalRecords = total.size;
   }
 
   async setRecordDataTable(data) {
-    const pagination = getPagination(data, this.totalPages, this.currentPage, data.length);
+    const pagination = getPagination(
+      data,
+      this.totalPages,
+      this.currentPage,
+      data.length
+    );
     this.setPagination(pagination);
   }
 
-  setPatient(patient){
+  setPatient(patient) {
     this.patient = patient;
   }
 }

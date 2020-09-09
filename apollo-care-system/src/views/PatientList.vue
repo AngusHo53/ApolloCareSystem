@@ -123,7 +123,6 @@ export default class PatientList extends Vue {
   public pagination = getDefaultPagination();
   public totalPages = 0;
   public currentPage = 1;
-  public patientRecords = undefined;
   public patients: Patient[] = [];
   public totalPatients = 0;
   public items: PatientInfo[] = [];
@@ -152,6 +151,10 @@ export default class PatientList extends Vue {
   async created() {
     this.setPagination(getDefaultPagination());
     await this.updateTableData();
+  }
+
+  async destroyed() {
+    await this.clearPatient();
   }
 
   async updateTableData() {
@@ -200,6 +203,14 @@ export default class PatientList extends Vue {
 
   createPatient() {
     this.$router.push("newPatient");
+  }
+
+  clearPatient() {
+    this.patients = [];
+    this.items = [];
+    this.totalPages = 0;
+    this.totalPatients = 0;
+    this.pagination = getDefaultPagination();
   }
 
   changeToPatientRecordPage(item) {
