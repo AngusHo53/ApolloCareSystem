@@ -195,7 +195,6 @@ export default class Login extends Vue {
       phone: this.phone
     };
     const result = await http.put("/auth", params);
-    console.log(result);
     if (result) {
       if (result.data.status === "Success") {
         console.log("註冊成功");
@@ -221,7 +220,6 @@ export default class Login extends Vue {
       password: this.pass
     };
     const result = await http.post("/auth", params);
-    console.log(result);
     if (result) {
       if (result.data.status === "Success") {
         // Login Successful

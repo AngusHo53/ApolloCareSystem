@@ -68,8 +68,6 @@ class UserModule extends VuexModule implements UserState {
 
   @Action({ rawError: true })
   public signIn(userData) {
-    console.log(userData.accessToken)
-    console.log(userData.user);
     setToken(userData.accessToken);
     setUser(JSON.stringify(userData.user));
 
