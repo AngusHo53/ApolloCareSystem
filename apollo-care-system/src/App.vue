@@ -195,12 +195,10 @@ export default class App extends Vue {
   }
 
   handleNavigtiion(item: TODO) {
-    if (!this.loading) {
       this.menuItem = item.title;
       this.$router.push({
         name: item.title
       });
-    }
   }
 
   async handleUserActions(item: TODO) {

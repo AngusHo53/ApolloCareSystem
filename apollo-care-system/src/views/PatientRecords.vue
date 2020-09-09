@@ -118,7 +118,7 @@
     <!-- <v-overlay  :value="loading"></v-overlay> -->
   </v-container>
 </template>
-<script>
+<script lang="ts">
 import Table from "@/components/Table.vue";
 import TableHeaderButtons from "@/components/TableHeaderButtons.vue";
 import MeasureCard from "@/components/MeasureCard.vue";
@@ -127,9 +127,11 @@ import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import { patientModule } from "@/store/modules/patients";
 import { recordModule } from "@/store/modules/records";
-import { getDefaultPagination, MEASUREITEM } from "@/utils/store-util";
+import { Entity, MeasureData, RecordOptions } from '@/types';
+import { getDefaultPagination, MEASUREITEM,GENDER, getPagination } from "@/utils/store-util";
 import { formatValue } from "@/utils/app-util";
 import { formatMeasureAt } from "@/utils/app-util";
+import http from "@/http/axios";
 
 Vue.filter("formatValue", function(value) {
   return formatValue(value);
@@ -149,10 +151,47 @@ Vue.filter("formatMeasureAt", function(value) {
   }
 })
 export default class PatientRecords extends Vue {
-  dialog = false;
-  singleExpand = false;
-  expanded = [];
-  patientInfo = {};
+  public dialog = false;
+  public singleExpand = false;
+  public expanded = [];
+  public patientInfo = {};
+  public totalPages = 0;
+  public currentPage = 1;
+  public totalRecords = 0;
+  public records: MeasureData[] = [];
+  public items = [];
+  public loading = true;
+  public measurementTypes = {};
+
+  pagination = getDefaultPagination();
+  patient = {
+    user: {
+      age: 0,
+      birthday: '',
+      created_at: '',
+      gender: '',
+      health_state: 0,
+      id: 0,
+      id_card: '',
+      name: '',
+      phone: '',
+      updated_at: '',
+      uuid: '',
+      email: ''
+    },
+    id: 0,
+    record: {
+      blood: null,
+      blood_glucose: null,
+      blood_pressure: null,
+      body_temperature: null,
+      bone: null,
+      frailty: null,
+      mental: null,
+      metabolic: null,
+      spo2: null
+    }
+  };
 
   measureTab = null;
   measureItem = MEASUREITEM;
@@ -175,23 +214,38 @@ export default class PatientRecords extends Vue {
 
   async created() {
     this.recordsOptions.formatMeasureAt = true;
-    recordModule.setPagination(getDefaultPagination());
+    this.setPagination(getDefaultPagination());
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
     // this.recordModule.getMeasurementType();
-    patientModule.getPatientByUuid(this.recordsOptions.uuid);
-    this.updateTableData();
+    await this.getPatientByUuid(this.recordsOptions.uuid);
+    await this.updateTableData();
+    this.loading = false;
   }
 
-  mounted() {}
+  // destroyed() {
+  //   patientModule.clearPatients();
+  //   this.clearRecords();
+  // }
 
-  destroyed() {
-    patientModule.clearPatients();
-    recordModule.clearRecords();
+  setPagination(pagination){
+    this.pagination = pagination;
+  }
+
+  async getPatientByUuid(uuid){
+    this.setPatient(undefined);
+    const result = await http.get(`/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`);
+    if (result.data.data) {
+      const data = result.data.data;
+      data.user.gender = GENDER[data.user.gender];
+      this.setPatient(data);
+    } else {
+      console.error(result);
+    }
   }
 
   async updateTableData() {
-    await recordModule.clearRecords();
-    await recordModule.getPatientRecordByUuid(this.recordsOptions);
+    await this.clearRecords();
+    await this.getPatientRecordByUuid(this.recordsOptions);
   }
 
   changeToChartPage() {
@@ -204,24 +258,74 @@ export default class PatientRecords extends Vue {
     });
     if (data) return data.name;
   }
-  get pagination() {
-    return recordModule.pagination;
+
+  clearRecords() {
+    this.totalPages = 0;
+    this.totalRecords = 0;
+    this.records = [];
+    this.items = [];
   }
 
-  get patient() {
-    return patientModule.patient;
+  async getPatientRecordByUuid(options){
+    this.loading = true;
+    const result = await http.get(`/user/${options.uuid}/record?limit=${options.limit}&page=${options.page}`);
+    if (result.data.data) {
+      const data = result.data.data;
+      // this.setPatient(result.data.data);
+      this.totalPages = data.total_page;
+      this.currentPage = data.current_page;
+      this.records = data.records;
+      await this.getMeasurementTypes();
+
+      await this.formateData({ data: data.records, formatTime: options.formatMeasureAt });
+      await this.setRecordDataTable(data.records);
+      this.loading = false;
+    } else {
+      console.error(result);
+    }
   }
 
-  get loading() {
-    return recordModule.loading;
+  async getMeasurementTypes(){
+    const result = await http.get(`/measurements/types`);
+    if (result) {
+      this.measurementTypes = result.data.data.measurement_type;
+    } else {
+      console.error(result);
+    }
+    return result;
   }
 
-  get items() {
-    return recordModule.items;
+  async formateData(obj) {
+    const total = new Set();
+
+    await obj.data.sort((a, b) => {
+      return (new Date(a.measure_at).getTime() > new Date(b.measure_at).getTime()) ? 1 : ((new Date(b.measure_at).getTime() > new Date(a.measure_at).getTime()) ? -1 : 0);
+    });
+    await obj.data.forEach(element => {
+      if (element) {
+        if (!obj.formatTime) {
+          element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
+        }
+        // Calculate the total records
+        total.add(element.measure_at);
+        element.zh = this.measurementTypes[element.key].i18n.zh;
+        if (this.measurementTypes[element.category]) {
+          element.category = this.measurementTypes[element.category].i18n.zh;
+        }
+        element.value = formatValue(element.value);
+      }
+      this.items.push(element);
+    })
+    this.totalRecords = total.size;
   }
 
-  get totalRecords() {
-    return recordModule.totalRecords;
+  async setRecordDataTable(data) {
+    const pagination = getPagination(data, this.totalPages, this.currentPage, data.length);
+    this.setPagination(pagination);
+  }
+
+  setPatient(patient){
+    this.patient = patient;
   }
 }
 </script>

@@ -149,9 +149,9 @@ export default class PatientList extends Vue {
   };
   private lastSearch = "";
 
-  created() {
-    this.setPagination(this.pagination);
-    this.updateTableData();
+  async created() {
+    this.setPagination(getDefaultPagination());
+    await this.updateTableData();
   }
 
   async updateTableData() {
@@ -193,8 +193,6 @@ export default class PatientList extends Vue {
       }
     });
   }
-
-  mounted() {}
 
   setPagination(pagination) {
     this.pagination = pagination;
