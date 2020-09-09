@@ -153,8 +153,7 @@ export default class Community extends Vue {
         console.log(this.errorMsg);
       }
     } else {
-      this.errorMsg = result.data.message;
-      console.log(this.errorMsg);
+      console.error(result.status);
     }
     appModule.setLoading(false);
   }

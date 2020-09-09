@@ -25,6 +25,11 @@ function requireAuth(to: TODO, from: TODO, next: TODO) {
 
 Vue.use(VueRouter);
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 const routes: Array<RouteConfig> = [
   { path: "/404", component: ErrorPage, name: "ErrorPage" },
   {
