@@ -250,6 +250,7 @@ export default class PatientRecords extends Vue {
   }
 
   async updateTableData() {
+    this.clearRecords();
     await this.getPatientRecordByUuid(this.recordsOptions);
   }
 
