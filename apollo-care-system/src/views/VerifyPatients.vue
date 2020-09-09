@@ -128,9 +128,7 @@ export default class VerifyPatients extends Vue {
     status: true
   };
 
-  created() {}
-
-  mounted() {
+  created() {
     this.updateTableData();
   }
 
