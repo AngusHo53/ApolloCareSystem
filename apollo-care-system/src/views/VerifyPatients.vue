@@ -198,7 +198,7 @@ export default class VerifyPatients extends Vue {
   }
 
   async clearVerifyPatients() {
-    this.verifyPatients = [];
+    this.verifySelect.patients = [];
     this.verifyItems = [];
     this.totalPages = 0;
     this.totalVerifyPatients = 0;

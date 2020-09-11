@@ -206,7 +206,7 @@ export default class App extends Vue {
     if (item.title === "登出") {
       await userModule.logout();
     }
-    this.$router.push(item.link);
+    this.$router.push({ path: '/login' });
   }
 
   mounted() {}
