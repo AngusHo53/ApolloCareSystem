@@ -13,6 +13,10 @@
         </v-card-title>
         <v-card-text>
           <v-text-field
+            clearable
+            flat
+            solo-inverted
+            hide-details
             v-model="patientOptions.q"
             append-icon="mdi-magnify"
             label="關鍵字搜尋"
@@ -80,7 +84,7 @@ import {
   MeasureData,
   PatientFormData
 } from "@/types";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
 import { patientModule } from "@/store/modules/patients";
 import { appModule } from "@/store/modules/app";
@@ -146,6 +150,7 @@ export default class PatientList extends Vue {
     order: "asc",
     sort: ""
   };
+
   private lastSearch = "";
 
   async created() {
@@ -158,6 +163,7 @@ export default class PatientList extends Vue {
   }
 
   async updateTableData() {
+    this.loading = true;
     this.clearPatient();
     if (!this.loading) {
       if (this.patientOptions.q !== this.lastSearch) {
@@ -165,7 +171,7 @@ export default class PatientList extends Vue {
         this.lastSearch = this.patientOptions.q;
       }
     }
-    this.loading = true;
+
     const result = await http.get(
       `/user?q=${this.patientOptions.q}&page=${this.patientOptions.page}&limit=10`
     );
@@ -285,6 +291,14 @@ export default class PatientList extends Vue {
   set quickSearch(val) {
     this.quickSearchFilter = val;
     this.quickSearchFilter && this.quickSearchCustomers();
+  }
+
+  @Watch('patientOptions.q')
+  watchSearch(newVal, oldVal) {
+    if(newVal != oldVal && newVal == "")
+    {
+      this.updateTableData()
+    }
   }
 }
 </script>

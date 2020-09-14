@@ -175,10 +175,10 @@ export function formatMeasureAt(timestamp: number) {
   const twoDaysAgo = new Date(todayTime - (oneDayTime * 2)).getTime();
 
   if (preTime >= todayTime) {
-    return '今天 ' + preLocaleTime.toLocaleTimeString();
+    return '今天 ' + preLocaleTime.toLocaleTimeString().substring(0,preLocaleTime.toLocaleString().length-3);
   }
   else if (preTime < todayTime && yesterdayTime <= preTime) {
-    return '昨天 ' + preLocaleTime.toLocaleTimeString();
+    return '昨天 ' + preLocaleTime.toLocaleTimeString().substring(0,preLocaleTime.toLocaleString().length-3);
   }
   else {
     return preLocaleTime.toLocaleString().substring(0,preLocaleTime.toLocaleString().length-3);
