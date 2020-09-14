@@ -207,7 +207,7 @@ export default class PatientRecords extends Vue {
   public measureItem = MEASUREITEM;
   public headers = [
     { text: "測量時間", sortable: false, value: "measure_at" },
-    { text: "關鍵字", sortable: false, value: "zh" },
+    { text: "關鍵字", sortable: false, value: "zh",align: 'start',width: "25%" },
     { text: "值", sortable: false, value: "value" }
   ];
 
