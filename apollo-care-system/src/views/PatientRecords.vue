@@ -38,6 +38,10 @@
                   <v-list-item-content :class="['font-weight-bold text-h6']">電話:</v-list-item-content>
                   <v-list-item-content :class="['text-h6']">{{patient.user.phone}}</v-list-item-content>
                 </v-list-item>
+                <v-list-item>
+                  <v-list-item-content :class="['font-weight-bold text-h6']">社區:</v-list-item-content>
+                  <v-list-item-content :class="['text-left text-h6']">{{place}}</v-list-item-content>
+                </v-list-item>
               </v-list>
             </v-col>
             <v-col>
@@ -99,7 +103,7 @@
             <template v-slot:group.header="{items, isOpen, toggle}">
               <th colspan="3">
                 <v-awesome-icon @click="toggle" :icon="isOpen ? 'minus' : 'plus' " size="lg" />
-                測量時間: {{ items[0].measure_at | formatMeasureAt}}
+                {{items[0].zh}}  {{ items[0].measure_at | formatMeasureAt}}
               </th>
             </template>
           </v-data-table>
@@ -198,17 +202,16 @@ export default class PatientRecords extends Vue {
       spo2: null
     }
   };
-
-  measureTab = null;
-  measureItem = MEASUREITEM;
-  headers = [
-    { text: "類別", sortable: false, value: "category" },
+  public place = "";
+  public measureTab = null;
+  public measureItem = MEASUREITEM;
+  public headers = [
     { text: "測量時間", sortable: false, value: "measure_at" },
     { text: "關鍵字", sortable: false, value: "zh" },
     { text: "值", sortable: false, value: "value" }
   ];
 
-  recordsOptions = {
+  public recordsOptions = {
     page: 1,
     q: "",
     order: "asc",
@@ -249,6 +252,7 @@ export default class PatientRecords extends Vue {
     } else {
       console.error(result);
     }
+    await this.getPlaceList();
     this.pLoading = false;
   }
 
@@ -290,7 +294,6 @@ export default class PatientRecords extends Vue {
       this.currentPage = data.current_page;
       this.records = data.records;
       await this.getMeasurementTypes();
-
       await this.formateData({
         data: data.records,
         formatTime: options.formatMeasureAt
@@ -306,6 +309,25 @@ export default class PatientRecords extends Vue {
     const result = await http.get(`/measurements/types`);
     if (result) {
       this.measurementTypes = result.data.data.measurement_type;
+    } else {
+      console.error(result);
+    }
+    return result;
+  }
+
+  async getPlaceList() {
+    const pCode = this.patient.user.place.split(',');
+    const result = await http.get(`/place`);
+    if (result) {
+      for(let i = 0;i<result.data.data.place.length;i++){
+        if(result.data.data.place[i].shortcode == pCode[0])
+        {
+          if(result.data.data.place[i].index == pCode[1])
+          {
+            this.place = result.data.data.place[i].branch_name
+          }
+        }
+      }
     } else {
       console.error(result);
     }
