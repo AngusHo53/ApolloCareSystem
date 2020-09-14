@@ -2,7 +2,7 @@
 <template>
   <v-container fluid>
     <v-flex xs12>
-      <v-card v-if="!loading" style="margin-bottom:10px">
+      <v-card v-if="!pLoading" style="margin-bottom:10px">
         <v-card-title>
           <v-toolbar flat>
             <!-- <div class='blue rounded-circle d-inline-flex pa-2' style='width:16px;height:16px;'></div> -->
@@ -13,8 +13,8 @@
             </v-btn>
           </v-toolbar>
         </v-card-title>
-        <v-card-text v-if="patient && patient.user">
-          <v-row>
+        <v-card-text>
+          <v-row :key="patient.user.name">
             <v-col cols="3" md="3" lg="3">
               <v-subheader>基本資訊</v-subheader>
               <v-list>
@@ -127,7 +127,7 @@ import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import { patientModule } from "@/store/modules/patients";
 import { recordModule } from "@/store/modules/records";
-import { Entity, MeasureData, RecordOptions } from "@/types";
+import { Patient, Entity, MeasureData, RecordOptions } from "@/types";
 import {
   getDefaultPagination,
   MEASUREITEM,
@@ -166,10 +166,11 @@ export default class PatientRecords extends Vue {
   public records: MeasureData[] = [];
   public items = [];
   public loading = true;
+  public pLoading = true;
   public measurementTypes = {};
 
-  pagination = getDefaultPagination();
-  patient = {
+  public pagination = getDefaultPagination();
+  public patient: Patient = {
     user: {
       age: 0,
       birthday: "",
@@ -236,6 +237,7 @@ export default class PatientRecords extends Vue {
   }
 
   async getPatientByUuid(uuid) {
+    this.pLoading = true;
     this.setPatient(undefined);
     const result = await http.get(
       `/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`
@@ -247,10 +249,10 @@ export default class PatientRecords extends Vue {
     } else {
       console.error(result);
     }
+    this.pLoading = false;
   }
 
   async updateTableData() {
-    this.clearRecords();
     await this.getPatientRecordByUuid(this.recordsOptions);
   }
 
