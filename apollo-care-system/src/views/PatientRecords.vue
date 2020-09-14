@@ -103,7 +103,7 @@
             <template v-slot:group.header="{items, isOpen, toggle}">
               <th colspan="3">
                 <v-awesome-icon @click="toggle" :icon="isOpen ? 'minus' : 'plus' " size="lg" />
-                {{items[0].zh}}  {{ items[0].measure_at | formatMeasureAt}}
+                {{items[0].category}}  {{ items[0].measure_at | formatMeasureAt}}
               </th>
             </template>
           </v-data-table>
