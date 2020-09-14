@@ -180,5 +180,8 @@ export function formatMeasureAt(timestamp: number) {
   else if (preTime < todayTime && yesterdayTime <= preTime) {
     return '昨天 ' + preLocaleTime.toLocaleTimeString();
   }
-  return preLocaleTime.toLocaleString();
+  else {
+    return preLocaleTime.toLocaleString().substring(0,preLocaleTime.toLocaleString().length-3);
+  }
+
 }

@@ -14,7 +14,7 @@
           >
             <template v-slot:header>
               <v-card-title>
-                <span class="text-h4 font-weight-black">社區名單</span>
+                          <v-toolbar-title>社區名單</v-toolbar-title>
                 <v-spacer></v-spacer>
               </v-card-title>
               <v-text-field

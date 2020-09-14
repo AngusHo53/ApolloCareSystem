@@ -1,9 +1,8 @@
 <template>
   <v-container fluid>
     <v-card :loading="loading">
-      <v-card-title class="title">
+      <v-card-title>
         <v-toolbar flat>
-          <!-- <div class='blue rounded-circle d-inline-flex pa-2' style='width:16px;height:16px;'></div> -->
           <v-toolbar-title class="text-h4 pa-2 ont-weight-bold">圖表</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
@@ -215,7 +214,7 @@ export default class RecordChart extends Vue {
   async getDataByCategory(name: string) {
     const data = this.items.filter(data => data.key === name);
     for (const d of data) {
-      this.mearsumentAt.push(d.measure_at);
+      this.mearsumentAt.push(d.measure_at.substring(5,d.measure_at.length-3));
       this.mearsumentValue.push(d.value);
     }
 

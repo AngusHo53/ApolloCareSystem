@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <span class="title">病人名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</span>
+          <v-toolbar-title>病人名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <div>
             <v-btn class="blue darken-2 mr-2" fab small dark @click.native="createPatient()">
