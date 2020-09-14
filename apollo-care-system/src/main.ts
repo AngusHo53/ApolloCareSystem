@@ -34,6 +34,8 @@ const options = {
 Vue.config.productionTip = false;
 
 Vue.use(VueProgressBar, options);
+
+VueClipboard.config.autoSetContainer = true;
 Vue.use(VueClipboard)
 
 library.add(fas);

@@ -15,7 +15,7 @@
         </v-card-title>
         <v-card-text>
           <v-row :key="patient.user.name">
-            <v-col cols="3" md="3" lg="3">
+            <v-col cols="4" md="4" lg="4">
               <v-subheader>基本資訊</v-subheader>
               <v-list>
                 <v-list-item>

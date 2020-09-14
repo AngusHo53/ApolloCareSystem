@@ -6,11 +6,8 @@
           <v-data-table
             :headers="headers"
             :items="api_list"
-            :single-expand="singleExpand"
-            :expanded.sync="expanded"
             :loading="loading"
             loading-text="請稍後..."
-            show-expand
             item-key="name"
             class="elevation-1"
           >
@@ -52,20 +49,34 @@
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
+                <v-dialog v-model="dialog2" max-width="500px">
+                  <v-card>
+                    <v-card-title class="headline">{{apiKey.name}} API key</v-card-title>
+
+                    <v-card-text>{{apiKey.api_key}}</v-card-text>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        v-clipboard:copy="apiKey.api_key"
+                        v-clipboard:success="copyApi"
+                        v-clipboard:error="onError"
+                      >複製</v-btn>
+                      <v-btn color="blue darken-1" text @click="dialog2 = false">關閉</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </v-toolbar>
+            </template>
+            <template v-slot:item.api_key_icon="{item}">
+              <v-awesome-icon class="mr-2" @click="apikey(item)" icon="key" size="lg" />
             </template>
             <template v-slot:item.actions="{ item }">
               <v-awesome-icon class="mr-2" @click="editItem(item)" icon="edit" size="lg" />
               <v-awesome-icon class="mr-2" @click="deleteItem(item)" icon="trash" size="lg" />
               <v-awesome-icon class="mr-2" @click="resetItem(item)" icon="sync-alt" size="lg" />
-            </template>
-            <template v-slot:expanded-item="{ headers, item }">
-              <td>
-                <v-icon class="mr-2" @click="copyApi(item.api_key)">mdi-content-copy</v-icon>
-              </td>
-              <td :colspan="headers.length">
-                <p id="api-key">API Key: {{ item.api_key }}</p>
-              </td>
             </template>
           </v-data-table>
         </v-container>
@@ -75,11 +86,13 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import { appModule } from "@/store/modules/app";
 import http from "../http/axios";
 
 @Component
 export default class ApiToken extends Vue {
   public dialog = false;
+  public dialog2 = false;
   public loading = true;
   public headers = [
     {
@@ -89,10 +102,9 @@ export default class ApiToken extends Vue {
     },
     { text: "API type", value: "api_type" },
     { text: "uuid", value: "uuid" },
+    { text: "API key", value: "api_key_icon", sortable: false },
     { text: "Actions", value: "actions", sortable: false }
   ];
-  public expanded = [];
-  public singleExpand = true;
   public copyBtn = null;
   public api_list = [];
   public editedIndex = -1;
@@ -100,6 +112,11 @@ export default class ApiToken extends Vue {
     name: "",
     api_type: 0,
     uuid: ""
+  };
+
+  public apiKey = {
+    name: "",
+    api_key: ""
   };
 
   public defaultItem = {
@@ -115,23 +132,25 @@ export default class ApiToken extends Vue {
   editItem(item) {
     this.editedIndex = this.api_list.indexOf(item);
     this.editedItem = Object.assign({}, item);
-    console.log(this.editedItem);
-    console.log(this.editedIndex);
 
     this.dialog = true;
   }
 
-  public copyApi(api_key) {
-    this.$copyText(api_key).then(
-      function(e) {
-        alert("複製成功");
-        console.log(e);
-      },
-      function(e) {
-        alert("複製失敗");
-        console.log(e);
-      }
-    );
+  apikey(item) {
+    this.apiKey.name = item.name;
+    this.apiKey.api_key = item.api_key;
+    console.log(this.apiKey);
+
+    this.dialog2 = true;
+  }
+
+  public copyApi() {
+    appModule.sendSuccessNotice("複製成功");
+    this.dialog2 = false;
+  }
+
+  public onError() {
+    appModule.sendErrorNotice("複製失敗");
   }
   public async deleteItem(item) {
     const index = this.api_list.indexOf(item);
@@ -140,13 +159,13 @@ export default class ApiToken extends Vue {
       const result = await http.delete("/apikey/" + this.api_list[index].uuid);
       if (result) {
         if (result.data.status === "Success") {
-          confirm("刪除成功");
+          appModule.sendSuccessNotice("刪除成功");
         } else {
-          confirm("刪除失敗");
+          appModule.sendErrorNotice("刪除失敗");
         }
       }
     } else {
-      confirm("刪除失敗");
+      appModule.sendErrorNotice("刪除失敗");
     }
     this.apiList();
   }
@@ -158,13 +177,13 @@ export default class ApiToken extends Vue {
       const result = await http.post("/apikey/" + this.api_list[index].uuid);
       if (result) {
         if (result.data.status === "Success") {
-          confirm("重置成功");
+          appModule.sendSuccessNotice("重置成功");
         } else {
-          confirm("重置失敗");
+          appModule.sendErrorNotice("重置失敗");
         }
       }
     } else {
-      confirm("重置失敗");
+      appModule.sendErrorNotice("重置失敗");
     }
     this.apiList();
   }
@@ -187,9 +206,9 @@ export default class ApiToken extends Vue {
       console.log(result);
       if (result) {
         if (result.data.status === "Success") {
-          console.log("註冊成功");
+          appModule.sendSuccessNotice("註冊成功");
         } else {
-          console.log("註冊失敗");
+          appModule.sendErrorNotice("註冊失敗");
         }
       }
     } else {
@@ -201,9 +220,9 @@ export default class ApiToken extends Vue {
       console.log(result);
       if (result) {
         if (result.data.status === "Success") {
-          console.log("修改成功");
+          appModule.sendSuccessNotice("修改成功");
         } else {
-          console.log("修改失敗");
+          appModule.sendErrorNotice("修改失敗");
         }
       }
     }

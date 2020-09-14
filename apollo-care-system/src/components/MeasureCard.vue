@@ -8,7 +8,7 @@
   >
     <v-toolbar flat>
       <v-toolbar-title>
-        <span class="text-h4 font-weight-bold">{{header}}</span>
+        <span class="measure-title font-weight-bold">{{header}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <span v-if="measure_at">{{ measure_at}}</span>
@@ -68,6 +68,10 @@ export default class MeasureCard extends Vue {
   to {
     transform: scale(1);
   }
+}
+
+.measure-title{
+  font-size: 1.8rem;
 }
 
 .v-avatar--metronome {
