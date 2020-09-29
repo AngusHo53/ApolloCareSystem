@@ -25,7 +25,7 @@
       </v-tabs>
 
       <v-tabs-items v-model="measureTab">
-        <v-tab-item v-for="item in measureItem" :key="item.name_zn">
+        <v-tab-item v-for="item in measureItem" :key="item.name_zn" style="transition: none;">
           <v-card color="basil" flat>
             <v-card-title>
               <v-toolbar flat>
@@ -37,7 +37,7 @@
                 <v-card>
                   <v-card-title v-text="data.name_ch"></v-card-title>
                   <v-card-text class="text-h4">
-                    <span>{{this_records[item.name_zn][data.name_zn]}}人</span>
+                    <span>{{this_records[item.name_zn][data.name_zn]}}</span>
                     <v-icon
                       v-if="this_records[item.name_zn][data.name_zn] > last_records[item.name_zn][data.name_zn]"
                       large
@@ -360,6 +360,8 @@ export default class CommunityRecords extends Vue {
     this.communtiyName = param;
     this.cTableList();
   }
+
+
 
   mounted() {}
 }

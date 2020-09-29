@@ -37,10 +37,10 @@
               <v-btn fab class="indigo mr-2" small dark @click="changeToPatientRecordPage(item)">
                 <v-awesome-icon icon="user" size="lg" />
               </v-btn>
-              <v-btn fab class="teal mr-2" small dark @click="edit()">
+              <v-btn fab class="teal mr-2" small dark @click="edit(item)">
                 <v-awesome-icon icon="edit" size="lg" />
               </v-btn>
-              <v-btn fab class="cyan" small @click="remove()">
+              <v-btn fab class="cyan" small @click="remove(item)">
                 <v-awesome-icon icon="trash" size="lg" />
               </v-btn>
             </template>
@@ -56,20 +56,72 @@
           </div>
         </v-card-text>
       </v-card>
+      <v-dialog v-model="editDialog" max-width="500px">
+        <v-card>
+          <v-card-title class="headline">個案資料修改</v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field label="姓名" v-model="editItem.name"></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field label="ID" disabled v-model="editItem.iid"></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4" sm="4">
+                  <v-select :items="['男', '女']" label="性別" v-model="editItem.gender"></v-select>
+                </v-col>
+                <v-col cols="12" sm="4" md="4">
+                  <v-text-field label="年齡" v-model="editItem.age"></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4" sm="4">
+                  <v-menu
+                    ref="menu"
+                    v-model="dateMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="date"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="editItem.birthday"
+                        label="生日"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="editItem.birthday" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="dateMenu = false">取消</v-btn>
+                      <v-btn text color="primary" @click="$refs.menu.save(editItem.birthday)">確認</v-btn>
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field label="電話" v-model="editItem.phone"></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field label="信箱" v-model="editItem.email"></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="closeEdit()">取消</v-btn>
+            <v-btn color="blue darken-1" text @click="dialog = false">儲存</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-flex>
-    <confirm-dialog
-      :dialog="dialog"
-      :dialogTitle="dialogTitle"
-      :dialogText="dialogText"
-      @onConfirm="onConfirm"
-      @onCancel="onCancel"
-    ></confirm-dialog>
   </v-container>
 </template>
 <script lang="ts">
 import SearchPanel from "@/components/SearchPanel.vue";
 import { debounce } from "lodash";
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import {
   buildSearchFilters,
   buildJsonServerQuery,
@@ -97,14 +149,10 @@ import http from "@/http/axios";
 
 @Component({
   components: {
-    SearchPanel,
-    ConfirmDialog
+    SearchPanel
   }
 })
 export default class PatientList extends Vue {
-  public dialog = false;
-  public dialogTitle = "Patient Delete Dialog";
-  public dialogText = "Do you want to delete this patient?";
   private showSearchPanel = false;
   public right = true;
   public loading = true;
@@ -124,13 +172,16 @@ export default class PatientList extends Vue {
     { text: "其他操作", value: "actions", sortable: false }
   ];
 
+  public editDialog = false;
   public pagination = getDefaultPagination();
   public totalPages = 0;
   public currentPage = 1;
   public patients: Patient[] = [];
   public totalPatients = 0;
   public items: PatientInfo[] = [];
-
+  public editItem = [];
+  private dateMenu = false;
+  private date = new Date().toISOString().substr(0, 10);
   private searchFilter = {
     contains: {
       firstName: "",
@@ -229,21 +280,20 @@ export default class PatientList extends Vue {
     });
   }
 
-  edit() {
-    appModule.setSnackbar;
-    appModule.sendErrorNotice("編輯未做");
+  edit(item) {
+    this.editDialog = true;
+    this.editItem = item;
+    console.log(this.editItem);
+  }
+
+  closeEdit() {
+    this.editItem = [];
+    this.editDialog = false;
   }
 
   remove() {
     appModule.setSnackbar;
     appModule.sendErrorNotice("刪除未做");
-  }
-  onConfirm() {
-    // patientModule.deleteCustomer(this.itemId);
-    this.dialog = false;
-  }
-  onCancel() {
-    this.dialog = false;
   }
 
   searchCustomers() {
@@ -293,11 +343,10 @@ export default class PatientList extends Vue {
     this.quickSearchFilter && this.quickSearchCustomers();
   }
 
-  @Watch('patientOptions.q')
+  @Watch("patientOptions.q")
   watchSearch(newVal, oldVal) {
-    if(newVal != oldVal && newVal == "")
-    {
-      this.updateTableData()
+    if (newVal != oldVal && newVal == "") {
+      this.updateTableData();
     }
   }
 }

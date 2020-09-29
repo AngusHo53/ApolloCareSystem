@@ -230,7 +230,7 @@ export default class Login extends Vue {
         };
         userModule.signIn(userData);
 
-        this.$router.push({ name: "社區狀態顯示表" }).catch(err => {
+        this.$router.push({ name: "病人名單" }).catch(err => {
           console.log("catch test");
           console.log(err);
         });

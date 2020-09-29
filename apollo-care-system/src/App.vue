@@ -105,12 +105,12 @@ export default class App extends Vue {
   public drawer = window.innerWidth > 960;
   private fixed = false;
   private items: AppMenu[] = [
-    {
-      icon: "home",
-      title: "社區狀態顯示表",
-      vertical: "community",
-      link: "communities"
-    },
+    // {
+    //   icon: "home",
+    //   title: "社區狀態顯示表",
+    //   vertical: "community",
+    //   link: "communities"
+    // },
     {
       icon: "check",
       title: "病人審核",

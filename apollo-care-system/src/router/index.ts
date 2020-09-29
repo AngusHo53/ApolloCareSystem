@@ -68,18 +68,18 @@ const routes: Array<RouteConfig> = [
     name: 'API列表',
     beforeEnter: requireAuth
   },
-  {
-    path: "/community",
-    component: Community,
-    name: '社區狀態顯示表',
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/community/:name/records",
-    component: CommunityRecords,
-    name: "社區紀錄",
-    beforeEnter: requireAuth
-  },
+  // {
+  //   path: "/community",
+  //   component: Community,
+  //   name: '社區狀態顯示表',
+  //   beforeEnter: requireAuth
+  // },
+  // {
+  //   path: "/community/:name/records",
+  //   component: CommunityRecords,
+  //   name: "社區紀錄",
+  //   beforeEnter: requireAuth
+  // },
   { path: "/login", component: Login, name: "Login" },
   { path: "/", redirect: "/login" },
   { path: "*", redirect: "/404" }
