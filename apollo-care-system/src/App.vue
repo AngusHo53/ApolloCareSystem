@@ -104,13 +104,7 @@ export default class App extends Vue {
   private isRootComponent = true;
   public drawer = window.innerWidth > 960;
   private fixed = false;
-  private items: AppMenu[] = [
-    // {
-    //   icon: "home",
-    //   title: "社區狀態顯示表",
-    //   vertical: "community",
-    //   link: "communities"
-    // },
+  public adminItems: AppMenu[] = [
     {
       icon: "check",
       title: "病人審核",
@@ -118,16 +112,34 @@ export default class App extends Vue {
       link: "verifyPatients"
     },
     {
-      icon: "users",
-      title: "病人名單",
-      vertical: "Patient",
-      link: "patients"
-    },
+      icon: "key",
+      title: "API列表",
+      vertical: "apiList",
+      link: "apilist"
+    }
+  ];
+
+  public developItems: AppMenu[] = [
     {
       icon: "key",
       title: "API列表",
       vertical: "apiList",
       link: "apilist"
+    }
+  ];
+
+  public items: AppMenu[] = [
+    // {
+    //   icon: "home",
+    //   title: "社區狀態顯示表",
+    //   vertical: "community",
+    //   link: "communities"
+    // },
+    {
+      icon: "users",
+      title: "病人名單",
+      vertical: "Patient",
+      link: "patients"
     }
   ];
 
@@ -170,6 +182,14 @@ export default class App extends Vue {
     });
   }
 
+  roleItem() {
+    if (this.user.roles.includes("Owner" || "Admen")) {
+      this.items = this.items.concat(this.adminItems);
+    } else if (this.user.roles.includes("Developer")) {
+      this.items = this.items.concat(this.developItems);
+    }
+  }
+
   get activeMenuItem() {
     return this.menuItem;
   }
@@ -195,10 +215,10 @@ export default class App extends Vue {
   }
 
   handleNavigtiion(item: TODO) {
-      this.menuItem = item.title;
-      this.$router.push({
-        name: item.title
-      });
+    this.menuItem = item.title;
+    this.$router.push({
+      name: item.title
+    });
   }
 
   async handleUserActions(item: TODO) {
@@ -206,10 +226,12 @@ export default class App extends Vue {
     if (item.title === "登出") {
       await userModule.logout();
     }
-    this.$router.push({ path: '/login' });
+    this.$router.push({ path: "/login" });
   }
 
-  mounted() {}
+  mounted() {
+    this.roleItem();
+  }
 }
 </script>
 <style scoped>

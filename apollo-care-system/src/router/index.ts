@@ -54,6 +54,9 @@ const routes: Array<RouteConfig> = [
     path: "/verifyPatients",
     component: VerifyPatients,
     name: '病人審核',
+    meta: {
+      roles: ['Owner', 'Admin']
+    },
     beforeEnter: requireAuth
   },
   {
@@ -66,6 +69,9 @@ const routes: Array<RouteConfig> = [
     path: "/apiToken",
     component: ApiToken,
     name: 'API列表',
+    meta: {
+      roles: ['Owner', 'admin', 'Developer']
+    },
     beforeEnter: requireAuth
   },
   // {

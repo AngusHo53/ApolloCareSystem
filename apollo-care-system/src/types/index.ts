@@ -20,6 +20,7 @@ export interface UserInfo extends Entity {
 
 export interface User extends Entity {
   name: string;
+  roles: Array<string>;
   email: string;
   avatar: string;
   mobile: string;
