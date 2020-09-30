@@ -60,7 +60,7 @@
               >{{ text }}</v-alert>
               <v-dialog ref="dialog" v-model="registerDialog" persistent max-width="600px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" dark v-bind="attrs" v-on="on">註冊</v-btn>
+                  <v-btn class="blue darken-1" dark v-bind="attrs" v-on="on">註冊</v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -143,7 +143,11 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <v-btn class="ml-auto pa-2" color="primary" @click="login()">登入</v-btn>
+              <v-btn class="ml-auto pa-2 blue darken-1" dark @click="test()">忘記密碼</v-btn>
+              <v-btn class="ml-auto pa-2 blue darken-1" dark @click="login()">登入</v-btn>
+              <v-snackbar v-model="snackbar" :top="true" :timeout="2000" :color="error">
+                {{ notice }}
+              </v-snackbar>
             </v-flex>
           </v-form>
         </v-card-text>
@@ -155,9 +159,10 @@
 </template>
 <script lang="ts">
 import { Component } from "vue-property-decorator";
-import { GENDER } from '@/utils/store-util';
+import { GENDER } from "@/utils/store-util";
 import Vue from "vue";
 import { userModule } from "@/store/modules/user";
+import { appModule } from "@/store/modules/app";
 import http from "@/http/axios";
 
 @Component
@@ -165,6 +170,8 @@ export default class Login extends Vue {
   private email = "";
   private show_pass = false;
   private show_confim_pass = false;
+  public snackbar = false;
+  public notice = "";
   private pass = "";
   private confirm_pass = "";
   private id_card = "";
@@ -211,6 +218,11 @@ export default class Login extends Vue {
     if (userModule.isSignedIn) {
       userModule.logout();
     }
+  }
+
+  test() {
+    this.snackbar = true;
+    this.notice = "忘記密碼未做";
   }
 
   public async login() {
