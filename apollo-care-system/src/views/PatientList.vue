@@ -179,7 +179,7 @@ export default class PatientList extends Vue {
   public patients: Patient[] = [];
   public totalPatients = 0;
   public items: PatientInfo[] = [];
-  public editItem = [];
+  public editItem: PatientInfo[] = [];
   private dateMenu = false;
   private date = new Date().toISOString().substr(0, 10);
   private searchFilter = {
@@ -280,10 +280,9 @@ export default class PatientList extends Vue {
     });
   }
 
-  edit(item) {
+  edit(item: PatientInfo[]) {
     this.editDialog = true;
-    this.editItem = item;
-    console.log(this.editItem);
+    this.editItem = JSON.parse(JSON.stringify(item));
   }
 
   closeEdit() {

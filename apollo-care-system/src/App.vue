@@ -79,6 +79,66 @@
             <!-- <v-btn dark text @click.native="closeSnackbar">取消</v-btn> -->
           </v-snackbar>
           <router-view></router-view>
+          <v-dialog v-model="editDialog" max-width="500px">
+            <v-card>
+              <v-card-title class="headline">個案資料修改</v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field label="姓名" v-model="editItem.name"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field label="ID" disabled v-model="editItem.iid"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4" sm="4">
+                      <v-select :items="['男', '女']" label="性別" v-model="editItem.gender"></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="4" md="4">
+                      <v-text-field label="年齡" v-model="editItem.age"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4" sm="4">
+                      <v-menu
+                        ref="menu"
+                        v-model="dateMenu"
+                        :close-on-content-click="false"
+                        :return-value.sync="date"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="editItem.birthday"
+                            label="生日"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="editItem.birthday" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="dateMenu = false">取消</v-btn>
+                          <v-btn text color="primary" @click="$refs.menu.save(editItem.birthday)">確認</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field label="電話" v-model="editItem.phone"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field label="信箱" v-model="editItem.email"></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeEdit()">取消</v-btn>
+                <v-btn color="blue darken-1" text @click="dialog = false">儲存</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-container>
       </v-main>
     </template>
@@ -146,6 +206,11 @@ export default class App extends Vue {
   private userMenus: AppMenu[] = [
     {
       icon: "bubble_chart",
+      title: "修改個人資料",
+      link: "userInfo"
+    },
+    {
+      icon: "bubble_chart",
       title: "登出",
       link: "Login"
     }
@@ -155,6 +220,11 @@ export default class App extends Vue {
   private right = true;
   private rightDrawer = false;
   private menuItem = "";
+
+  private editDialog = false;
+  private dateMenu = false;
+  private date = new Date().toISOString().substr(0, 10);
+  private editItem = [];
 
   created() {
     //  [App.vue specific] When App.vue is first loaded start the progress bar
@@ -185,8 +255,10 @@ export default class App extends Vue {
   roleItem() {
     if (this.user.roles.includes("Owner" || "Admen")) {
       this.items = this.items.concat(this.adminItems);
+      return;
     } else if (this.user.roles.includes("Developer")) {
       this.items = this.items.concat(this.developItems);
+      return;
     }
   }
 
@@ -225,8 +297,17 @@ export default class App extends Vue {
     this.menuItem = item.title;
     if (item.title === "登出") {
       await userModule.logout();
+      this.$router.push({ path: "/login" });
+    } else if (item.title === "修改個人資料") {
+      console.log(this.user);
+      this.editDialog = true;
+      this.editItem = JSON.parse(JSON.stringify(this.user));
     }
-    this.$router.push({ path: "/login" });
+  }
+
+  closeEdit() {
+    this.editItem = [];
+    this.editDialog = false;
   }
 
   mounted() {

@@ -155,6 +155,7 @@
 </template>
 <script lang="ts">
 import { Component } from "vue-property-decorator";
+import { GENDER } from '@/utils/store-util';
 import Vue from "vue";
 import { userModule } from "@/store/modules/user";
 import http from "@/http/axios";
@@ -224,6 +225,7 @@ export default class Login extends Vue {
       if (result.data.status === "Success") {
         // Login Successful
         const data = result.data.data;
+        data.user.gender = GENDER[data.user.gender];
         const userData = {
           accessToken: data.session.token,
           user: data.user

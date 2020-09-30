@@ -11,6 +11,7 @@ import PatientForm from "@/views/PatientForm.vue";
 import CommunityRecords from "@/views/CommunityRecords.vue";
 import VerifyPatients from "@/views/VerifyPatients.vue";
 import ApiToken from "@/views/ApiToken.vue";
+import UserForm from "@/views/UserForm.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
   if (!userModule.isSignedIn) {
@@ -63,6 +64,12 @@ const routes: Array<RouteConfig> = [
     path: "/newPatient",
     component: PatientForm,
     name: "新增病人",
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/userInfo",
+    component: UserForm,
+    name: "個人資料",
     beforeEnter: requireAuth
   },
   {
