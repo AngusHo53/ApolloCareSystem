@@ -81,7 +81,7 @@
           <router-view></router-view>
           <v-dialog v-model="editDialog" max-width="500px">
             <v-card>
-              <v-card-title class="headline">個案資料修改</v-card-title>
+              <v-card-title class="headline">個人資料修改</v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row>
@@ -124,10 +124,16 @@
                       </v-menu>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field label="電話" v-model="editItem.phone"></v-text-field>
+                      <v-text-field
+                        label="電話"
+                        prefix="(+886)"
+                        v-model="editItem.phone"
+                        hint="電話號碼請省略0"
+                        persistent-hint
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field label="信箱" v-model="editItem.email"></v-text-field>
+                      <v-text-field label="信箱" disabled v-model="editItem.email"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -145,7 +151,7 @@
   </v-app>
 </template>
 <script lang="ts">
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
 import { userModule } from "@/store/modules/user";
 import { appModule } from "./store/modules/app";
@@ -159,12 +165,24 @@ export default class App extends Vue {
   get user() {
     return userModule.user;
   }
-
+  public role = false;
   private mini = false;
   private isRootComponent = true;
   public drawer = window.innerWidth > 960;
   private fixed = false;
   public adminItems: AppMenu[] = [
+    {
+      icon: "users",
+      title: "病人名單",
+      vertical: "Patient",
+      link: "patients"
+    },
+    {
+      icon: "user-nurse",
+      title: "看護名單",
+      vertical: "Paramedic",
+      link: "paramedic"
+    },
     {
       icon: "check",
       title: "病人審核",
@@ -176,6 +194,12 @@ export default class App extends Vue {
       title: "API列表",
       vertical: "apiList",
       link: "apilist"
+    },
+    {
+      icon: "user-tag",
+      title: "權限列表",
+      vertical: "roleList",
+      link: "rolelist"
     }
   ];
 
@@ -188,6 +212,15 @@ export default class App extends Vue {
     }
   ];
 
+  public paramedicItems: AppMenu[] = [
+    {
+      icon: "users",
+      title: "病人名單",
+      vertical: "Patient",
+      link: "patients"
+    }
+  ];
+
   public items: AppMenu[] = [
     // {
     //   icon: "home",
@@ -195,12 +228,6 @@ export default class App extends Vue {
     //   vertical: "community",
     //   link: "communities"
     // },
-    {
-      icon: "users",
-      title: "病人名單",
-      vertical: "Patient",
-      link: "patients"
-    }
   ];
 
   private userMenus: AppMenu[] = [
@@ -225,6 +252,19 @@ export default class App extends Vue {
   private dateMenu = false;
   private date = new Date().toISOString().substr(0, 10);
   private editItem = [];
+
+  @Watch("$route", { immediate: true, deep: true })
+  onUrlChange(to, from) {
+    if (this.signedIn && from.name == "Login") {
+      this.role = true;
+       location.reload();
+    }
+  }
+
+  @Watch("this.role", { immediate: true, deep: true })
+  onsignedIn(newVal: any) {
+    this.roleItem();
+  }
 
   created() {
     //  [App.vue specific] When App.vue is first loaded start the progress bar
@@ -253,12 +293,18 @@ export default class App extends Vue {
   }
 
   roleItem() {
-    if (this.user.roles.includes("Owner" || "Admen")) {
-      this.items = this.items.concat(this.adminItems);
-      return;
-    } else if (this.user.roles.includes("Developer")) {
-      this.items = this.items.concat(this.developItems);
-      return;
+    if (!this.signedIn) return;
+    else {
+      if (this.user.roles.includes("Owner" || "Admen")) {
+        this.items = this.items.concat(this.adminItems);
+        return;
+      } else if (this.user.roles.includes("Developer")) {
+        this.items = this.items.concat(this.developItems);
+        return;
+      } else if (this.user.roles.includes("Paramedic")) {
+        this.items = this.items.concat(this.paramedicItems);
+        return;
+      }
     }
   }
 
@@ -309,10 +355,7 @@ export default class App extends Vue {
     this.editItem = [];
     this.editDialog = false;
   }
-
-  mounted() {
-    this.roleItem();
-  }
+  mounted() {}
 }
 </script>
 <style scoped>

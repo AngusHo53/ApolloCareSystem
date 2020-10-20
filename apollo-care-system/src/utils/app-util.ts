@@ -175,7 +175,6 @@ export function formatMeasureAt(timestamp: number) {
   const twoDaysAgo = new Date(todayTime - (oneDayTime * 2)).getTime();
 
   const newTime = preLocaleTime.toLocaleString().substring(0, preLocaleTime.toLocaleString().length - 3);
-  console.log("time: " + newTime);
   if (preTime >= todayTime) {
     return '今天 ' + newTime;
   }

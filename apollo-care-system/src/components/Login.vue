@@ -143,14 +143,99 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <v-btn class="ml-auto pa-2 blue darken-1" dark @click="test()">忘記密碼</v-btn>
+              <v-dialog v-model="forgetDialog" persistent max-width="600px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn class="ml-2 pa-2 blue darken-1" dark v-bind="attrs" v-on="on">忘記密碼</v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">忘記密碼</span>
+                  </v-card-title>
+                  <v-card-text class="subtitle-1 font-weight-bold">請輸入登入信箱，並在點擊「送出」後前往信箱確認驗證碼。</v-card-text>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-text-field v-model="verify.email" label="信箱" clearable required></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closePass()">Close</v-btn>
+                    <v-btn color="blue darken-1" text @click="forgetPassword()">送出</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+              <v-dialog v-model="verifyDialog" persistent max-width="600px">
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">驗證信箱</span>
+                  </v-card-title>
+                  <v-card-subtitle>
+                    <span class="subtitle-1">已發送驗證碼至信箱{{verify.email}}，請至信箱查看並複製驗證碼。</span>
+                  </v-card-subtitle>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" md="6" sm="6">
+                          <v-text-field
+                            v-model="verify.email"
+                            label="信箱*"
+                            required
+                            :rules="[() => !!verify.email || '信箱不能為空']"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6" sm="6">
+                          <v-text-field
+                            v-model="verify.verify_code"
+                            label="驗證碼*"
+                            clearable
+                            required
+                            persistent-hint
+                            :rules="[() => !!verify.verify_code || '驗證碼不能為空，請至信箱接收驗證信，並複製驗證碼']"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6" sm="6">
+                          <v-text-field
+                            v-model="verify.new_pass"
+                            :append-icon="show_pass ? 'mdi-eye' : 'mdi-eye-off'"
+                            :type="show_pass ? 'text' : 'password'"
+                            label="新密碼*"
+                            clearable
+                            @click:append="show_pass = !show_pass"
+                            required
+                            :rules="[() => !!verify.new_pass || '新密碼不能為空']"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6" sm="6">
+                          <v-text-field
+                            v-model="verify.new_pass_verify"
+                            :append-icon="show_confim_pass ? 'mdi-eye' : 'mdi-eye-off'"
+                            label="確認新密碼*"
+                            clearable
+                            :rules="[(verify.new_pass_verify === verify.new_pass) || 'Password must match']"
+                            :type="show_confim_pass ? 'text' : 'password'"
+                            @click:append="show_confim_pass = !show_confim_pass"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closePass()">Close</v-btn>
+                    <v-btn color="blue darken-1" text @click="newPassword()">送出</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
               <v-btn class="ml-auto pa-2 blue darken-1" dark @click="login()">登入</v-btn>
-              <v-snackbar v-model="snackbar" :top="true" :timeout="2000" :color="error">
-                {{ notice }}
-              </v-snackbar>
             </v-flex>
           </v-form>
         </v-card-text>
+        <v-snackbar v-model="snackbar" :color="s_color" :timeout="6000">{{ s_text }}</v-snackbar>
       </v-card>
       <v-overlay :value="loading"></v-overlay>
     </v-flex>
@@ -162,7 +247,6 @@ import { Component } from "vue-property-decorator";
 import { GENDER } from "@/utils/store-util";
 import Vue from "vue";
 import { userModule } from "@/store/modules/user";
-import { appModule } from "@/store/modules/app";
 import http from "@/http/axios";
 
 @Component
@@ -170,25 +254,36 @@ export default class Login extends Vue {
   private email = "";
   private show_pass = false;
   private show_confim_pass = false;
-  public snackbar = false;
   public notice = "";
   private pass = "";
   private confirm_pass = "";
   private id_card = "";
   private name = "";
+  private snackbar = false;
   private gender = "";
   private phone = "";
   private error = false;
+  private s_text = "";
+  private s_color = "";
   private text = "No Response";
   private loading = false;
   private valid = true;
   private timeout = 500000;
   private registerDialog = false;
+  private forgetDialog = false;
+  private verifyDialog = false;
   private dateMenu = false;
   private date = new Date().toISOString().substr(0, 10);
   public gotoDashboard() {
     this.$router.push("/");
   }
+
+  private verify = {
+    email: "",
+    verify_code: "",
+    new_pass: "",
+    new_pass_verify: ""
+  };
 
   public async register() {
     this.loading = true;
@@ -220,9 +315,72 @@ export default class Login extends Vue {
     }
   }
 
-  test() {
-    this.snackbar = true;
-    this.notice = "忘記密碼未做";
+  async destroyed() {
+    await this.clearLogin();
+  }
+
+  async forgetPassword() {
+    const params = {
+      email: this.verify.email
+    };
+    const result = await http.post("/auth/password/reset", params);
+    if (result) {
+      if (result.data.status === "Success") {
+        this.verifyDialog = true;
+      } else {
+        this.s_color = "error";
+        this.s_text = "傳送驗證碼錯誤，請確認信箱是否輸入正確";
+        this.snackbar = true;
+      }
+    } else {
+      this.s_color = "error";
+      this.s_text = "傳送驗證碼錯誤，請確認信箱是否輸入正確";
+      this.snackbar = true;
+    }
+  }
+
+  async newPassword() {
+    if (this.verify.new_pass_verify !== this.verify.new_pass) {
+      this.s_color = "error";
+      this.s_text = "新密碼與確認新密碼不相同";
+      this.snackbar = true;
+      return;
+    }
+    const params = {
+      email: this.verify.email,
+      code: this.verify.verify_code,
+      password: this.verify.new_pass,
+      password_confirm: this.verify.new_pass_verify
+    };
+    const result = await http.put("/auth/password/reset", params);
+
+    if (result) {
+      if (result.data.status === "Success") {
+        this.s_color = "success";
+        this.s_text = "修改新密碼成功";
+        this.snackbar = true;
+        this.closePass();
+      } else {
+        this.s_color = "error";
+        this.s_text = result.data.message;
+        this.snackbar = true;
+      }
+    } else {
+      this.s_color = "error";
+      this.s_text = result.data.message;
+      this.snackbar = true;
+    }
+  }
+
+  closePass() {
+    this.forgetDialog = false;
+    this.verifyDialog = false;
+    this.verify = {
+      email: "",
+      verify_code: "",
+      new_pass: "",
+      new_pass_verify: ""
+    };
   }
 
   public async login() {
@@ -260,6 +418,17 @@ export default class Login extends Vue {
       console.log(`error`);
     }
     this.loading = false;
+  }
+
+  clearLogin() {
+    this.closePass();
+    this.email = "";
+    this.pass = "";
+    this.confirm_pass = "";
+    this.id_card = "";
+    this.name = "";
+    this.gender = "";
+    this.phone = "";
   }
 }
 </script>

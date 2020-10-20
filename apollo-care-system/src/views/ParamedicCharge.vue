@@ -3,13 +3,19 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-toolbar-title>病人名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title>{{paramedic_name}}負責個案 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <div>
-            <v-btn class="blue darken-2 mr-2" fab small dark @click.native="createPatient()">
+            <!-- <v-btn class="blue darken-2 mr-2" fab small dark @click.native="addPatient()">
               <v-awesome-icon icon="user-plus" size="lg" />
             </v-btn>
+            <v-btn class="red darken-2 mr-2" fab small dark @click.native="removePatient()">
+              <v-awesome-icon icon="user-minus" size="lg" />
+            </v-btn> -->
           </div>
+          <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
+            <v-awesome-icon icon="times-circle" size="lg" />
+          </v-btn>
         </v-card-title>
         <v-card-text>
           <v-text-field
@@ -32,19 +38,7 @@
             hide-default-footer
             :loading="loading"
             loading-text="Loading..."
-          >
-            <template v-slot:item.actions="{ item }">
-              <v-btn fab class="indigo mr-2" small dark @click="changeToPatientRecordPage(item)">
-                <v-awesome-icon icon="user" size="lg" />
-              </v-btn>
-              <v-btn fab class="teal mr-2" small dark @click="edit(item)">
-                <v-awesome-icon icon="edit" size="lg" />
-              </v-btn>
-              <v-btn fab class="cyan" small @click="remove(item)">
-                <v-awesome-icon icon="trash" size="lg" />
-              </v-btn>
-            </template>
-          </v-data-table>
+          ></v-data-table>
           <div class="text-xs-center pt-2">
             <v-pagination
               v-model="patientOptions.page"
@@ -56,75 +50,6 @@
           </div>
         </v-card-text>
       </v-card>
-      <v-dialog v-model="editDialog" max-width="500px">
-        <v-card>
-          <v-card-title class="headline">個案資料修改</v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="姓名" v-model="editItem.name"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="ID" disabled v-model="editItem.iid"></v-text-field>
-                </v-col>
-                <v-col cols="12" md="4" sm="4">
-                  <v-select :items="['男', '女']" label="性別" v-model="editItem.gender"></v-select>
-                </v-col>
-                <v-col cols="12" sm="4" md="4">
-                  <v-text-field label="年齡" v-model="editItem.age"></v-text-field>
-                </v-col>
-                <v-col cols="12" md="4" sm="4">
-                  <v-menu
-                    ref="menu"
-                    v-model="dateMenu"
-                    :close-on-content-click="false"
-                    :return-value.sync="date"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="290px"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="editItem.birthday"
-                        label="生日"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="editItem.birthday" no-title scrollable>
-                      <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="dateMenu = false">取消</v-btn>
-                      <v-btn text color="primary" @click="$refs.menu.save(editItem.birthday)">確認</v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field
-                    label="電話"
-                    prefix="(+886)"
-                    v-model="editItem.phone"
-                    hint="電話號碼請省略0"
-                    persistent-hint
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field label="信箱" disabled v-model="editItem.email"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-select :items="place.branch_name" label="地區" v-model="editItem.place"></v-select>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeEdit()">取消</v-btn>
-            <v-btn color="blue darken-1" text @click="dialog = false">儲存</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </v-flex>
   </v-container>
 </template>
@@ -161,7 +86,7 @@ import http from "@/http/axios";
     SearchPanel
   }
 })
-export default class PatientList extends Vue {
+export default class ParamedicCharge extends Vue {
   private showSearchPanel = false;
   public right = true;
   public loading = true;
@@ -177,16 +102,10 @@ export default class PatientList extends Vue {
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },
     { text: "電話", sortable: false, value: "phone" },
-    { text: "信箱", sortable: false, value: "email" },
-    { text: "其他操作", value: "actions", sortable: false }
+    { text: "信箱", sortable: false, value: "email" }
   ];
 
-  public place = {
-    branch_name: [],
-    index: [],
-    shortcode: []
-  };
-
+  public paramedic_name = "";
   public editDialog = false;
   public pagination = getDefaultPagination();
   public totalPages = 0;
@@ -194,21 +113,7 @@ export default class PatientList extends Vue {
   public patients: Patient[] = [];
   public totalPatients = 0;
   public items: PatientInfo[] = [];
-  public editItem = {
-    age: 0,
-    birthday: "",
-    created_at: "",
-    gender: "",
-    health_state: 0,
-    id: 0,
-    id_card: "",
-    name: "",
-    phone: "",
-    updated_at: "",
-    uuid: "",
-    email: "",
-    place: ""
-  };
+  public editItem: PatientInfo[] = [];
   private dateMenu = false;
   private date = new Date().toISOString().substr(0, 10);
   private searchFilter = {
@@ -234,13 +139,17 @@ export default class PatientList extends Vue {
   private lastSearch = "";
 
   async created() {
+    this.paramedic_name = this.$route.params.name;
     this.setPagination(getDefaultPagination());
     await this.updateTableData();
-    await this.getPlaceList();
   }
 
   async destroyed() {
     await this.clearPatient();
+  }
+
+  cancel() {
+    this.$router.push({ name: "看護名單" });
   }
 
   async updateTableData() {
@@ -289,7 +198,11 @@ export default class PatientList extends Vue {
     this.pagination = pagination;
   }
 
-  createPatient() {
+  addPatient() {
+    this.$router.push("newPatient");
+  }
+
+  removePatient() {
     this.$router.push("newPatient");
   }
 
@@ -313,55 +226,10 @@ export default class PatientList extends Vue {
   edit(item: PatientInfo[]) {
     this.editDialog = true;
     this.editItem = JSON.parse(JSON.stringify(item));
-    console.log(this.editItem);
-    this.codetoPlace(item);
   }
-
-  async getPlaceList() {
-    const result = await http.get(`/place`);
-    if (result) {
-      for (let i = 0; i < result.data.data.place.length; i++) {
-        this.place.branch_name.push(result.data.data.place[i].branch_name);
-        this.place.index.push(result.data.data.place[i].index);
-        this.place.shortcode.push(result.data.data.place[i].shortcode);
-      }
-    } else {
-      console.error(result.data.status);
-    }
-  }
-
-  codetoPlace(item) {
-    if (item.place !== null) {
-      const pCode = item.place.split(",");
-      for (let i = 0; i < this.place.branch_name.length; i++) {
-        if (this.place.shortcode[i] == pCode[0]) {
-          if (this.place.index[i] == pCode[1]) {
-            this.editItem.place = this.place.branch_name[i];
-            console.log(this.place.branch_name[i]);
-          }
-        }
-      }
-    } else return;
-  }
-
-  placetoCode(item) {}
 
   closeEdit() {
-    this.editItem = {
-      age: 0,
-      birthday: "",
-      created_at: "",
-      gender: "",
-      health_state: 0,
-      id: 0,
-      id_card: "",
-      name: "",
-      phone: "",
-      updated_at: "",
-      uuid: "",
-      email: "",
-      place: ""
-    };
+    this.editItem = [];
     this.editDialog = false;
   }
 

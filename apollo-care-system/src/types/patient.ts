@@ -18,7 +18,7 @@ export interface PatientInfo {
   updated_at: string;
   uuid: string;
   email: string;
-  place: string;
+  place: any;
 }
 
 export interface PatientOptions {

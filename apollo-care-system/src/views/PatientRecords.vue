@@ -103,7 +103,7 @@
             <template v-slot:group.header="{items, isOpen, toggle}">
               <th colspan="3">
                 <v-awesome-icon @click="toggle" :icon="isOpen ? 'minus' : 'plus' " size="lg" />
-                {{items[0].category}}  {{ items[0].measure_at | formatMeasureAt}}
+                {{items[0].category}} {{ items[0].measure_at | formatMeasureAt}}
               </th>
             </template>
           </v-data-table>
@@ -208,7 +208,13 @@ export default class PatientRecords extends Vue {
   public measureItem = MEASUREITEM;
   public headers = [
     { text: "測量時間", sortable: false, value: "measure_at" },
-    { text: "關鍵字", sortable: false, value: "zh",align: 'start',width: "25%" },
+    {
+      text: "關鍵字",
+      sortable: false,
+      value: "zh",
+      align: "start",
+      width: "25%"
+    },
     { text: "值", sortable: false, value: "value" }
   ];
 
@@ -317,22 +323,23 @@ export default class PatientRecords extends Vue {
   }
 
   async getPlaceList() {
-    const pCode = this.patient.user.place.split(',');
-    const result = await http.get(`/place`);
-    if (result) {
-      for(let i = 0;i<result.data.data.place.length;i++){
-        if(result.data.data.place[i].shortcode == pCode[0])
-        {
-          if(result.data.data.place[i].index == pCode[1])
-          {
-            this.place = result.data.data.place[i].branch_name
+    if (this.patient.user.place !== null) {
+      const pCode = this.patient.user.place.split(",");
+      const result = await http.get(`/place`);
+      if (result) {
+        for (let i = 0; i < result.data.data.place.length; i++) {
+          if (result.data.data.place[i].shortcode == pCode[0]) {
+            if (result.data.data.place[i].index == pCode[1]) {
+              this.place = result.data.data.place[i].branch_name;
+            }
           }
         }
+      } else {
+        console.error(result);
       }
-    } else {
-      console.error(result);
+      return result;
     }
-    return result;
+    else return;
   }
 
   async formateData(obj) {
