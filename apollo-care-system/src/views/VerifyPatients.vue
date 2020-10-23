@@ -54,7 +54,7 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>名稱: {{item.name}}</v-list-item-title>
-              <v-list-item-subtitle>ID: {{item.iid}}</v-list-item-subtitle>
+              <v-list-item-subtitle>身份證字號: {{item.iid}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-card-text>
@@ -102,7 +102,7 @@ export default class VerifyPatients extends Vue {
       sortable: false,
       value: "name"
     },
-    { text: "ID", sortable: false, value: "iid" },
+    { text: "身份證字號", sortable: false, value: "iid" },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },

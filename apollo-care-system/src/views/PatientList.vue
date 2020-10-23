@@ -66,7 +66,7 @@
                   <v-text-field label="姓名" v-model="editItem.name"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="ID" disabled v-model="editItem.iid"></v-text-field>
+                  <v-text-field label="身份證字號" disabled v-model="editItem.iid"></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4" sm="4">
                   <v-select :items="['男', '女']" label="性別" v-model="editItem.gender"></v-select>
@@ -172,7 +172,7 @@ export default class PatientList extends Vue {
       sortable: false,
       value: "name"
     },
-    { text: "ID", sortable: false, value: "iid" },
+    { text: "身份證字號", sortable: false, value: "iid" },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },

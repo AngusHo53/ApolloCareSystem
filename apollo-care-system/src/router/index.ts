@@ -99,12 +99,12 @@ const routes: Array<RouteConfig> = [
     name: '權限列表',
     beforeEnter: requireAuth
   },
-  // {
-  //   path: "/community",
-  //   component: Community,
-  //   name: '社區狀態顯示表',
-  //   beforeEnter: requireAuth
-  // },
+  {
+    path: "/community",
+    component: Community,
+    name: '社區狀態顯示表',
+    beforeEnter: requireAuth
+  },
   // {
   //   path: "/community/:name/records",
   //   component: CommunityRecords,

@@ -19,6 +19,7 @@ export interface PatientInfo {
   uuid: string;
   email: string;
   place: any;
+  roles:[string];
 }
 
 export interface PatientOptions {

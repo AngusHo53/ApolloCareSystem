@@ -5,10 +5,10 @@
         <v-container fluid>
           <v-data-table
             :headers="headers"
-            :items="api_list"
+            :items="account_list"
             :loading="loading"
             loading-text="請稍後..."
-            item-key="name"
+            item-key="uuid"
             class="elevation-1"
           >
             <template v-slot:top>
@@ -28,9 +28,9 @@
                           </v-col>
                           <v-col cols="12" sm="6">
                             <v-autocomplete
-                              v-model="editedItem.api_type"
+                              v-model="editedItem.roles"
                               :items="role_item"
-                              :rules="[() => !!editedItem.api_type || 'This field is required']"
+                              :rules="[() => !!editedItem.roles || 'This field is required']"
                               label="權限組"
                               multiple
                               required
@@ -62,6 +62,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { appModule } from "@/store/modules/app";
 import http from "../http/axios";
+import { userModule } from "@/store/modules/user";
 
 @Component
 export default class RoleList extends Vue {
@@ -73,29 +74,26 @@ export default class RoleList extends Vue {
       align: "start",
       value: "name"
     },
-    { text: "權限組", value: "api_type" },
+    { text: "權限組", value: "roles" },
     { text: "Actions", value: "actions", sortable: false }
   ];
-  public api_list = [];
-  public editedItem = {
-    name: "",
-    api_type: 0,
-    uuid: ""
-  };
+  public account_list = [{ uuid: "", name: "", roles: [] }];
 
-  public apiKey = {
+  public editedItem = {
+    uuid: "",
     name: "",
-    api_key: ""
+    roles: []
   };
 
   public defaultItem = {
+    uuid: "",
     name: "",
-    api_type: 0,
-    uuid: ""
+    roles: []
   };
 
-  public role_item = ['Admin','Developer','Doctor','Paramedic','Patient'];
-
+  public role_item = [];
+  public admin_role = ["Developer", "Doctor", "Paramedic", "Patient"];
+  public owner_role = ["Admin", "Developer", "Doctor", "Paramedic", "Patient"];
   editItem(item) {
     this.editedItem = Object.assign({}, item);
 
@@ -110,11 +108,14 @@ export default class RoleList extends Vue {
   }
 
   public async save() {
+    console.log(this.editedItem.roles);
     const params = {
-      name: this.editedItem.name,
-      type: this.editedItem.api_type
+      roles: this.editedItem.roles
     };
-    const result = await http.put("/apikey/" + this.editedItem.uuid, params);
+    const result = await http.put(
+      "/user/" + this.editedItem.uuid + "/roles",
+      params
+    );
     console.log(result);
     if (result) {
       if (result.data.status === "Success") {
@@ -124,14 +125,14 @@ export default class RoleList extends Vue {
       }
     }
     this.close();
-    this.apiList();
+    // location.reload();
   }
 
-  public async apiList() {
-    const result = await http.get("/apikey");
+  public async roleList() {
+    const result = await http.get("/accounts");
     if (result) {
       if (result.data.status === "Success") {
-        this.api_list = result.data.data.clients;
+        this.account_list = result.data.data.accounts;
         this.loading = false;
       } else {
         console.log("error");
@@ -142,9 +143,18 @@ export default class RoleList extends Vue {
   }
 
   created() {
-    this.apiList();
+    this.roleList();
+    if (this.user.roles.includes("Owner")) {
+      this.role_item = this.role_item.concat(this.owner_role);
+    } else if (this.user.roles.includes("Admen")) {
+      this.role_item = this.role_item.concat(this.admin_role);
+    }
   }
 
   mounted() {}
+
+  get user() {
+    return userModule.user;
+  }
 }
 </script>

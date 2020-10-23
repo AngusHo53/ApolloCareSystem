@@ -23,7 +23,7 @@
                   <v-list-item-content :class="['text-left text-h6']">{{patient.user.name}}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-content :class="['font-weight-bold text-h6']">ID:</v-list-item-content>
+                  <v-list-item-content :class="['font-weight-bold text-h6']">身份證字號:</v-list-item-content>
                   <v-list-item-content :class="['text-h6']">{{patient.user.iid}}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
@@ -129,9 +129,7 @@ import MeasureCard from "@/components/MeasureCard.vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
-import { patientModule } from "@/store/modules/patients";
-import { recordModule } from "@/store/modules/records";
-import { Patient, Entity, MeasureData, RecordOptions } from "@/types";
+import { Patient, MeasureData } from "@/types";
 import {
   getDefaultPagination,
   MEASUREITEM,
@@ -188,7 +186,8 @@ export default class PatientRecords extends Vue {
       updated_at: "",
       uuid: "",
       email: "",
-      place: ""
+      place: "",
+      roles:[""]
     },
     id: 0,
     record: {

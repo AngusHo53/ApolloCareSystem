@@ -42,7 +42,8 @@ class PatientModule extends VuexModule implements PatientState {
       updated_at: '',
       uuid: '',
       email: '',
-      place:''
+      place:'',
+      roles:[""]
     },
     id: 0,
     record: {

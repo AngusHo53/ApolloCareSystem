@@ -48,7 +48,7 @@
                         <v-flex md8 sm12 xs12 class="mx-1 px-0">
                           <v-text-field
                             name="iid"
-                            label="*身分證"
+                            label="*身份證字號"
                             v-model="patientFormData.iid"
                             class="input-group--focused"
                             required

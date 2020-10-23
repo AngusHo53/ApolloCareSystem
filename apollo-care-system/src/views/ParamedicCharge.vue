@@ -3,19 +3,14 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-toolbar-title>{{paramedic_name}}負責個案 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title>{{paramedic_name}}負責個案 {{ totalPatient ? '(' + totalPatient + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <div>
-            <!-- <v-btn class="blue darken-2 mr-2" fab small dark @click.native="addPatient()">
-              <v-awesome-icon icon="user-plus" size="lg" />
-            </v-btn>
-            <v-btn class="red darken-2 mr-2" fab small dark @click.native="removePatient()">
-              <v-awesome-icon icon="user-minus" size="lg" />
-            </v-btn> -->
-          </div>
-          <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
-            <v-awesome-icon icon="times-circle" size="lg" />
-          </v-btn>
+          <!-- <v-col cols="12" md="2">
+            <v-btn class="mb-3 blue white--text" @click="addDialog()">新增個案</v-btn>
+          </v-col>-->
+          <v-col cols="12" md="2">
+            <v-btn class="mb-3 red white--text" @click="removeDialog()">移除個案</v-btn>
+          </v-col>
         </v-card-title>
         <v-card-text>
           <v-text-field
@@ -23,73 +18,96 @@
             flat
             solo-inverted
             hide-details
-            v-model="patientOptions.q"
+            v-model="search"
             append-icon="mdi-magnify"
             label="關鍵字搜尋"
-            @keyup.enter="updateTableData()"
           ></v-text-field>
           <v-data-table
-            item-key="patients.iid"
+            v-model="modify_items"
+            item-key="iid"
             :headers="headers"
-            :items="items"
-            :page.sync="patientOptions.page"
-            :items-per-page="pagination.rowsPerPage"
-            :options="patientOptions"
-            hide-default-footer
+            :items="patient_items"
             :loading="loading"
-            loading-text="Loading..."
-          ></v-data-table>
-          <div class="text-xs-center pt-2">
-            <v-pagination
-              v-model="patientOptions.page"
-              :length="pagination.pages"
-              :total-visible="9"
-              @input="updateTableData()"
-              circle
-            ></v-pagination>
-          </div>
+            loading-text="請稍後..."
+            :search="search"
+            show-select
+            :single-select="false"
+          >
+            <template v-slot:item.actions="{ item }">
+              <v-btn fab class="indigo mr-2" small dark @click="changeToPatient(item)">
+                <v-awesome-icon icon="user" size="lg" />
+              </v-btn>
+            </template>
+          </v-data-table>
         </v-card-text>
       </v-card>
     </v-flex>
+    <v-dialog v-if="modify_items" v-model="remove_dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">移除個案({{modify_items.length}})</span>
+        </v-card-title>
+        <v-card-text>
+          <v-divider></v-divider>
+          <v-list-item two-line v-for="item in modify_items" :key="item.iid">
+            <v-list-item-avatar class="grey lighten-1 white--text">
+              <v-awesome-icon icon="user" size="lg" />
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>名稱: {{item.name}}</v-list-item-title>
+              <v-list-item-subtitle>身份證字號: {{item.iid}}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="close">取消</v-btn>
+          <v-btn color="blue darken-1" text @click="save">確認</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-if="modify_items" v-model="add_dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">新增個案({{modify_items.length}})</span>
+        </v-card-title>
+        <v-card-text>
+          <v-divider></v-divider>
+          <v-list-item two-line v-for="item in modify_items" :key="item.iid">
+            <v-list-item-avatar class="grey lighten-1 white--text">
+              <v-awesome-icon icon="user" size="lg" />
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>名稱: {{item.name}}</v-list-item-title>
+              <v-list-item-subtitle>身份證字號: {{item.iid}}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="close">取消</v-btn>
+          <v-btn color="blue darken-1" text @click="save">確認</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script lang="ts">
-import SearchPanel from "@/components/SearchPanel.vue";
-import { debounce } from "lodash";
-import {
-  buildSearchFilters,
-  buildJsonServerQuery,
-  clearSearchFilters
-} from "@/utils/app-util";
-import {
-  Patient,
-  Order,
-  Entity,
-  PatientInfo,
-  PatientOptions,
-  MeasureData,
-  PatientFormData
-} from "@/types";
-import { Component, Watch } from "vue-property-decorator";
+import { Patient, PatientInfo } from "@/types";
+import { GENDER } from "@/utils/store-util";
+import { Component } from "vue-property-decorator";
 import Vue from "vue";
-import { patientModule } from "@/store/modules/patients";
-import { appModule } from "@/store/modules/app";
-import {
-  getDefaultPagination,
-  getPagination,
-  GENDER
-} from "@/utils/store-util";
 import http from "@/http/axios";
+import { appModule } from "@/store/modules/app";
 
-@Component({
-  components: {
-    SearchPanel
-  }
-})
+@Component
 export default class ParamedicCharge extends Vue {
-  private showSearchPanel = false;
-  public right = true;
   public loading = true;
+  public search = "";
+  public paramedic_name = "";
+  public paramedic_id = "";
   public headers = [
     {
       text: "名稱",
@@ -97,199 +115,123 @@ export default class ParamedicCharge extends Vue {
       sortable: false,
       value: "name"
     },
-    { text: "ID", sortable: false, value: "iid" },
+    { text: "身份證字號", sortable: false, value: "iid" },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },
     { text: "電話", sortable: false, value: "phone" },
     { text: "信箱", sortable: false, value: "email" }
   ];
-
-  public paramedic_name = "";
-  public editDialog = false;
-  public pagination = getDefaultPagination();
-  public totalPages = 0;
-  public currentPage = 1;
-  public patients: Patient[] = [];
-  public totalPatients = 0;
-  public items: PatientInfo[] = [];
-  public editItem: PatientInfo[] = [];
-  private dateMenu = false;
-  private date = new Date().toISOString().substr(0, 10);
-  private searchFilter = {
-    contains: {
-      firstName: "",
-      lastName: ""
-    },
-    between: {
-      rewards: { former: 0, latter: 0 }
+  public patient: PatientInfo[] = [];
+  public patient_items: PatientInfo[] = [];
+  public modify_items = [
+    {
+      iid: "",
+      name: ""
     }
-  };
-  private query = "";
-  private color = "";
-  private quickSearchFilter = "";
-  private itemId = -1;
-  private patientOptions = {
-    page: 1,
-    q: "",
-    order: "asc",
-    sort: ""
-  };
+  ];
+  public totalPatient = 0;
 
-  private lastSearch = "";
+  public remove_dialog = false;
+  public add_dialog = false;
+  public dialogTitle = "";
 
   async created() {
     this.paramedic_name = this.$route.params.name;
-    this.setPagination(getDefaultPagination());
+    this.paramedic_id = this.$route.params.id;
     await this.updateTableData();
   }
 
   async destroyed() {
-    await this.clearPatient();
-  }
-
-  cancel() {
-    this.$router.push({ name: "看護名單" });
+    await this.cleanPatient();
   }
 
   async updateTableData() {
     this.loading = true;
-    this.clearPatient();
-    if (!this.loading) {
-      if (this.patientOptions.q !== this.lastSearch) {
-        this.patientOptions.page = 1;
-        this.lastSearch = this.patientOptions.q;
+    const result = await http.get("/user/" + this.paramedic_id + "/patients");
+    if (result) {
+      if (result.data.status === "Success") {
+        const data = result.data.data;
+        this.patient = data.accounts;
+        this.totalPatient = this.patient.length;
+        this.patient.forEach(element => {
+          if (element) {
+            element.gender = GENDER[element.gender];
+            this.patient_items.push(element);
+          }
+        });
+        this.loading = false;
+      } else {
+        console.log("error");
       }
+    } else {
+      console.log("error");
+    }
+  }
+
+  cleanPatient() {
+    this.totalPatient = 0;
+    this.patient = [];
+    this.patient_items = [];
+    this.modify_items = [];
+  }
+
+  removeDialog() {
+    this.remove_dialog = true;
+    this.dialogTitle = "移除個案";
+  }
+
+  addDialog() {
+    this.add_dialog = true;
+    this.dialogTitle = "新增個案";
+  }
+
+  showDialog(title) {
+    this.remove_dialog = true;
+    this.dialogTitle = title;
+  }
+
+  async modifyPatient() {
+    const params = {
+      add: [],
+      remove: []
+    };
+    if (this.dialogTitle === "新增個案") {
+      const add_id = [];
+      this.modify_items.forEach(function(item) {
+        add_id.push(item.iid);
+      });
+      params.add = add_id;
+    } else {
+      const remove_id = [];
+      this.modify_items.forEach(function(item) {
+        remove_id.push(item.iid);
+      });
+      params.remove = remove_id;
     }
 
-    const result = await http.get(
-      `/user?q=${this.patientOptions.q}&page=${this.patientOptions.page}&limit=10`
+    const result = await http.post(
+      "/user/" + this.paramedic_id + "/patients",
+      params
     );
     if (result) {
-      const data = result.data.data;
-      this.totalPatients = data.total_users;
-      this.totalPages = data.total_page;
-      this.patients = data.users;
-      this.currentPage = this.patientOptions.page;
-      // Extract Table Data
-      await this.extractPatientInfo(data.users);
-      const pagination = getPagination(
-        this.items,
-        this.totalPages,
-        this.currentPage
-      );
-      this.setPagination(pagination);
-      this.loading = false;
+      location.reload();
+      appModule.sendSuccessNotice("變更成功");
     } else {
-      console.error(result);
+      appModule.sendErrorNotice("變更失敗");
     }
   }
 
-  async extractPatientInfo(patients: Patient[]) {
-    patients.forEach(element => {
-      if (element.user) {
-        element.user.gender = GENDER[element.user.gender];
-        this.items.push(element.user);
-      }
-    });
+  close() {
+    this.remove_dialog = false;
+    this.add_dialog = false;
+    // this.updateTableData();
   }
 
-  setPagination(pagination) {
-    this.pagination = pagination;
-  }
-
-  addPatient() {
-    this.$router.push("newPatient");
-  }
-
-  removePatient() {
-    this.$router.push("newPatient");
-  }
-
-  clearPatient() {
-    this.patients = [];
-    this.items = [];
-    this.totalPages = 0;
-    this.totalPatients = 0;
-    this.pagination = getDefaultPagination();
-  }
-
-  changeToPatientRecordPage(item) {
-    this.$router.push({
-      name: `病人紀錄`,
-      params: {
-        id: item.uuid
-      }
-    });
-  }
-
-  edit(item: PatientInfo[]) {
-    this.editDialog = true;
-    this.editItem = JSON.parse(JSON.stringify(item));
-  }
-
-  closeEdit() {
-    this.editItem = [];
-    this.editDialog = false;
-  }
-
-  remove() {
-    appModule.setSnackbar;
-    appModule.sendErrorNotice("刪除未做");
-  }
-
-  searchCustomers() {
-    buildSearchFilters(this.searchFilter);
-    this.query = buildJsonServerQuery(this.searchFilter);
-    this.quickSearch = "";
-    // patientModule.searchCustomers(this.query);
-    this.showSearchPanel = false;
-  }
-
-  clearSearchFilters() {
-    this.showSearchPanel = !this.showSearchPanel;
-    clearSearchFilters(this.searchFilter);
-    // patientModule.getAllCustomers();
-  }
-
-  reloadData() {
-    this.query = "";
-    //patientModule.getAllCustomers();
-  }
-
-  updateSearchPanel() {
-    this.rightDrawer = !this.rightDrawer;
-  }
-
-  cancelSearch() {
-    this.showSearchPanel = false;
-  }
-
-  quickSearchCustomers = debounce(function() {
-    // patientModule.quickSearch(this.headers, this.quickSearchFilter);
-  }, 500);
-
-  get rightDrawer() {
-    return this.showSearchPanel;
-  }
-
-  set rightDrawer(_showSearchPanel: boolean) {
-    this.showSearchPanel = _showSearchPanel;
-  }
-
-  get quickSearch() {
-    return this.quickSearchFilter;
-  }
-  set quickSearch(val) {
-    this.quickSearchFilter = val;
-    this.quickSearchFilter && this.quickSearchCustomers();
-  }
-
-  @Watch("patientOptions.q")
-  watchSearch(newVal, oldVal) {
-    if (newVal != oldVal && newVal == "") {
-      this.updateTableData();
-    }
+  public async save() {
+    this.remove_dialog = false;
+    this.add_dialog = false;
+    this.modifyPatient();
   }
 }
 </script>
