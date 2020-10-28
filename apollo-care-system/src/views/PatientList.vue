@@ -13,7 +13,6 @@
         </v-card-title>
         <v-card-text>
           <v-text-field
-            clearable
             flat
             solo-inverted
             hide-details
@@ -66,7 +65,7 @@
                   <v-text-field label="姓名" v-model="editItem.name"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="身份證字號" disabled v-model="editItem.iid"></v-text-field>
+                  <v-text-field label="身份證字號" disabled></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4" sm="4">
                   <v-select :items="['男', '女']" label="性別" v-model="editItem.gender"></v-select>
@@ -129,13 +128,6 @@
   </v-container>
 </template>
 <script lang="ts">
-import SearchPanel from "@/components/SearchPanel.vue";
-import { debounce } from "lodash";
-import {
-  buildSearchFilters,
-  buildJsonServerQuery,
-  clearSearchFilters
-} from "@/utils/app-util";
 import { Patient, PatientInfo } from "@/types";
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
@@ -147,14 +139,8 @@ import {
 } from "@/utils/store-util";
 import http from "@/http/axios";
 
-@Component({
-  components: {
-    SearchPanel
-  }
-})
+@Component
 export default class PatientList extends Vue {
-  private showSearchPanel = false;
-  public right = true;
   public loading = true;
   public headers = [
     {
@@ -163,7 +149,7 @@ export default class PatientList extends Vue {
       sortable: false,
       value: "name"
     },
-    { text: "身份證字號", sortable: false, value: "iid" },
+    { text: "身份證字號", sortable: false },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },
@@ -202,19 +188,6 @@ export default class PatientList extends Vue {
   };
   private dateMenu = false;
   private date = new Date().toISOString().substr(0, 10);
-  private searchFilter = {
-    contains: {
-      firstName: "",
-      lastName: ""
-    },
-    between: {
-      rewards: { former: 0, latter: 0 }
-    }
-  };
-  private query = "";
-  private color = "";
-  private quickSearchFilter = "";
-  private itemId = -1;
   private patientOptions = {
     page: 1,
     q: "",
@@ -270,6 +243,13 @@ export default class PatientList extends Vue {
   async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
       if (element.user) {
+        if (
+          element.user.name !== "廖小栩" &&
+          element.user.name !== "廖德" &&
+          element.user.name !== "廖大德"
+        ) {
+          element.user.name = " ";
+        }
         element.user.gender = GENDER[element.user.gender];
         this.items.push(element.user);
       }
@@ -378,10 +358,7 @@ export default class PatientList extends Vue {
       place: this.editItem.place
     };
 
-    const result = await http.put(
-      "/user/" + this.editItem.uuid,
-      params
-    );
+    const result = await http.put("/user/" + this.editItem.uuid, params);
     if (result) {
       if (result.data.status === "Success") {
         appModule.sendSuccessNotice("修改成功");
@@ -393,53 +370,6 @@ export default class PatientList extends Vue {
     }
     this.closeEdit();
     // location.reload();
-  }
-
-  searchCustomers() {
-    buildSearchFilters(this.searchFilter);
-    this.query = buildJsonServerQuery(this.searchFilter);
-    this.quickSearch = "";
-    // patientModule.searchCustomers(this.query);
-    this.showSearchPanel = false;
-  }
-
-  clearSearchFilters() {
-    this.showSearchPanel = !this.showSearchPanel;
-    clearSearchFilters(this.searchFilter);
-    // patientModule.getAllCustomers();
-  }
-
-  reloadData() {
-    this.query = "";
-    //patientModule.getAllCustomers();
-  }
-
-  updateSearchPanel() {
-    this.rightDrawer = !this.rightDrawer;
-  }
-
-  cancelSearch() {
-    this.showSearchPanel = false;
-  }
-
-  quickSearchCustomers = debounce(function() {
-    // patientModule.quickSearch(this.headers, this.quickSearchFilter);
-  }, 500);
-
-  get rightDrawer() {
-    return this.showSearchPanel;
-  }
-
-  set rightDrawer(_showSearchPanel: boolean) {
-    this.showSearchPanel = _showSearchPanel;
-  }
-
-  get quickSearch() {
-    return this.quickSearchFilter;
-  }
-  set quickSearch(val) {
-    this.quickSearchFilter = val;
-    this.quickSearchFilter && this.quickSearchCustomers();
   }
 
   @Watch("patientOptions.q")

@@ -24,7 +24,7 @@
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content :class="['font-weight-bold text-h6']">身份證字號:</v-list-item-content>
-                  <v-list-item-content :class="['text-h6']">{{patient.user.iid}}</v-list-item-content>
+                  <!-- <v-list-item-content :class="['text-h6']">{{patient.user.iid}}</v-list-item-content> -->
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content :class="['font-weight-bold text-h6']">性別:</v-list-item-content>
@@ -187,7 +187,7 @@ export default class PatientRecords extends Vue {
       uuid: "",
       email: "",
       place: "",
-      roles:[""]
+      roles: [""]
     },
     id: 0,
     record: {
@@ -253,6 +253,13 @@ export default class PatientRecords extends Vue {
     );
     if (result.data.data) {
       const data = result.data.data;
+      if (
+        data.user.name !== "廖小栩" &&
+        data.user.name !== "廖德" &&
+        data.user.name !== "廖大德"
+      ) {
+        data.user.name = " ";
+      }
       data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
     } else {
@@ -337,8 +344,7 @@ export default class PatientRecords extends Vue {
         console.error(result);
       }
       return result;
-    }
-    else return;
+    } else return;
   }
 
   async formateData(obj) {

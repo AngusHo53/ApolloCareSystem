@@ -14,13 +14,13 @@
         </v-card-title>
         <v-card-text>
           <v-text-field
-            clearable
             flat
             solo-inverted
             hide-details
-            v-model="search"
+            v-model="patientOptions.q"
             append-icon="mdi-magnify"
             label="關鍵字搜尋"
+            @keyup.enter="updateTableData()"
           ></v-text-field>
           <v-data-table
             v-model="modify_items"
@@ -31,6 +31,10 @@
             loading-text="請稍後..."
             :search="search"
             show-select
+            :page.sync="patientOptions.page"
+            :items-per-page="pagination.rowsPerPage"
+            :options="patientOptions"
+            hide-default-footer
             :single-select="false"
           >
             <template v-slot:item.actions="{ item }">
@@ -39,6 +43,15 @@
               </v-btn>
             </template>
           </v-data-table>
+          <div class="text-xs-center pt-2">
+            <v-pagination
+              v-model="patientOptions.page"
+              :length="pagination.pages"
+              :total-visible="9"
+              @input="updateTableData()"
+              circle
+            ></v-pagination>
+          </div>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -55,7 +68,7 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>名稱: {{item.name}}</v-list-item-title>
-              <v-list-item-subtitle>身份證字號: {{item.iid}}</v-list-item-subtitle>
+              <v-list-item-subtitle>身份證字號:</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-card-text>
@@ -85,24 +98,39 @@
           <v-spacer></v-spacer>
           <v-card-title>
             <v-text-field
-              v-model="a_search"
+              flat
+              solo-inverted
+              hide-details
+              v-model="a_patientOptions.q"
               append-icon="mdi-magnify"
               label="關鍵字搜尋"
-              single-line
-              hide-details
+              @keyup.enter="justNeedAdd()"
             ></v-text-field>
           </v-card-title>
           <v-data-table
             v-model="modify_items"
             item-key="iid"
             :headers="headers"
-            :items="patient_not"
+            :items="patient_not_items"
             :search="a_search"
             :loading="a_loading"
             loading-text="請稍後..."
             show-select
+            :page.sync="a_patientOptions.page"
+            :items-per-page="a_pagination.rowsPerPage"
+            :options="a_patientOptions"
+            hide-default-footer
             :single-select="false"
           ></v-data-table>
+          <div class="text-xs-center pt-2">
+            <v-pagination
+              v-model="a_patientOptions.page"
+              :length="a_pagination.pages"
+              :total-visible="9"
+              @input="justNeedAdd()"
+              circle
+            ></v-pagination>
+          </div>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -116,14 +144,41 @@
 </template>
 <script lang="ts">
 import { PatientInfo } from "@/types";
-import { GENDER } from "@/utils/store-util";
-import { Component } from "vue-property-decorator";
+import {
+  GENDER,
+  getDefaultPagination,
+  getPagination
+} from "@/utils/store-util";
+import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
 import http from "@/http/axios";
 import { appModule } from "@/store/modules/app";
 
 @Component
 export default class ParamedicCharge extends Vue {
+  public pagination = getDefaultPagination();
+  public totalPages = 0;
+  public currentPage = 1;
+  private patientOptions = {
+    page: 1,
+    q: "",
+    order: "asc",
+    sort: ""
+  };
+  private lastSearch = "";
+  public totalPatient = 0;
+
+  public a_pagination = getDefaultPagination();
+  public a_totalPages = 0;
+  public a_currentPage = 1;
+  private a_patientOptions = {
+    page: 1,
+    q: "",
+    order: "asc",
+    sort: ""
+  };
+  private a_lastSearch = "";
+
   public loading = false;
   public a_loading = false;
   public search = "";
@@ -137,7 +192,7 @@ export default class ParamedicCharge extends Vue {
       sortable: false,
       value: "name"
     },
-    { text: "身份證字號", sortable: false, value: "iid" },
+    { text: "身份證字號", sortable: false },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },
@@ -150,13 +205,13 @@ export default class ParamedicCharge extends Vue {
   public patient_not_items: PatientInfo[] = [];
   public modify_items = [];
   public add_list = "";
-  public totalPatient = 0;
 
   public remove_dialog = false;
   public add_dialog = false;
   public dialogTitle = "";
 
   async created() {
+    this.setPagination(getDefaultPagination());
     this.paramedic_name = this.$route.params.name;
     this.paramedic_id = this.$route.params.id;
 
@@ -164,24 +219,55 @@ export default class ParamedicCharge extends Vue {
     await this.justNeedAdd();
   }
 
+  setPagination(pagination) {
+    this.pagination = pagination;
+  }
+
+  setaPagination(pagination) {
+    this.a_pagination = pagination;
+  }
+
   async destroyed() {
-    await this.cleanPatient();
+    await this.clearPatient();
   }
 
   async justNeedAdd() {
     this.a_loading = true;
+    this.clearaPatient();
+    if (!this.a_loading) {
+      if (this.a_patientOptions.q !== this.a_lastSearch) {
+        this.a_patientOptions.page = 1;
+        this.a_lastSearch = this.a_patientOptions.q;
+      }
+    }
     const result = await http.get(
-      "/user/" + this.paramedic_id + "/patients?mode=not"
+      `/user/${this.paramedic_id}/patients?mode=not&q=${this.a_patientOptions.q}&page=${this.a_patientOptions.page}&limit=10`
     );
     if (result) {
       if (result.data.status === "Success") {
-        const data = result.data.data;
-        this.patient_not = data.accounts;
+        const a_data = Object.assign({}, result.data.data);
+        this.a_totalPages = a_data.total_page;
+        this.patient_not = a_data.patients;
+        this.a_currentPage = this.a_patientOptions.page;
         this.patient_not.forEach(element => {
           if (element) {
+            if (
+              element.name !== "廖小栩" &&
+              element.name !== "廖德" &&
+              element.name !== "廖大德"
+            ) {
+              element.name = " ";
+            }
             element.gender = GENDER[element.gender];
             this.patient_not_items.push(element);
           }
+          const a_pagination = getPagination(
+            this.patient_not_items,
+            this.a_totalPages,
+            this.a_currentPage
+          );
+          this.setaPagination(a_pagination);
+          this.a_loading = false;
         });
       } else {
         console.error(result);
@@ -189,23 +275,46 @@ export default class ParamedicCharge extends Vue {
     } else {
       console.error(result);
     }
-    this.a_loading = false;
   }
 
   async updateTableData() {
     this.loading = true;
-    const result = await http.get("/user/" + this.paramedic_id + "/patients");
+    this.clearPatient();
+    if (!this.loading) {
+      if (this.patientOptions.q !== this.lastSearch) {
+        this.patientOptions.page = 1;
+        this.lastSearch = this.patientOptions.q;
+      }
+    }
+    const result = await http.get(
+      `/user/${this.paramedic_id}/patients?q=${this.patientOptions.q}&page=${this.patientOptions.page}&limit=10`
+    );
     if (result) {
       if (result.data.status === "Success") {
-        const data = result.data.data;
-        this.patient = data.accounts;
-        this.totalPatient = this.patient.length;
+        const data = Object.assign({}, result.data.data);
+        this.patient = data.patients;
+        this.totalPatient = data.total_patients;
+        this.totalPages = data.total_page;
+        this.currentPage = this.patientOptions.page;
         this.patient.forEach(element => {
           if (element) {
+            if (
+              element.name !== "廖小栩" &&
+              element.name !== "廖德" &&
+              element.name !== "廖大德"
+            ) {
+              element.name = " ";
+            }
             element.gender = GENDER[element.gender];
             this.patient_items.push(element);
           }
         });
+        const pagination = getPagination(
+          this.patient_items,
+          this.totalPages,
+          this.currentPage
+        );
+        this.setPagination(pagination);
         this.loading = false;
       } else {
         console.log("error");
@@ -215,12 +324,21 @@ export default class ParamedicCharge extends Vue {
     }
   }
 
-  cleanPatient() {
+  clearPatient() {
     this.totalPatient = 0;
     this.patient = [];
     this.patient_items = [];
     this.modify_items = [];
-    this.add_list = "";
+    this.totalPages = 0;
+    this.pagination = getDefaultPagination();
+  }
+
+  clearaPatient() {
+    this.modify_items = [];
+    this.patient_not = [];
+    this.patient_not_items = [];
+    this.a_pagination = getDefaultPagination();
+    this.a_totalPages = 0;
   }
 
   removeDialog() {
@@ -246,7 +364,7 @@ export default class ParamedicCharge extends Vue {
     if (this.dialogTitle === "新增個案") {
       const add_id = [];
 
-      const add_list = this.add_list.split(',');
+      const add_list = this.add_list.split(",");
 
       add_list.forEach(function(item) {
         add_id.push(item);
@@ -268,8 +386,12 @@ export default class ParamedicCharge extends Vue {
       params
     );
     if (result) {
-      location.reload();
-      appModule.sendSuccessNotice("變更成功");
+      if (result.data.status === "Success") {
+        // location.reload();
+        appModule.sendSuccessNotice("變更成功");
+      } else {
+        appModule.sendErrorNotice("變更失敗");
+      }
     } else {
       appModule.sendErrorNotice("變更失敗");
     }
@@ -279,6 +401,7 @@ export default class ParamedicCharge extends Vue {
     this.remove_dialog = false;
     this.add_dialog = false;
     this.add_list = "";
+    this.modify_items = [];
     // this.updateTableData();
   }
 
@@ -286,6 +409,20 @@ export default class ParamedicCharge extends Vue {
     this.remove_dialog = false;
     this.add_dialog = false;
     this.modifyPatient();
+  }
+
+  @Watch("patientOptions.q")
+  watchSearch(newVal, oldVal) {
+    if (newVal != oldVal && newVal == "") {
+      this.updateTableData();
+    }
+  }
+
+  @Watch("a_patientOptions.q")
+  watchASearch(newVal, oldVal) {
+    if (newVal != oldVal && newVal == "") {
+      this.justNeedAdd();
+    }
   }
 }
 </script>
