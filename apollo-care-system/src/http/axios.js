@@ -81,7 +81,7 @@ export default {
       method: 'GET',
       baseURL: Vue.prototype.baseURL,
       url,
-      timeout: 10000,
+      timeout: 50000,
       headers: this.refreshHeaders(),
     };
     return axios(params).then((response) => {

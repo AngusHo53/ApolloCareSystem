@@ -121,7 +121,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" text @click="closeEdit()">取消</v-btn>
-            <v-btn color="blue darken-1" text @click="dialog = false">儲存</v-btn>
+            <v-btn color="blue darken-1" text @click="saveEdit()">儲存</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -136,18 +136,9 @@ import {
   buildJsonServerQuery,
   clearSearchFilters
 } from "@/utils/app-util";
-import {
-  Patient,
-  Order,
-  Entity,
-  PatientInfo,
-  PatientOptions,
-  MeasureData,
-  PatientFormData
-} from "@/types";
+import { Patient, PatientInfo } from "@/types";
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
-import { patientModule } from "@/store/modules/patients";
 import { appModule } from "@/store/modules/app";
 import {
   getDefaultPagination,
@@ -200,7 +191,7 @@ export default class PatientList extends Vue {
     created_at: "",
     gender: "",
     health_state: 0,
-    id: 0,
+    iid: 0,
     id_card: "",
     name: "",
     phone: "",
@@ -313,7 +304,6 @@ export default class PatientList extends Vue {
   edit(item: PatientInfo[]) {
     this.editDialog = true;
     this.editItem = JSON.parse(JSON.stringify(item));
-    console.log(this.editItem);
     this.codetoPlace(item);
   }
 
@@ -337,14 +327,22 @@ export default class PatientList extends Vue {
         if (this.place.shortcode[i] == pCode[0]) {
           if (this.place.index[i] == pCode[1]) {
             this.editItem.place = this.place.branch_name[i];
-            console.log(this.place.branch_name[i]);
           }
         }
       }
     } else return;
   }
 
-  placetoCode(item) {}
+  placetoCode() {
+    if (this.editItem.place != null) {
+      for (let i = 0; i < this.place.branch_name.length; i++) {
+        if (this.editItem.place == this.place.branch_name[i]) {
+          this.editItem.place =
+            this.place.shortcode[i] + "," + this.place.index[i];
+        }
+      }
+    } else return;
+  }
 
   closeEdit() {
     this.editItem = {
@@ -353,7 +351,7 @@ export default class PatientList extends Vue {
       created_at: "",
       gender: "",
       health_state: 0,
-      id: 0,
+      iid: 0,
       id_card: "",
       name: "",
       phone: "",
@@ -365,9 +363,36 @@ export default class PatientList extends Vue {
     this.editDialog = false;
   }
 
-  remove() {
-    appModule.setSnackbar;
-    appModule.sendErrorNotice("刪除未做");
+  async saveEdit() {
+    if (this.editItem.gender === "1") this.editItem.gender = "男";
+    else if (this.editItem.gender === "2") this.editItem.gender = "女";
+
+    this.editItem.phone = "+886" + this.editItem.phone;
+    await this.placetoCode();
+
+    const params = {
+      age: this.editItem.age,
+      gender: this.editItem.gender,
+      name: this.editItem.name,
+      phone: this.editItem.phone,
+      place: this.editItem.place
+    };
+
+    const result = await http.put(
+      "/user/" + this.editItem.uuid,
+      params
+    );
+    if (result) {
+      if (result.data.status === "Success") {
+        appModule.sendSuccessNotice("修改成功");
+      } else {
+        appModule.sendErrorNotice("修改失敗");
+      }
+    } else {
+      console.error(result.data.status);
+    }
+    this.closeEdit();
+    // location.reload();
   }
 
   searchCustomers() {

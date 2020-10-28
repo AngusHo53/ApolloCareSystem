@@ -141,7 +141,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="closeEdit()">取消</v-btn>
-                <v-btn color="blue darken-1" text @click="dialog = false">儲存</v-btn>
+                <v-btn color="blue darken-1" text @click="saveEdit()">儲存</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -155,6 +155,7 @@ import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
 import { userModule } from "@/store/modules/user";
 import { appModule } from "./store/modules/app";
+import http from "@/http/axios";
 
 @Component
 export default class App extends Vue {
@@ -251,13 +252,27 @@ export default class App extends Vue {
   private editDialog = false;
   private dateMenu = false;
   private date = new Date().toISOString().substr(0, 10);
-  private editItem = [];
+  private editItem = {
+    age: 0,
+    birthday: "",
+    created_at: "",
+    gender: "",
+    health_state: 0,
+    iid: 0,
+    id_card: "",
+    name: "",
+    phone: "",
+    updated_at: "",
+    uuid: "",
+    email: "",
+    place: ""
+  };
 
   @Watch("$route", { immediate: true, deep: true })
   onUrlChange(to, from) {
     if (this.signedIn && from.name == "Login") {
       this.role = true;
-       location.reload();
+      location.reload();
     }
   }
 
@@ -345,16 +360,58 @@ export default class App extends Vue {
       await userModule.logout();
       this.$router.push({ path: "/login" });
     } else if (item.title === "修改個人資料") {
-      console.log(this.user);
       this.editDialog = true;
       this.editItem = JSON.parse(JSON.stringify(this.user));
     }
   }
 
+  async saveEdit() {
+    if (this.editItem.gender === "1") this.editItem.gender = "男";
+    else if (this.editItem.gender === "2") this.editItem.gender = "女";
+
+    this.editItem.phone = "+886" + this.editItem.phone;
+
+    const params = {
+      age: this.editItem.age,
+      gender: this.editItem.gender,
+      name: this.editItem.name,
+      phone: this.editItem.phone,
+      place: this.editItem.place
+    };
+
+    const result = await http.put("/user/" + this.editItem.uuid, params);
+    if (result) {
+      if (result.data.status === "Success") {
+        appModule.sendSuccessNotice("修改成功");
+      } else {
+        appModule.sendErrorNotice("修改失敗");
+      }
+    } else {
+      console.error(result.data.status);
+    }
+    this.closeEdit();
+    // location.reload();
+  }
+
   closeEdit() {
-    this.editItem = [];
+    this.editItem = {
+      age: 0,
+      birthday: "",
+      created_at: "",
+      gender: "",
+      health_state: 0,
+      iid: 0,
+      id_card: "",
+      name: "",
+      phone: "",
+      updated_at: "",
+      uuid: "",
+      email: "",
+      place: ""
+    };
     this.editDialog = false;
   }
+
   mounted() {}
 }
 </script>

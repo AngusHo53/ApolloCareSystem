@@ -5,9 +5,9 @@
         <v-card-title>
           <v-toolbar-title>{{paramedic_name}}負責個案 {{ totalPatient ? '(' + totalPatient + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <!-- <v-col cols="12" md="2">
+          <v-col cols="12" md="2">
             <v-btn class="mb-3 blue white--text" @click="addDialog()">新增個案</v-btn>
-          </v-col>-->
+          </v-col>
           <v-col cols="12" md="2">
             <v-btn class="mb-3 red white--text" @click="removeDialog()">移除個案</v-btn>
           </v-col>
@@ -67,22 +67,42 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-if="modify_items" v-model="add_dialog" max-width="500px">
+    <v-dialog v-if="modify_items" v-model="add_dialog" max-width="80%">
       <v-card>
         <v-card-title>
           <span class="headline">新增個案({{modify_items.length}})</span>
         </v-card-title>
         <v-card-text>
           <v-divider></v-divider>
-          <v-list-item two-line v-for="item in modify_items" :key="item.iid">
-            <v-list-item-avatar class="grey lighten-1 white--text">
-              <v-awesome-icon icon="user" size="lg" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>名稱: {{item.name}}</v-list-item-title>
-              <v-list-item-subtitle>身份證字號: {{item.iid}}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+          <v-textarea
+            v-model="add_list"
+            name="input-7-1"
+            filled
+            label="新增個案身份證字號(請用,隔開)"
+            auto-grow
+            value
+          ></v-textarea>
+          <v-spacer></v-spacer>
+          <v-card-title>
+            <v-text-field
+              v-model="a_search"
+              append-icon="mdi-magnify"
+              label="關鍵字搜尋"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+          <v-data-table
+            v-model="modify_items"
+            item-key="iid"
+            :headers="headers"
+            :items="patient_not"
+            :search="a_search"
+            :loading="a_loading"
+            loading-text="請稍後..."
+            show-select
+            :single-select="false"
+          ></v-data-table>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -95,7 +115,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Patient, PatientInfo } from "@/types";
+import { PatientInfo } from "@/types";
 import { GENDER } from "@/utils/store-util";
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
@@ -104,8 +124,10 @@ import { appModule } from "@/store/modules/app";
 
 @Component
 export default class ParamedicCharge extends Vue {
-  public loading = true;
+  public loading = false;
+  public a_loading = false;
   public search = "";
+  public a_search = "";
   public paramedic_name = "";
   public paramedic_id = "";
   public headers = [
@@ -124,12 +146,10 @@ export default class ParamedicCharge extends Vue {
   ];
   public patient: PatientInfo[] = [];
   public patient_items: PatientInfo[] = [];
-  public modify_items = [
-    {
-      iid: "",
-      name: ""
-    }
-  ];
+  public patient_not: PatientInfo[] = [];
+  public patient_not_items: PatientInfo[] = [];
+  public modify_items = [];
+  public add_list = "";
   public totalPatient = 0;
 
   public remove_dialog = false;
@@ -139,11 +159,37 @@ export default class ParamedicCharge extends Vue {
   async created() {
     this.paramedic_name = this.$route.params.name;
     this.paramedic_id = this.$route.params.id;
+
     await this.updateTableData();
+    await this.justNeedAdd();
   }
 
   async destroyed() {
     await this.cleanPatient();
+  }
+
+  async justNeedAdd() {
+    this.a_loading = true;
+    const result = await http.get(
+      "/user/" + this.paramedic_id + "/patients?mode=not"
+    );
+    if (result) {
+      if (result.data.status === "Success") {
+        const data = result.data.data;
+        this.patient_not = data.accounts;
+        this.patient_not.forEach(element => {
+          if (element) {
+            element.gender = GENDER[element.gender];
+            this.patient_not_items.push(element);
+          }
+        });
+      } else {
+        console.error(result);
+      }
+    } else {
+      console.error(result);
+    }
+    this.a_loading = false;
   }
 
   async updateTableData() {
@@ -174,6 +220,7 @@ export default class ParamedicCharge extends Vue {
     this.patient = [];
     this.patient_items = [];
     this.modify_items = [];
+    this.add_list = "";
   }
 
   removeDialog() {
@@ -198,6 +245,12 @@ export default class ParamedicCharge extends Vue {
     };
     if (this.dialogTitle === "新增個案") {
       const add_id = [];
+
+      const add_list = this.add_list.split(',');
+
+      add_list.forEach(function(item) {
+        add_id.push(item);
+      });
       this.modify_items.forEach(function(item) {
         add_id.push(item.iid);
       });
@@ -225,6 +278,7 @@ export default class ParamedicCharge extends Vue {
   close() {
     this.remove_dialog = false;
     this.add_dialog = false;
+    this.add_list = "";
     // this.updateTableData();
   }
 

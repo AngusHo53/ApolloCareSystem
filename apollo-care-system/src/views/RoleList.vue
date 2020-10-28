@@ -112,7 +112,7 @@ export default class RoleList extends Vue {
     const params = {
       roles: this.editedItem.roles
     };
-    const result = await http.put(
+    const result = await http.post(
       "/user/" + this.editedItem.uuid + "/roles",
       params
     );
@@ -125,7 +125,7 @@ export default class RoleList extends Vue {
       }
     }
     this.close();
-    // location.reload();
+    location.reload();
   }
 
   public async roleList() {
