@@ -246,7 +246,7 @@ export default class RecordChart extends Vue {
 
   cancel() {
     this.resetChart();
-    this.$router.push({ name: "病人紀錄" });
+    this.$router.push({ name: "個案紀錄" });
   }
 
   get items() {

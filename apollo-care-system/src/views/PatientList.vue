@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-toolbar-title>病人名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title>個案名單 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <div>
             <v-btn class="blue darken-2 mr-2" fab small dark @click.native="createPatient()">
@@ -274,7 +274,7 @@ export default class PatientList extends Vue {
 
   changeToPatientRecordPage(item) {
     this.$router.push({
-      name: `病人紀錄`,
+      name: `個案紀錄`,
       params: {
         id: item.uuid
       }

@@ -72,7 +72,7 @@
     <v-card>
       <v-card-title>
         <v-toolbar flat>
-          <v-toolbar-title class="text-h6 mb-1 font-weight-black">病人連續測量記錄</v-toolbar-title>
+          <v-toolbar-title class="text-h6 mb-1 font-weight-black">個案連續測量記錄</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn class="teal darken-2 mr-2" fab small dark>
             <v-icon>mdi-printer</v-icon>
@@ -158,7 +158,7 @@ export default class CommunityRecords extends Vue {
   };
 
   private p_headers = [
-    { text: "病人姓名", sortable: false, value: "name" },
+    { text: "個案姓名", sortable: false, value: "name" },
     { text: "收縮壓", sortable: false, value: "systolic" },
     { text: "舒張壓", sortable: false, value: "diastolic" },
     { text: "脈搏", sortable: false, value: "pulse" },
@@ -168,7 +168,7 @@ export default class CommunityRecords extends Vue {
   ];
 
   private c_headers = [
-    { text: "病人姓名", sortable: false, value: "name" },
+    { text: "個案姓名", sortable: false, value: "name" },
     { text: "身分證字號", sortable: false, value: "iid" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "性別", sortable: false, value: "gender" }

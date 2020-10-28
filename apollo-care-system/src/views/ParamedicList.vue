@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-toolbar-title>看護名單 {{ totalParamedics ? '(' + totalParamedics + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title>照護人員名單 {{ totalParamedics ? '(' + totalParamedics + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>

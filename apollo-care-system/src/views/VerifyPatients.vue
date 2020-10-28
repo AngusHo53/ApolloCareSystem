@@ -4,7 +4,7 @@
       <v-card style="margin-bottom:10px">
         <v-card-title>
           <v-toolbar flat color="white">
-            <v-toolbar-title>審核病人列表 {{ totalVerifyPatients ? '(' + totalVerifyPatients + ')' : '' }}</v-toolbar-title>
+            <v-toolbar-title>審核個案列表 {{ totalVerifyPatients ? '(' + totalVerifyPatients + ')' : '' }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-col cols="12" md="2">
               <v-btn class="mb-3 blue white--text" @click="showDialog('通過名單')">通過</v-btn>

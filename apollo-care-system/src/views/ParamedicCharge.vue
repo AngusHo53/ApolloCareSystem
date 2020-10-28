@@ -84,17 +84,10 @@
       <v-card>
         <v-card-title>
           <span class="headline">新增個案({{modify_items.length}})</span>
+          <v-btn class="ml-auto pa-2 blue white--text" @click="addDialog2()">批量匯入個案</v-btn>
         </v-card-title>
         <v-card-text>
           <v-divider></v-divider>
-          <v-textarea
-            v-model="add_list"
-            name="input-7-1"
-            filled
-            label="新增個案身份證字號(請用,隔開)"
-            auto-grow
-            value
-          ></v-textarea>
           <v-spacer></v-spacer>
           <v-card-title>
             <v-text-field
@@ -122,7 +115,7 @@
             hide-default-footer
             :single-select="false"
           ></v-data-table>
-          <div class="text-xs-center pt-2">
+          <div class="text-xs-center pt-2 pb-10">
             <v-pagination
               v-model="a_patientOptions.page"
               :length="a_pagination.pages"
@@ -131,11 +124,42 @@
               circle
             ></v-pagination>
           </div>
+          <v-spacer></v-spacer>
+          <p class="text-h5 font-weight-black grey--text text--darken-4">新增個案身分證字號:</p>
+          <div class="rounded grey lighten-2 pa-4">
+            <span v-for="(item) in modify_items" :key="item.uuid">{{item.iid}},</span>
+          </div>
+          <p>請確認個案身分證字號是否正確，確認後再送出。</p>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="close">取消</v-btn>
+          <v-btn color="blue darken-1" text @click="save">確認</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="add_dialog2" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">批量匯入個案({{add_list.length}})</span>
+        </v-card-title>
+        <v-card-text>
+          <v-divider></v-divider>
+          <v-textarea
+            v-model="add_list"
+            name="input-7-1"
+            filled
+            label="新增個案身份證字號(請用,隔開)"
+            auto-grow
+            value
+          ></v-textarea>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="close2">取消</v-btn>
           <v-btn color="blue darken-1" text @click="save">確認</v-btn>
         </v-card-actions>
       </v-card>
@@ -208,6 +232,7 @@ export default class ParamedicCharge extends Vue {
 
   public remove_dialog = false;
   public add_dialog = false;
+  public add_dialog2 = false;
   public dialogTitle = "";
 
   async created() {
@@ -334,7 +359,6 @@ export default class ParamedicCharge extends Vue {
   }
 
   clearaPatient() {
-    this.modify_items = [];
     this.patient_not = [];
     this.patient_not_items = [];
     this.a_pagination = getDefaultPagination();
@@ -347,7 +371,16 @@ export default class ParamedicCharge extends Vue {
   }
 
   addDialog() {
+    this.modify_items = [];
+    this.add_list = "";
     this.add_dialog = true;
+    this.dialogTitle = "新增個案";
+  }
+
+  addDialog2() {
+    this.modify_items = [];
+    this.add_list = "";
+    this.add_dialog2 = true;
     this.dialogTitle = "新增個案";
   }
 
@@ -387,7 +420,7 @@ export default class ParamedicCharge extends Vue {
     );
     if (result) {
       if (result.data.status === "Success") {
-        // location.reload();
+        location.reload();
         appModule.sendSuccessNotice("變更成功");
       } else {
         appModule.sendErrorNotice("變更失敗");
@@ -400,14 +433,22 @@ export default class ParamedicCharge extends Vue {
   close() {
     this.remove_dialog = false;
     this.add_dialog = false;
+    this.add_dialog2 = false;
     this.add_list = "";
     this.modify_items = [];
     // this.updateTableData();
   }
 
+  close2() {
+    this.add_dialog2 = false;
+    this.add_list = "";
+    this.modify_items = [];
+  }
+
   public async save() {
     this.remove_dialog = false;
     this.add_dialog = false;
+    this.add_dialog2 = false;
     this.modifyPatient();
   }
 

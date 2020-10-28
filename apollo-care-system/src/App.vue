@@ -174,19 +174,19 @@ export default class App extends Vue {
   public adminItems: AppMenu[] = [
     {
       icon: "users",
-      title: "病人名單",
+      title: "個案名單",
       vertical: "Patient",
       link: "patients"
     },
     {
       icon: "user-nurse",
-      title: "看護名單",
+      title: "照護人員名單",
       vertical: "Paramedic",
       link: "paramedic"
     },
     {
       icon: "check",
-      title: "病人審核",
+      title: "個案審核",
       vertical: "verifyPatients",
       link: "verifyPatients"
     },
@@ -216,7 +216,7 @@ export default class App extends Vue {
   public paramedicItems: AppMenu[] = [
     {
       icon: "users",
-      title: "病人名單",
+      title: "個案名單",
       vertical: "Patient",
       link: "patients"
     }

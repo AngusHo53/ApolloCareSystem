@@ -274,7 +274,7 @@ export default class PatientRecords extends Vue {
   }
 
   changeToChartPage() {
-    this.$router.push({ name: "病人紀錄圖表" });
+    this.$router.push({ name: "個案紀錄圖表" });
   }
 
   changeDataToCH(item, name) {

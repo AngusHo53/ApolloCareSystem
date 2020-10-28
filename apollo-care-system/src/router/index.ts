@@ -39,13 +39,13 @@ const routes: Array<RouteConfig> = [
   {
     path: "/patients",
     component: PatientList,
-    name: "病人名單",
+    name: "個案名單",
     beforeEnter: requireAuth
   },
   {
     path: "/paramedic",
     component: ParamedicList,
-    name: "看護名單",
+    name: "照護人員名單",
     beforeEnter: requireAuth
   },
   {
@@ -57,19 +57,19 @@ const routes: Array<RouteConfig> = [
   {
     path: "/patients/:id/records",
     component: PatientRecords,
-    name: "病人紀錄",
+    name: "個案紀錄",
     beforeEnter: requireAuth
   },
   {
     path: "/patients/:id/records/chart",
     component: RecordChart,
-    name: "病人紀錄圖表",
+    name: "個案紀錄圖表",
     beforeEnter: requireAuth
   },
   {
     path: "/verifyPatients",
     component: VerifyPatients,
-    name: '病人審核',
+    name: '個案審核',
     meta: {
       roles: ['Owner', 'Admin']
     },
@@ -78,7 +78,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/newPatient",
     component: PatientForm,
-    name: "新增病人",
+    name: "新增個案",
     beforeEnter: requireAuth
   },
   {

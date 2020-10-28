@@ -162,7 +162,7 @@ export default class UserForm extends Vue {
   }
 
   cancel() {
-    this.$router.push({ name: "病人名單" });
+    this.$router.push({ name: "個案名單" });
   }
 
   created() {}

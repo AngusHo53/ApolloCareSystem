@@ -185,15 +185,15 @@ export default class PatientForm extends Vue {
   }
 
   cancel() {
-    this.$router.push({ name: "病人名單" });
+    this.$router.push({ name: "個案名單" });
   }
 
   created() {}
 
   mounted() {
     if (this.$route.params.id) {
-      this.title = "編輯病人資料";
-    } else this.title = "新增病人資料";
+      this.title = "編輯個案資料";
+    } else this.title = "新增個案資料";
   }
 }
 </script>
