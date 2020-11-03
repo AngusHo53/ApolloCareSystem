@@ -1,12 +1,9 @@
 
-import { formatValue } from '@/utils/app-util';
-import { Patient, Order, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormData } from '@/types';
+import { Patient, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormData } from '@/types';
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
-import Vue from 'vue';
 import http from "@/http/axios";
-import { reject } from 'lodash';
 
 export interface PatientState {
   pagination: Pagination;
@@ -36,7 +33,7 @@ class PatientModule extends VuexModule implements PatientState {
       gender: '',
       health_state: 0,
       id: 0,
-      id_card: '',
+      iid: '',
       name: '',
       phone: '',
       updated_at: '',
@@ -145,7 +142,7 @@ class PatientModule extends VuexModule implements PatientState {
     this.patient = patient;
   }
 
-  @Mutation setPatients(patients: any[]): void {
+  @Mutation setPatients(patients: Patient[]): void {
     this.patients = patients;
   }
   @Mutation setTotalPatients(totalPatients: number): void {

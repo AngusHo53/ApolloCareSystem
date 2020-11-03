@@ -127,9 +127,9 @@
 <script lang="ts">
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
-import { Entity, PatientFormData } from "@/types";
+import { PatientFormData } from "@/types";
 import { appModule } from "@/store/modules/app";
-import { isValidEmail, isValidRewards } from "@/utils/app-util";
+import { isValidEmail } from "@/utils/app-util";
 import { patientModule } from "@/store/modules/patients";
 import { GENDER } from "@/utils/store-util";
 

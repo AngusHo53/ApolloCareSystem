@@ -8,12 +8,12 @@ import PatientList from "@/views/PatientList.vue";
 import PatientRecords from "@/views/PatientRecords.vue";
 import RecordChart from "@/views/RecordChart.vue";
 import PatientForm from "@/views/PatientForm.vue";
-import CommunityRecords from "@/views/CommunityRecords.vue";
 import VerifyPatients from "@/views/VerifyPatients.vue";
 import ApiToken from "@/views/ApiToken.vue";
 import UserForm from "@/views/UserForm.vue";
 import RoleList from "@/views/RoleList.vue";
 import ParamedicList from "@/views/ParamedicList.vue";
+import Dashboard from "@/views/Dashboard.vue";
 import ParamedicCharge from "@/views/ParamedicCharge.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
@@ -40,6 +40,12 @@ const routes: Array<RouteConfig> = [
     path: "/patients",
     component: PatientList,
     name: "個案名單",
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/dashboard",
+    component: Dashboard,
+    name: "首頁",
     beforeEnter: requireAuth
   },
   {

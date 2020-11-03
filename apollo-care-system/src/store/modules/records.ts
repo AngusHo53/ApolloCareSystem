@@ -3,9 +3,7 @@ import { Entity, MeasureData, RecordOptions } from '@/types';
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import store from '@/store';
-import Vue from 'vue';
 import http from "@/http/axios";
-import { formatMeasureAt } from "@/utils/app-util";
 
 export interface RecordState {
   pagination: Pagination;
@@ -27,7 +25,7 @@ class RecordModule extends VuexModule implements RecordState {
 
   @Action async getPatientRecordByUuid(options: RecordOptions): Promise<TODO> {
     this.setLoading(true);
-    const result = await http.get(`/user/${options.uuid}/record?limit=${options.limit}&page=${options.page}`);
+    const result = await http.get(`/user/${options.uuid}/record?limit=${options.limit}&range=${options.range}`);
     if (result.data.data) {
       const data = result.data.data;
       // this.setPatient(result.data.data);
@@ -44,7 +42,7 @@ class RecordModule extends VuexModule implements RecordState {
     }
     return result;
   }
-  @Action async formateData(obj: any) {
+  @Action async formateData(obj: {data:any, formatTime: boolean}) {
     const total = new Set();
 
     await obj.data.sort((a, b) => {

@@ -24,7 +24,7 @@
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content :class="['font-weight-bold text-h6']">身份證字號:</v-list-item-content>
-                  <!-- <v-list-item-content :class="['text-h6']">{{patient.user.iid}}</v-list-item-content> -->
+                  <v-list-item-content :class="['text-h6']">{{patient.user.iid}}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content :class="['font-weight-bold text-h6']">性別:</v-list-item-content>
@@ -180,7 +180,7 @@ export default class PatientRecords extends Vue {
       gender: "",
       health_state: 0,
       id: 0,
-      id_card: "",
+      iid: "",
       name: "",
       phone: "",
       updated_at: "",
@@ -223,7 +223,7 @@ export default class PatientRecords extends Vue {
     order: "asc",
     sort: "",
     uuid: "",
-    limit: -1,
+    limit: 10,
     formatMeasureAt: true
   };
 
@@ -258,8 +258,13 @@ export default class PatientRecords extends Vue {
         data.user.name !== "廖德" &&
         data.user.name !== "廖大德"
       ) {
-        data.user.name = " ";
+        data.user.name = data.user.name.substring(0, 1);
       }
+
+      data.user.iid =
+        data.user.iid.substring(0, 3) +
+        "*****" +
+        data.user.iid.substring(8, 10);
       data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
     } else {
@@ -285,7 +290,6 @@ export default class PatientRecords extends Vue {
   }
 
   clearRecords() {
-    this.patient = undefined;
     this.patientInfo = {};
     this.totalPages = 0;
     this.totalRecords = 0;
@@ -297,6 +301,7 @@ export default class PatientRecords extends Vue {
 
   async getPatientRecordByUuid(options) {
     this.loading = true;
+    await this.clearRecords();
     const result = await http.get(
       `/user/${options.uuid}/record?limit=${options.limit}&page=${options.page}`
     );

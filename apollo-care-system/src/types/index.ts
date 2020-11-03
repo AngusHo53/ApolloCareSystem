@@ -1,6 +1,6 @@
-import { Patient, PatientInfo, PatientOptions, MeasureData, Record, RecordOptions, VerifyPatientsOptions, PatientFormData } from './patient';
+import { Patient, PatientInfo, PatientOptions, MeasureData, Record, RecordOptions, PatientsRecord, VerifyPatientsOptions, PatientFormData } from './patient';
 
-export { Patient, PatientInfo, PatientOptions, MeasureData, Record, RecordOptions, VerifyPatientsOptions, PatientFormData };
+export { Patient, PatientInfo, PatientOptions, MeasureData, Record, RecordOptions, PatientsRecord, VerifyPatientsOptions, PatientFormData };
 export interface Entity {
   id: number;
   text?: string;

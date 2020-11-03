@@ -102,7 +102,7 @@ export default class VerifyPatients extends Vue {
       sortable: false,
       value: "name"
     },
-    { text: "身份證字號", sortable: false },
+    { text: "身份證字號", sortable: false, value:"iid" },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },

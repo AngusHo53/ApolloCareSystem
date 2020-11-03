@@ -172,7 +172,6 @@ export function formatMeasureAt(timestamp: number) {
   const oneDayTime = 1000 * 24 * 60 * 60;
 
   const yesterdayTime = new Date(todayTime - oneDayTime).getTime();
-  const twoDaysAgo = new Date(todayTime - (oneDayTime * 2)).getTime();
 
   const newTime = preLocaleTime.toLocaleString().substring(0, preLocaleTime.toLocaleString().length - 3);
   if (preTime >= todayTime) {

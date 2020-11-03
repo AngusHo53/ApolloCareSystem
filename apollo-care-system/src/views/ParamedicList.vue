@@ -36,7 +36,6 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Patient } from "@/types";
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
 import http from "@/http/axios";

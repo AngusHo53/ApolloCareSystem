@@ -7,7 +7,6 @@ import {
   getModule
 } from "vuex-module-decorators";
 import store from "@/store";
-import { login } from "@/utils/demo-api";
 import {
   getUser,
   getToken,
@@ -15,7 +14,6 @@ import {
   setUser,
   cleanSession
 } from "@/utils/app-util";
-import Vue from 'vue';
 import http from "@/http/axios";
 export interface UserState {
   callingAPI: boolean;

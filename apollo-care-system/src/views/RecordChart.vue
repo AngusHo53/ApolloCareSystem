@@ -49,13 +49,19 @@
               >{{STATUS_BAD.operation}} {{STATUS_BAD.value}}</v-chip>
             </div>
             <v-spacer></v-spacer>
-            <v-btn-toggle v-model="text" tile color="deep-purple accent-3" group>
-              <v-btn value="week">一周</v-btn>
-              <v-btn value="month">一個月</v-btn>
+            <v-btn-toggle
+              v-model="recordsOptions.range"
+              tile
+              color="deep-purple accent-3"
+              group
+              @click.native="changeRange()"
+            >
+              <v-btn value="7,d">一周</v-btn>
+              <v-btn value="1,m">一個月</v-btn>
 
-              <v-btn value="halfyear">半年</v-btn>
+              <v-btn value="6,m">半年</v-btn>
 
-              <v-btn value="yaer">一年</v-btn>
+              <v-btn value="12,m">一年</v-btn>
             </v-btn-toggle>
           </v-card-title>
           <v-card-text v-if="chartOptions">
@@ -91,7 +97,6 @@ interface STASUS {
   }
 })
 export default class RecordChart extends Vue {
-  text = "week";
   chartOptions = {};
   series = [];
   mearsumentAt = [];
@@ -117,18 +122,22 @@ export default class RecordChart extends Vue {
   };
 
   recordsOptions = {
-    page: 1,
     q: "",
     order: "asc",
     sort: "",
     uuid: "",
     limit: -1,
-    formatMeasureAt: false
+    formatMeasureAt: false,
+    range: "7,d"
   };
 
   async created() {
-    await this.resetChart();
     this.recordsOptions.uuid = this.$router.currentRoute.params.id;
+    this.changeRange();
+  }
+
+  async changeRange() {
+    this.resetChart();
     recordModule.clearRecords();
     recordModule.getPatientRecordByUuid(this.recordsOptions).then(() => {
       this.update();
@@ -147,7 +156,6 @@ export default class RecordChart extends Vue {
     await this.resetChart();
     await this.getDataByCategory(measurementName);
     await this.updataChart();
-    console.log(this.chartOptions);
   }
 
   updataChart() {
@@ -185,7 +193,6 @@ export default class RecordChart extends Vue {
         width: [3, 3, 3],
         curve: "straight",
         dashArray: [0, 3, 3]
-        // colors: ['#EF5350', '#2196F3', '#EF5350']
       },
       markers: {
         size: [6, 0, 0],
@@ -201,9 +208,14 @@ export default class RecordChart extends Vue {
         enabledOnSeries: [0]
       }
     };
+    console.log(
+      JSON.parse(JSON.stringify(this.series)),
+      JSON.parse(JSON.stringify(this.chartOptions))
+    );
   }
 
   resetChart() {
+    this.chartOptions = {};
     this.mearsumentAt = [];
     this.mearsumentValue = [];
     this.mearsumentGoodValue = [];
@@ -214,7 +226,9 @@ export default class RecordChart extends Vue {
   async getDataByCategory(name: string) {
     const data = this.items.filter(data => data.key === name);
     for (const d of data) {
-      this.mearsumentAt.push(d.measure_at.substring(5,d.measure_at.length-3));
+      this.mearsumentAt.push(
+        d.measure_at.substring(5, d.measure_at.length - 3)
+      );
       this.mearsumentValue.push(d.value);
     }
 

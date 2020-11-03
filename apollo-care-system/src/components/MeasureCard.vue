@@ -30,11 +30,8 @@
 </template>
 <script>
 import Vue from "vue";
-import { PatientOptions } from "@/types";
 import { Component, Prop } from "vue-property-decorator";
-import { Mutation } from "vuex-module-decorators";
-import { MEASUREMENT_STATUS, MEASUREMENT_COLORS } from "@/utils/store-util";
-import { formatMeasureAt } from "@/utils/app-util";
+import { MEASUREMENT_COLORS } from "@/utils/store-util";
 
 @Component
 export default class MeasureCard extends Vue {

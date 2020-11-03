@@ -402,8 +402,7 @@ export default class Login extends Vue {
         };
         userModule.signIn(userData);
 
-        this.$router.push({ name: "個案名單" }).catch(err => {
-          console.log("catch test");
+        this.$router.push({ name: "首頁" }).catch(err => {
           console.log(err);
         });
       } else {

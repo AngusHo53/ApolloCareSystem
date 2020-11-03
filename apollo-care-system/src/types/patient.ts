@@ -12,14 +12,14 @@ export interface PatientInfo {
   gender: string;
   health_state: number;
   id: number;
-  id_card: string;
+  iid: string;
   name: string;
   phone: string;
   updated_at: string;
   uuid: string;
   email: string;
-  place: any;
-  roles:[string];
+  place: string;
+  roles: [string];
 }
 
 export interface PatientOptions {
@@ -41,13 +41,13 @@ export interface PatientFormData {
 }
 
 export interface RecordOptions {
-  page: number,
   q: string,
   order: string,
   sort: string,
   uuid: string,
   limit: number,
-  formatMeasureAt: boolean
+  formatMeasureAt: boolean,
+  range: string
 }
 
 export interface VerifyPatientsOptions {
@@ -71,8 +71,8 @@ export interface MeasureData {
   measure_at: string,
   category: string,
   type: string,
-  unit: any,
-  uuid: any,
+  unit: string,
+  uuid: string,
   value: number
 }
 
@@ -88,7 +88,7 @@ export interface BloodPressure {
 }
 
 export interface BloodGlucose {
-  blood_glucose: number;
+  blood_glucose: MeasureData;
   meal: string;
 }
 
@@ -146,4 +146,21 @@ export interface Mental {
 export interface Bone {
   osteoporosis: number;
   fracture: number;
+}
+
+export interface RecordType {
+  measure_at: string;
+  value: number;
+}
+
+export interface ChartRecord {
+  systolic: RecordType[];
+  diastolic: RecordType[];
+  pulse: RecordType[];
+  blood_glucose: RecordType[];
+}
+
+export interface PatientsRecord {
+  user: Patient;
+  record: ChartRecord;
 }

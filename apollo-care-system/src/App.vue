@@ -173,6 +173,12 @@ export default class App extends Vue {
   private fixed = false;
   public adminItems: AppMenu[] = [
     {
+      icon: "tachometer-alt",
+      title: "首頁",
+      vertical: "Dashboard",
+      link: "dashboard"
+    },
+    {
       icon: "users",
       title: "個案名單",
       vertical: "Patient",
@@ -214,6 +220,12 @@ export default class App extends Vue {
   ];
 
   public paramedicItems: AppMenu[] = [
+    {
+      icon: "tachometer-alt",
+      title: "首頁",
+      vertical: "Dashboard",
+      link: "dashboard"
+    },
     {
       icon: "users",
       title: "個案名單",
@@ -277,7 +289,7 @@ export default class App extends Vue {
   }
 
   @Watch("this.role", { immediate: true, deep: true })
-  onsignedIn(newVal: any) {
+  onsignedIn() {
     this.roleItem();
   }
 
@@ -310,7 +322,7 @@ export default class App extends Vue {
   roleItem() {
     if (!this.signedIn) return;
     else {
-      if (this.user.roles.includes("Owner" || "Admen")) {
+      if (this.user.roles.includes("Owner" || "Admin")) {
         this.items = this.items.concat(this.adminItems);
         return;
       } else if (this.user.roles.includes("Developer")) {
