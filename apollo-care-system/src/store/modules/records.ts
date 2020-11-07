@@ -33,7 +33,6 @@ class RecordModule extends VuexModule implements RecordState {
       this.setCurrentPage(data.current_page);
       this.setRecords(data.records);
       await this.getMeasurementTypes();
-
       await this.formateData({ data: data.records, formatTime: options.formatMeasureAt });
       await this.setRecordDataTable(data.records);
       this.setLoading(false);
@@ -42,17 +41,18 @@ class RecordModule extends VuexModule implements RecordState {
     }
     return result;
   }
-  @Action async formateData(obj: {data:any, formatTime: boolean}) {
+  @Action async formateData(obj: { data: any, formatTime: boolean }) {
     const total = new Set();
 
-    await obj.data.sort((a, b) => {
-      return (new Date(a.measure_at).getTime() > new Date(b.measure_at).getTime()) ? 1 : ((new Date(b.measure_at).getTime() > new Date(a.measure_at).getTime()) ? -1 : 0);
-    });
+    // await obj.data.sort((a, b) => {
+    //   return (new Date(a.measure_at).getTime() > new Date(b.measure_at).getTime()) ? 1 : ((new Date(b.measure_at).getTime() > new Date(a.measure_at).getTime()) ? -1 : 0);
+    // });
     await obj.data.forEach(element => {
       if (element) {
         if (!obj.formatTime) {
           element.measure_at = new Date(element.measure_at * 1000).toLocaleString();
         }
+
         // Calculate the total records
         total.add(element.measure_at);
         element.zh = this.measurementTypes[element.key].i18n.zh;

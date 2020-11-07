@@ -208,10 +208,6 @@ export default class RecordChart extends Vue {
         enabledOnSeries: [0]
       }
     };
-    console.log(
-      JSON.parse(JSON.stringify(this.series)),
-      JSON.parse(JSON.stringify(this.chartOptions))
-    );
   }
 
   resetChart() {
