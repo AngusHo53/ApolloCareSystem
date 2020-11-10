@@ -267,7 +267,7 @@ export default class PatientRecords extends Vue {
         case 4:
           data.user.name =
             data.user.name.substring(0, 1) +
-            "◯◯◯" +
+            "◯◯" +
             data.user.name.substring(3, 4);
           break;
         default:

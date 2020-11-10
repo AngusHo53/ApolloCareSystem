@@ -222,7 +222,7 @@ export default class VerifyPatients extends Vue {
           case 4:
             element.user.name =
               element.user.name.substring(0, 1) +
-              "◯◯◯" +
+              "◯◯" +
               element.user.name.substring(3, 4);
             break;
           default:

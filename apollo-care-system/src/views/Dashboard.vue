@@ -302,7 +302,7 @@ export default class Dashboard extends Vue {
           case 4:
             patient.user.name =
               patient.user.name.substring(0, 1) +
-              "◯◯◯" +
+              "◯◯" +
               patient.user.name.substring(3, 4);
             break;
           default:

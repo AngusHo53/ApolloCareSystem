@@ -290,10 +290,11 @@ export default class ParamedicCharge extends Vue {
               case 4:
                 element.name =
                   element.name.substring(0, 1) +
-                  "◯◯◯" +
+                  "◯◯" +
                   element.name.substring(3, 4);
                 break;
               default:
+                element.name = element.name.substr(0, 3) + "◯".repeat(len-6) + element.name.substr(len-3, 3);
                 break;
             }
             element.gender = GENDER[element.gender];
@@ -350,7 +351,7 @@ export default class ParamedicCharge extends Vue {
               case 4:
                 element.name =
                   element.name.substring(0, 1) +
-                  "◯◯◯" +
+                  "◯◯" +
                   element.name.substring(3, 4);
                 break;
               default:
