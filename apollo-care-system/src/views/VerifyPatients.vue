@@ -208,12 +208,26 @@ export default class VerifyPatients extends Vue {
   async extractVerifyPatientInfo(verifyPatients: Patient[]) {
     verifyPatients.forEach(element => {
       if (element.user) {
-        if (
-          element.user.name !== "廖小栩" &&
-          element.user.name !== "廖德" &&
-          element.user.name !== "廖大德"
-        ) {
-          element.user.name = " ";
+        const len = element.user.name.length;
+        switch (len) {
+          case 2:
+            element.user.name = element.user.name.substring(0, 1) + "◯";
+            break;
+          case 3:
+            element.user.name =
+              element.user.name.substring(0, 1) +
+              "◯" +
+              element.user.name.substring(2, 3);
+            break;
+          case 4:
+            element.user.name =
+              element.user.name.substring(0, 1) +
+              "◯◯◯" +
+              element.user.name.substring(3, 4);
+            break;
+          default:
+            element.user.name = element.user.name.substr(0, 3) + "◯".repeat(len-6) + element.user.name.substr(len-3, 3);
+            break;
         }
         // if (element.user.birthday) {
         //     const timestamp = Date.parse(element.user.birthday);

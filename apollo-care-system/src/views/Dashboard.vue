@@ -286,37 +286,51 @@ export default class Dashboard extends Vue {
 
   async extractPatientInfo(patients) {
     const patients_record = [];
-    for (const i in patients) {
-      if (patients[i].user) {
-        if (
-          patients[i].user.name !== "廖小栩" &&
-          patients[i].user.name !== "廖德" &&
-          patients[i].user.name !== "廖大德"
-        ) {
-          patients[i].user.name = patients[i].user.name.substring(0, 1);
+    for (const patient of patients) {
+      if (patients.user) {
+        const len = patient.user.name.length;
+        switch (len) {
+          case 2:
+            patient.user.name = patient.user.name.substring(0, 1) + "◯";
+            break;
+          case 3:
+            patient.user.name =
+              patient.user.name.substring(0, 1) +
+              "◯" +
+              patient.user.name.substring(2, 3);
+            break;
+          case 4:
+            patient.user.name =
+              patient.user.name.substring(0, 1) +
+              "◯◯◯" +
+              patient.user.name.substring(3, 4);
+            break;
+          default:
+            patient.user.name = patient.user.name.substr(0, 3) + "◯".repeat(len-6) + patient.user.name.substr(len-3, 3);
+            break;
         }
-        patients[i].user.place = this.codetoPlace(patients[i].user);
+        patient.user.place = this.codetoPlace(patients.user);
 
-        if (patients[i].record.blood_pressure.systolic.measure_at !== null) {
-          patients[i].record.blood_pressure.systolic.measure_at = new Date(
-            patients[i].record.blood_pressure.systolic.measure_at * 1000
+        if (patients.record.blood_pressure.systolic.measure_at !== null) {
+          patients.record.blood_pressure.systolic.measure_at = new Date(
+            patients.record.blood_pressure.systolic.measure_at * 1000
           ).toLocaleString();
         }
-        if (patients[i].record.blood_pressure.pulse.measure_at !== null) {
-          patients[i].record.blood_pressure.pulse.measure_at = new Date(
-            patients[i].record.blood_pressure.pulse.measure_at * 1000
+        if (patients.record.blood_pressure.pulse.measure_at !== null) {
+          patients.record.blood_pressure.pulse.measure_at = new Date(
+            patients.record.blood_pressure.pulse.measure_at * 1000
           ).toLocaleString();
         }
         if (
-          patients[i].record.blood_glucose.blood_glucose.measure_at !== null
+          patients.record.blood_glucose.blood_glucose.measure_at !== null
         ) {
-          patients[i].record.blood_glucose.blood_glucose.measure_at = new Date(
-            patients[i].record.blood_glucose.blood_glucose.measure_at * 1000
+          patients.record.blood_glucose.blood_glucose.measure_at = new Date(
+            patients.record.blood_glucose.blood_glucose.measure_at * 1000
           ).toLocaleString();
         }
         patients_record.push({
-          user: patients[i],
-          record: await this.patientRecord(patients[i])
+          user: patients,
+          record: await this.patientRecord(patients)
         });
       }
     }

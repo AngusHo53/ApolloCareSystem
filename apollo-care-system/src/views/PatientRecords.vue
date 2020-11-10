@@ -253,12 +253,26 @@ export default class PatientRecords extends Vue {
     );
     if (result.data.data) {
       const data = result.data.data;
-      if (
-        data.user.name !== "廖小栩" &&
-        data.user.name !== "廖德" &&
-        data.user.name !== "廖大德"
-      ) {
-        data.user.name = data.user.name.substring(0, 1);
+      const len = data.user.name.length;
+      switch (len) {
+        case 2:
+          data.user.name = data.user.name.substring(0, 1) + "◯";
+          break;
+        case 3:
+          data.user.name =
+            data.user.name.substring(0, 1) +
+            "◯" +
+            data.user.name.substring(2, 3);
+          break;
+        case 4:
+          data.user.name =
+            data.user.name.substring(0, 1) +
+            "◯◯◯" +
+            data.user.name.substring(3, 4);
+          break;
+        default:
+            data.user.name = data.user.name.substr(0, 3) + "◯".repeat(len-6) + data.user.name.substr(len-3, 3);
+          break;
       }
 
       data.user.iid =
