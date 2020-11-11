@@ -214,21 +214,16 @@ export default class VerifyPatients extends Vue {
             element.user.name = element.user.name.substring(0, 1) + "◯";
             break;
           case 3:
-            element.user.name =
-              element.user.name.substring(0, 1) +
-              "◯" +
-              element.user.name.substring(2, 3);
+            element.user.name = element.user.name.substring(0, 1) + "◯" + element.user.name.substring(2, 3);
             break;
           case 4:
-            element.user.name =
-              element.user.name.substring(0, 1) +
-              "◯◯" +
-              element.user.name.substring(3, 4);
+            element.user.name = element.user.name.substring(0, 1) + "◯◯" + element.user.name.substring(3, 4);
             break;
           default:
             element.user.name = element.user.name.substr(0, 3) + "◯".repeat(len-6) + element.user.name.substr(len-3, 3);
             break;
         }
+        element.user.iid = element.user.iid.substring(0, 3) + "*****" + element.user.iid.substring(8, 10);
         // if (element.user.birthday) {
         //     const timestamp = Date.parse(element.user.birthday);
         //     if (isNaN(timestamp) === false) {

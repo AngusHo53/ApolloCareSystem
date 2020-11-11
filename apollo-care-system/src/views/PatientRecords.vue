@@ -259,26 +259,17 @@ export default class PatientRecords extends Vue {
           data.user.name = data.user.name.substring(0, 1) + "◯";
           break;
         case 3:
-          data.user.name =
-            data.user.name.substring(0, 1) +
-            "◯" +
-            data.user.name.substring(2, 3);
+          data.user.name = data.user.name.substring(0, 1) + "◯" + data.user.name.substring(2, 3);
           break;
         case 4:
-          data.user.name =
-            data.user.name.substring(0, 1) +
-            "◯◯" +
-            data.user.name.substring(3, 4);
+          data.user.name = data.user.name.substring(0, 1) + "◯◯" + data.user.name.substring(3, 4);
           break;
         default:
             data.user.name = data.user.name.substr(0, 3) + "◯".repeat(len-6) + data.user.name.substr(len-3, 3);
           break;
       }
 
-      data.user.iid =
-        data.user.iid.substring(0, 3) +
-        "*****" +
-        data.user.iid.substring(8, 10);
+      data.user.iid = data.user.iid.substring(0, 3) + "*****" + data.user.iid.substring(8, 10);
       data.user.gender = GENDER[data.user.gender];
       this.setPatient(data);
     } else {

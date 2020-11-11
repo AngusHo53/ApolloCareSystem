@@ -277,10 +277,7 @@ export default class PatientList extends Vue {
             break;
         }
 
-        element.user.iid =
-          element.user.iid.substring(0, 3) +
-          "*****" +
-          element.user.iid.substring(8, 10);
+        element.user.iid = element.user.iid.substring(0, 3) + "*****" + element.user.iid.substring(8, 10);
 
         element.user.gender = GENDER[element.user.gender];
         this.items.push(element.user);
