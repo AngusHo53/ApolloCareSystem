@@ -254,18 +254,30 @@ export default class PatientList extends Vue {
   async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
       if (element.user) {
-        if (
-          element.user.name !== "廖小栩" &&
-          element.user.name !== "廖德" &&
-          element.user.name !== "廖大德"
-        ) {
-          element.user.name = element.user.name.substring(0, 1);
+        console.log()
+        const len = element.user.name.length;
+        switch (len) {
+          case 2:
+            element.user.name = element.user.name.substring(0, 1) + "◯";
+            break;
+          case 3:
+            element.user.name =
+              element.user.name.substring(0, 1) +
+              "◯" +
+              element.user.name.substring(2, 3);
+            break;
+          case 4:
+            element.user.name =
+              element.user.name.substring(0, 1) +
+              "◯◯" +
+              element.user.name.substring(3, 4);
+            break;
+          default:
+            element.user.name = element.user.name.substr(0, 3) + "◯".repeat(len-6) + element.user.name.substr(len-3, 3);
+            break;
         }
 
-        element.user.iid =
-          element.user.iid.substring(0, 3) +
-          "*****" +
-          element.user.iid.substring(8, 10);
+        element.user.iid = element.user.iid.substring(0, 3) + "*****" + element.user.iid.substring(8, 10);
 
         element.user.gender = GENDER[element.user.gender];
         this.items.push(element.user);
