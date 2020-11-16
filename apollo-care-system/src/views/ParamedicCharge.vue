@@ -216,7 +216,7 @@ export default class ParamedicCharge extends Vue {
       sortable: false,
       value: "name"
     },
-    { text: "身份證字號", sortable: false },
+    { text: "身份證字號", sortable: false, value: "iid" },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },
@@ -292,6 +292,7 @@ export default class ParamedicCharge extends Vue {
                 break;
             }
             element.gender = GENDER[element.gender];
+            element.iid = element.iid.substring(0, 3) + "****" + element.iid.substring(7, 10);
             this.patient_not_items.push(element);
           }
           const a_pagination = getPagination(
@@ -347,6 +348,7 @@ export default class ParamedicCharge extends Vue {
                 break;
             }
             element.gender = GENDER[element.gender];
+            element.iid = element.iid.substring(0, 3) + "****" + element.iid.substring(7, 10);
             this.patient_items.push(element);
           }
         });
