@@ -322,7 +322,7 @@ export default class App extends Vue {
   roleItem() {
     if (!this.signedIn) return;
     else {
-      if (this.user.roles.includes("Owner" || "Admin")) {
+      if (this.user.roles.includes("Owner") || this.user.roles.includes("Admin")) {
         this.items = this.items.concat(this.adminItems);
         return;
       } else if (this.user.roles.includes("Developer")) {
