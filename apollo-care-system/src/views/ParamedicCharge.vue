@@ -266,7 +266,7 @@ export default class ParamedicCharge extends Vue {
       }
     }
     const result = await http.get(
-      `/user/${this.paramedic_id}/patients?mode=not&q=${this.a_patientOptions.q}&page=${this.a_patientOptions.page}&limit=10`
+      `/user/${this.paramedic_id}/patients?mode=not&q=${this.a_patientOptions.q}&page=${this.a_patientOptions.page}&limit=10&role=Patient`
     );
     if (result) {
       if (result.data.status === "Success") {
