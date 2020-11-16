@@ -28,15 +28,10 @@
                       <v-container>
                         <v-row>
                           <v-col cols="12" sm="6" md="4">
-                            <v-text-field v-model="editedItem.name" label="API token name"></v-text-field>
+                            <v-text-field v-model="api_token.name" label="API token name"></v-text-field>
                           </v-col>
                           <v-col cols="12" sm="6" md="4">
-                            <v-select
-                              v-model="editedItem.api_type"
-                              :items="[0,1]"
-                              label="Type"
-                              required
-                            ></v-select>
+                            <v-select v-model="api_token.api_type" :items="[0,1]" label="Type" required></v-select>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -51,16 +46,16 @@
                 </v-dialog>
                 <v-dialog v-model="dialog2" max-width="500px">
                   <v-card>
-                    <v-card-title class="headline">{{apiKey.name}} API key</v-card-title>
+                    <v-card-title class="headline">{{api_token.name}} API key</v-card-title>
 
-                    <v-card-text>{{apiKey.api_key}}</v-card-text>
+                    <v-card-text>{{api_token.api_key}}</v-card-text>
 
                     <v-card-actions>
                       <v-spacer></v-spacer>
                       <v-btn
                         color="blue darken-1"
                         text
-                        v-clipboard:copy="apiKey.api_key"
+                        v-clipboard:copy="api_token.api_key"
                         v-clipboard:success="copyApi"
                         v-clipboard:error="onError"
                       >複製</v-btn>
@@ -87,13 +82,16 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { appModule } from "@/store/modules/app";
+import { apiTokenModule } from "@/store/modules/apiToken";
 import http from "../http/axios";
 
 @Component
 export default class ApiToken extends Vue {
   public dialog = false;
   public dialog2 = false;
-  public loading = true;
+  get loading() {
+    return apiTokenModule.loading;
+  }
   public headers = [
     {
       text: "API name",
@@ -105,42 +103,42 @@ export default class ApiToken extends Vue {
     { text: "API key", value: "api_key_icon", sortable: false },
     { text: "Actions", value: "actions", sortable: false }
   ];
-  public copyBtn = null;
-  public api_list = [];
-  public editedIndex = -1;
-  public editedItem = {
-    name: "",
-    api_type: 0,
-    uuid: ""
-  };
+  get api_list() {
+    return apiTokenModule.api_list;
+  }
 
-  public apiKey = {
-    name: "",
-    api_key: ""
-  };
+  get api_token() {
+    return apiTokenModule.api_token;
+  }
+
+  set api_token(item) {
+    apiTokenModule.setApiToken(item);
+  }
+
+  public editedIndex = -1;
 
   public defaultItem = {
     name: "",
     api_type: 0,
-    uuid: ""
+    uuid: "",
+    api_key: ""
   };
 
   get formTitle() {
-    return this.editedIndex === -1 ? "Create API token" : "Edit API token";
+    return this.editedIndex === -1 ? "新增API token" : "修改API token";
   }
 
   editItem(item) {
     this.editedIndex = this.api_list.indexOf(item);
-    this.editedItem = Object.assign({}, item);
-
+    console.log(this.editedIndex);
+    this.api_token = Object.assign({}, item);
     this.dialog = true;
   }
 
   apikey(item) {
-    this.apiKey.name = item.name;
-    this.apiKey.api_key = item.api_key;
-    console.log(this.apiKey);
-
+    this.api_token.name = item.name;
+    this.api_token.api_key = item.api_key;
+    console.log(this.api_token);
     this.dialog2 = true;
   }
 
@@ -152,102 +150,49 @@ export default class ApiToken extends Vue {
   public onError() {
     appModule.sendErrorNotice("複製失敗");
   }
+
   public async deleteItem(item) {
-    const index = this.api_list.indexOf(item);
-    console.log(this.api_list[index].uuid);
+    this.api_token = Object.assign({}, item);
+    console.log(this.api_token,item);
     if (confirm("確定要刪除嗎?") == true) {
-      const result = await http.delete("/apikey/" + this.api_list[index].uuid);
-      if (result) {
-        if (result.data.status === "Success") {
-          appModule.sendSuccessNotice("刪除成功");
-        } else {
-          appModule.sendErrorNotice("刪除失敗");
-        }
-      }
+     apiTokenModule.deleteApi();
     } else {
       appModule.sendErrorNotice("刪除失敗");
     }
-    this.apiList();
   }
 
   public async resetItem(item) {
-    const index = this.api_list.indexOf(item);
-    console.log(this.api_list[index].uuid);
+    this.api_token = Object.assign({}, item);
     if (confirm("確定要重置API key嗎?") == true) {
-      const result = await http.post("/apikey/" + this.api_list[index].uuid);
-      if (result) {
-        if (result.data.status === "Success") {
-          appModule.sendSuccessNotice("重置成功");
-        } else {
-          appModule.sendErrorNotice("重置失敗");
-        }
-      }
+      apiTokenModule.resetToken();
     } else {
       appModule.sendErrorNotice("重置失敗");
     }
-    this.apiList();
   }
 
   close() {
     this.dialog = false;
     this.$nextTick(() => {
-      this.editedItem = Object.assign({}, this.defaultItem);
+      apiTokenModule.setApiToken(this.defaultItem);
       this.editedIndex = -1;
     });
   }
 
   public async save() {
     if (this.editedIndex == -1) {
-      const params = {
-        name: this.editedItem.name,
-        type: this.editedItem.api_type
-      };
-      const result = await http.post("/apikey", params);
-      console.log(result);
-      if (result) {
-        if (result.data.status === "Success") {
-          appModule.sendSuccessNotice("註冊成功");
-        } else {
-          appModule.sendErrorNotice("註冊失敗");
-        }
-      }
+      apiTokenModule.createApi();
     } else {
-      const params = {
-        name: this.editedItem.name,
-        type: this.editedItem.api_type
-      };
-      const result = await http.put("/apikey/" + this.editedItem.uuid, params);
-      console.log(result);
-      if (result) {
-        if (result.data.status === "Success") {
-          appModule.sendSuccessNotice("修改成功");
-        } else {
-          appModule.sendErrorNotice("修改失敗");
-        }
-      }
+      apiTokenModule.modifyApi();
     }
     this.close();
-    this.apiList();
-  }
-
-  public async apiList() {
-    const result = await http.get("/apikey");
-    if (result) {
-      if (result.data.status === "Success") {
-        this.api_list = result.data.data.clients;
-        this.loading = false;
-      } else {
-        console.log("error");
-      }
-    } else {
-      console.log("error");
-    }
   }
 
   created() {
-    this.apiList();
+    apiTokenModule.apiList();
   }
 
-  mounted() {}
+  destroyed() {
+    apiTokenModule.clearApiToken();
+  }
 }
 </script>

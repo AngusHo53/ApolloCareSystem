@@ -1,6 +1,6 @@
 import { Patient, PatientInfo, PatientOptions, MeasureData, Record, RecordOptions, PatientsRecord, VerifyPatientsOptions, PatientFormData } from './patient';
-
-export { Patient, PatientInfo, PatientOptions, MeasureData, Record, RecordOptions, PatientsRecord, VerifyPatientsOptions, PatientFormData };
+import { ApiToken } from './apiToken';
+export { Patient, PatientInfo, PatientOptions, MeasureData, Record, RecordOptions, PatientsRecord, VerifyPatientsOptions, PatientFormData, ApiToken };
 export interface Entity {
   id: number;
   text?: string;

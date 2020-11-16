@@ -3,23 +3,18 @@ import Vuex from "vuex";
 // import createPersistedState from "vuex-persistedstate";
 
 import { UserState } from "./modules/user";
-import { OrderState } from "./modules/orders";
-import { CustomerState } from "./modules/customers";
 import { PatientState } from "./modules/patients";
-import { ProductState } from "./modules/products";
 import { AppState } from "./modules/app";
-import {RecordState } from "./modules/records";
-
+import { RecordState } from "./modules/records";
+import { ApiTokenState } from "./modules/apiToken";
 Vue.use(Vuex);
 
 interface RootState {
   appState: AppState;
   userState: UserState;
-  orderState: OrderState;
-  customerState: CustomerState;
   patientState: PatientState;
-  productState: ProductState;
   recordState: RecordState;
+  apiTokenState: ApiTokenState;
 }
 
 export default new Vuex.Store<RootState>({
