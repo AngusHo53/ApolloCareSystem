@@ -369,7 +369,7 @@ export default class Dashboard extends Vue {
   async patientRecord(user: Patient) {
     this.loading = true;
     const result = await http.get(
-      `/user/${user.user.uuid}/record?limit=-1&range=7,d`
+      `/user/${user.user.uuid}/record?limit=-1&range=1,m`
     );
     const record = {
       systolic: [],
