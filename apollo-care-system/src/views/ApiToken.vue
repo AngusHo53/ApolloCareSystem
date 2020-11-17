@@ -31,7 +31,12 @@
                             <v-text-field v-model="api_token.name" label="API token name"></v-text-field>
                           </v-col>
                           <v-col cols="12" sm="6" md="4">
-                            <v-select v-model="api_token.api_type" :items="[0,1]" label="Type" required></v-select>
+                            <v-select
+                              v-model="api_token.api_type"
+                              :items="[0,1]"
+                              label="Type"
+                              required
+                            ></v-select>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -89,9 +94,6 @@ import http from "../http/axios";
 export default class ApiToken extends Vue {
   public dialog = false;
   public dialog2 = false;
-  get loading() {
-    return apiTokenModule.loading;
-  }
   public headers = [
     {
       text: "API name",
@@ -103,6 +105,11 @@ export default class ApiToken extends Vue {
     { text: "API key", value: "api_key_icon", sortable: false },
     { text: "Actions", value: "actions", sortable: false }
   ];
+
+  get loading() {
+    return apiTokenModule.loading;
+  }
+
   get api_list() {
     return apiTokenModule.api_list;
   }
@@ -116,13 +123,6 @@ export default class ApiToken extends Vue {
   }
 
   public editedIndex = -1;
-
-  public defaultItem = {
-    name: "",
-    api_type: 0,
-    uuid: "",
-    api_key: ""
-  };
 
   get formTitle() {
     return this.editedIndex === -1 ? "新增API token" : "修改API token";
@@ -152,7 +152,7 @@ export default class ApiToken extends Vue {
   public async deleteItem(item) {
     this.api_token = Object.assign({}, item);
     if (confirm("確定要刪除嗎?") == true) {
-     apiTokenModule.deleteApi();
+      apiTokenModule.deleteApi();
     } else {
       appModule.sendErrorNotice("刪除失敗");
     }

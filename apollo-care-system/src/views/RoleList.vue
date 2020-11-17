@@ -78,37 +78,16 @@ export default class RoleList extends Vue {
     { text: "Actions", value: "actions", sortable: false }
   ];
 
-  public editedItem = {
-    uuid: "",
-    name: "",
-    roles: []
-  };
-
-  public defaultItem = {
-    name: "",
-    email: "",
-    iid: "",
-    place: "",
-    uuid: "",
-    roles: []
-  };
-
   public role_item = [];
   public admin_role = ["Developer", "Doctor", "Paramedic", "Patient"];
   public owner_role = ["Admin", "Developer", "Doctor", "Paramedic", "Patient"];
 
-  editItem(item) {
-    this.account = Object.assign({}, item);
-    this.dialog = true;
-  }
-
-  public async save() {
-    roleListModule.replaceRole();
-    this.dialog = false;
-  }
-
   get user() {
     return userModule.user;
+  }
+
+  get loading() {
+    return roleListModule.loading;
   }
 
   get accounts() {
@@ -130,6 +109,20 @@ export default class RoleList extends Vue {
     } else if (this.user.roles.includes("Admen")) {
       this.role_item = this.role_item.concat(this.admin_role);
     }
+  }
+
+  editItem(item) {
+    this.account = Object.assign({}, item);
+    this.dialog = true;
+  }
+
+  public async save() {
+    roleListModule.replaceRole();
+    this.dialog = false;
+  }
+
+  destroyed() {
+    roleListModule.clearRoleList();
   }
 }
 </script>
