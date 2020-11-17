@@ -130,7 +130,6 @@ export default class ApiToken extends Vue {
 
   editItem(item) {
     this.editedIndex = this.api_list.indexOf(item);
-    console.log(this.editedIndex);
     this.api_token = Object.assign({}, item);
     this.dialog = true;
   }
@@ -138,7 +137,6 @@ export default class ApiToken extends Vue {
   apikey(item) {
     this.api_token.name = item.name;
     this.api_token.api_key = item.api_key;
-    console.log(this.api_token);
     this.dialog2 = true;
   }
 
@@ -153,7 +151,6 @@ export default class ApiToken extends Vue {
 
   public async deleteItem(item) {
     this.api_token = Object.assign({}, item);
-    console.log(this.api_token,item);
     if (confirm("確定要刪除嗎?") == true) {
      apiTokenModule.deleteApi();
     } else {
@@ -173,7 +170,6 @@ export default class ApiToken extends Vue {
   close() {
     this.dialog = false;
     this.$nextTick(() => {
-      apiTokenModule.setApiToken(this.defaultItem);
       this.editedIndex = -1;
     });
   }

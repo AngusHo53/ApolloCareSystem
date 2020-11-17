@@ -5,7 +5,7 @@
         <v-container fluid>
           <v-data-table
             :headers="headers"
-            :items="account_list"
+            :items="accounts"
             :loading="loading"
             loading-text="請稍後..."
             item-key="uuid"
@@ -24,13 +24,13 @@
                       <v-container>
                         <v-row>
                           <v-col cols="12" sm="6" md="6">
-                            <v-text-field disabled v-model="editedItem.name" label="用戶名"></v-text-field>
+                            <v-text-field disabled v-model="account.name" label="用戶名"></v-text-field>
                           </v-col>
                           <v-col cols="12" sm="6">
                             <v-autocomplete
-                              v-model="editedItem.roles"
+                              v-model="account.roles"
                               :items="role_item"
-                              :rules="[() => !!editedItem.roles || 'This field is required']"
+                              :rules="[() => !!account.roles || 'This field is required']"
                               label="權限組"
                               multiple
                               required
@@ -61,13 +61,13 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { appModule } from "@/store/modules/app";
-import http from "../http/axios";
 import { userModule } from "@/store/modules/user";
+import { roleListModule } from "@/store/modules/roleList";
+import http from "../http/axios";
 
 @Component
 export default class RoleList extends Vue {
   public dialog = false;
-  public loading = true;
   public headers = [
     {
       text: "用戶",
@@ -77,7 +77,6 @@ export default class RoleList extends Vue {
     { text: "權限組", value: "roles" },
     { text: "Actions", value: "actions", sortable: false }
   ];
-  public account_list = [{ uuid: "", name: "", roles: [] }];
 
   public editedItem = {
     uuid: "",
@@ -86,75 +85,51 @@ export default class RoleList extends Vue {
   };
 
   public defaultItem = {
-    uuid: "",
     name: "",
+    email: "",
+    iid: "",
+    place: "",
+    uuid: "",
     roles: []
   };
 
   public role_item = [];
   public admin_role = ["Developer", "Doctor", "Paramedic", "Patient"];
   public owner_role = ["Admin", "Developer", "Doctor", "Paramedic", "Patient"];
-  editItem(item) {
-    this.editedItem = Object.assign({}, item);
 
+  editItem(item) {
+    this.account = Object.assign({}, item);
     this.dialog = true;
   }
 
-  close() {
-    this.dialog = false;
-    this.$nextTick(() => {
-      this.editedItem = Object.assign({}, this.defaultItem);
-    });
-  }
-
   public async save() {
-    console.log(this.editedItem.roles);
-    const params = {
-      roles: this.editedItem.roles
-    };
-    const result = await http.post(
-      "/user/" + this.editedItem.uuid + "/roles",
-      params
-    );
-    console.log(result);
-    if (result) {
-      if (result.data.status === "Success") {
-        appModule.sendSuccessNotice("修改成功");
-      } else {
-        appModule.sendErrorNotice("修改失敗");
-      }
-    }
-    this.close();
-    location.reload();
+    roleListModule.replaceRole();
+    this.dialog = false;
   }
 
-  public async roleList() {
-    const result = await http.get("/accounts");
-    if (result) {
-      if (result.data.status === "Success") {
-        this.account_list = result.data.data.accounts;
-        this.loading = false;
-      } else {
-        console.log("error");
-      }
-    } else {
-      console.log("error");
-    }
+  get user() {
+    return userModule.user;
+  }
+
+  get accounts() {
+    return roleListModule.accounts;
+  }
+
+  get account() {
+    return roleListModule.account;
+  }
+
+  set account(item) {
+    roleListModule.setAccount(item);
   }
 
   created() {
-    this.roleList();
+    roleListModule.roleList();
     if (this.user.roles.includes("Owner")) {
       this.role_item = this.role_item.concat(this.owner_role);
     } else if (this.user.roles.includes("Admen")) {
       this.role_item = this.role_item.concat(this.admin_role);
     }
-  }
-
-  mounted() {}
-
-  get user() {
-    return userModule.user;
   }
 }
 </script>
