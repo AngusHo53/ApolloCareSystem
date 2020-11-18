@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-toolbar-title>{{account.name}}負責個案 {{ totalPatient ? '(' + totalPatient + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title>{{account.name}}負責個案 {{ totalResponsiblePatients ? '(' + totalResponsiblePatients + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-col cols="12" md="2">
             <v-btn class="mb-3 blue white--text" @click="addDialog()">新增個案</v-btn>
@@ -110,7 +110,7 @@
             loading-text="請稍後..."
             show-select
             :page.sync="a_patientOptions.page"
-            :items-per-page="a_pagination.rowsPerPage"
+            :items-per-page="aPagination.rowsPerPage"
             :options="a_patientOptions"
             hide-default-footer
             :single-select="false"
@@ -118,7 +118,7 @@
           <div class="text-xs-center pt-2 pb-10">
             <v-pagination
               v-model="a_patientOptions.page"
-              :length="a_pagination.pages"
+              :length="aPagination.pages"
               :total-visible="9"
               @input="justNeedAdd()"
               circle
@@ -167,11 +167,8 @@
   </v-container>
 </template>
 <script lang="ts">
-import { PatientInfo } from "@/types";
 import {
-  GENDER,
   getDefaultPagination,
-  getPagination,
   getDefaultPatientOptions
 } from "@/utils/store-util";
 import { Component, Watch } from "vue-property-decorator";
@@ -183,15 +180,8 @@ import { paramedicPatientsModule } from "@/store/modules/paramedicPatients";
 
 @Component
 export default class ParamedicCharge extends Vue {
-  public totalPages = 0;
-  public currentPage = 1;
   public patientOptions = getDefaultPatientOptions();
   private lastSearch = "";
-  public totalPatient = 0;
-
-  public a_pagination = getDefaultPagination();
-  public a_totalPages = 0;
-  public a_currentPage = 1;
   private a_patientOptions = getDefaultPatientOptions();
   private a_lastSearch = "";
   public search = "";
@@ -234,6 +224,10 @@ export default class ParamedicCharge extends Vue {
     return paramedicPatientsModule.responsiblePatients;
   }
 
+  get totalResponsiblePatients() {
+    return paramedicPatientsModule.totalResponsiblePatients;
+  }
+
   get pagination() {
     return paramedicPatientsModule.pagination;
   }
@@ -260,10 +254,6 @@ export default class ParamedicCharge extends Vue {
     await this.justNeedAdd();
   }
 
-  setaPagination(pagination) {
-    this.a_pagination = pagination;
-  }
-
   async destroyed() {
     paramedicModule.clearAccount();
     paramedicPatientsModule.clearResponsible();
@@ -277,10 +267,11 @@ export default class ParamedicCharge extends Vue {
         this.a_lastSearch = this.a_patientOptions.q;
       }
     }
-    await paramedicPatientsModule.needToAddPatientsList(
-      this.account.uuid,
-      this.a_patientOptions
-    );
+    const param = {
+      uuid: this.account.uuid,
+      options: this.a_patientOptions
+    };
+    await paramedicPatientsModule.needToAddPatientsList(param);
   }
 
   async updateTableData() {
@@ -290,11 +281,11 @@ export default class ParamedicCharge extends Vue {
         this.lastSearch = this.patientOptions.q;
       }
     }
-    console.log(JSON.stringify(this.patientOptions));
-    await paramedicPatientsModule.responsiblePatientsList(
-      this.account.uuid,
-      this.patientOptions
-    );
+    const param = {
+      uuid: this.account.uuid,
+      options: this.patientOptions
+    };
+    await paramedicPatientsModule.responsiblePatientsList(param);
   }
 
   removeDialog() {
@@ -368,7 +359,6 @@ export default class ParamedicCharge extends Vue {
     this.add_dialog2 = false;
     this.add_list = "";
     this.modify_items = [];
-    // this.updateTableData();
   }
 
   close2() {

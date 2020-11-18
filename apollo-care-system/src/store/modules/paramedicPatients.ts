@@ -35,15 +35,14 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
 
 
   @Action
-  async responsiblePatientsList(accountId: string, options: PatientOptions) {
+  async responsiblePatientsList(param) {
     this.setLoading(true);
     this.clearResponsible();
-    console.log(JSON.stringify(accountId));
-    const data = await getPatientsByAccount(accountId, options);
+    const data = await getPatientsByAccount(param.uuid, param.options);
     this.setResponsiblePatients(data.patients);
     this.setTotalResponsiblePatients(data.total_patients);
     this.setTotalResponsiblePages(data.total_page);
-    this.setCurrentResponsiblePage(options.page);
+    this.setCurrentResponsiblePage(param.options.page);
 
     this.responsiblePatients.forEach(element => {
       if (element) {
@@ -88,10 +87,10 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   }
 
   @Action
-  async needToAddPatientsList(accountId: string, options: PatientOptions) {
+  async needToAddPatientsList(param) {
     this.setaLoading(true);
     this.clearNeedToAdd();
-    const data = await getPatientsNeedToAdd(accountId, options)
+    const data = await getPatientsNeedToAdd(param.uuid, param.options)
     this.setNeedToAddPatients(data.patients);
     this.setTotalNeedToAddPages(data.total_page);
     this.setCurrentNeedToAddPage(this.aPagination.page);
@@ -139,18 +138,18 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   }
 
   @Action clearResponsible() {
-    this.pagination = getDefaultPagination();
-    this.responsiblePatients = [];
-    this.totalResponsiblePatients = 0;
-    this.totalResponsiblePages = 0;
-    this.currentResponsiblePage = 1;
+    this.setPagination(getDefaultPagination());
+    this.setResponsiblePatients([]);
+    this.setTotalResponsiblePatients(0);
+    this.setTotalResponsiblePages(0);
+    this.setCurrentResponsiblePage(1);
   }
 
   @Action clearNeedToAdd() {
-    this.aPagination = getDefaultPagination();
-    this.needToAddPatients = [];
-    this.totalNeedToAddPages = 0;
-    this.currentNeedToAddPage = 1;
+    this.setaPagination(getDefaultPagination());
+    this.setNeedToAddPatients([]);
+    this.setTotalNeedToAddPages(0);
+    this.setCurrentNeedToAddPage(1);
   }
 
   @Mutation setLoading(loading: boolean): void {
