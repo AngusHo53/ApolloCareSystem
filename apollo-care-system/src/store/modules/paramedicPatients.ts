@@ -8,10 +8,12 @@ import {
 import { PatientInfo, PatientOptions } from '@/types';
 import store from "@/store";
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
-import { getPatientsByAccount } from '@/api/accountListService';
+import { getPatientsByAccount, getPatientsNeedToAdd } from '@/api/accountListService';
 export interface ParamedicPatientsState {
   loading: boolean;
+  aLoading: boolean;
   pagination: Pagination;
+  aPagination: Pagination;
   responsiblePatients: PatientInfo[];
   needToAddPatients: PatientInfo[];
 }
@@ -19,18 +21,24 @@ export interface ParamedicPatientsState {
 @Module({ store, dynamic: true, name: "paramedicPatientsModule" })
 class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsState {
   public pagination = getDefaultPagination();
+  public aPagination = getDefaultPagination();
   public loading = false;
+  public aLoading = false;
   public responsiblePatients: PatientInfo[] = [];
-  public needToAddPatients: PatientInfo[] = [];
-
   public totalResponsiblePatients = 0;
   public totalResponsiblePages = 0;
   public currentResponsiblePage = 1;
 
+  public needToAddPatients: PatientInfo[] = [];
+  public totalNeedToAddPages = 0;
+  public currentNeedToAddPage = 1;
+
+
   @Action
   async responsiblePatientsList(accountId: string, options: PatientOptions) {
     this.setLoading(true);
-    console.log(JSON.stringify(options));
+    this.clearResponsible();
+    console.log(JSON.stringify(accountId));
     const data = await getPatientsByAccount(accountId, options);
     this.setResponsiblePatients(data.patients);
     this.setTotalResponsiblePatients(data.total_patients);
@@ -79,8 +87,78 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
     this.setLoading(false);
   }
 
+  @Action
+  async needToAddPatientsList(accountId: string, options: PatientOptions) {
+    this.setaLoading(true);
+    this.clearNeedToAdd();
+    const data = await getPatientsNeedToAdd(accountId, options)
+    this.setNeedToAddPatients(data.patients);
+    this.setTotalNeedToAddPages(data.total_page);
+    this.setCurrentNeedToAddPage(this.aPagination.page);
+
+    this.needToAddPatients.forEach(element => {
+      if (element) {
+        const len = element.name.length;
+        switch (len) {
+          case 2:
+            element.name = element.name.substring(0, 1) + "◯";
+            break;
+          case 3:
+            element.name =
+              element.name.substring(0, 1) +
+              "◯" +
+              element.name.substring(2, 3);
+            break;
+          case 4:
+            element.name =
+              element.name.substring(0, 1) +
+              "◯◯" +
+              element.name.substring(3, 4);
+            break;
+          default:
+            element.name =
+              element.name.substr(0, 3) +
+              "◯".repeat(len - 6) +
+              element.name.substr(len - 3, 3);
+            break;
+        }
+        element.gender = GENDER[element.gender];
+        element.iid =
+          element.iid.substring(0, 3) +
+          "****" +
+          element.iid.substring(7, 10);
+      }
+    });
+    const a_pagination = getPagination(
+      this.needToAddPatients,
+      this.totalNeedToAddPages,
+      this.currentNeedToAddPage
+    );
+    this.setaPagination(a_pagination);
+    this.setaLoading(false);
+  }
+
+  @Action clearResponsible() {
+    this.pagination = getDefaultPagination();
+    this.responsiblePatients = [];
+    this.totalResponsiblePatients = 0;
+    this.totalResponsiblePages = 0;
+    this.currentResponsiblePage = 1;
+  }
+
+  @Action clearNeedToAdd() {
+    this.aPagination = getDefaultPagination();
+    this.needToAddPatients = [];
+    this.totalNeedToAddPages = 0;
+    this.currentNeedToAddPage = 1;
+  }
+
   @Mutation setLoading(loading: boolean): void {
     this.loading = loading;
+  }
+
+  @Mutation setaLoading(aLoading: boolean): void {
+    this.aLoading = aLoading;
   }
 
   @Mutation setResponsiblePatients(responsiblePatients: PatientInfo[]): void {
@@ -103,6 +181,25 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   @Mutation setPagination(pagination: Pagination): void {
     this.pagination = pagination;
   }
+
+  @Mutation setNeedToAddPatients(needToAddPatients: PatientInfo[]): void {
+    this.needToAddPatients = needToAddPatients;
+  }
+
+  @Mutation setTotalNeedToAddPages(totalNeedToAddPages: number): void {
+    this.totalNeedToAddPages = totalNeedToAddPages;
+  }
+
+  @Mutation setCurrentNeedToAddPage(currentNeedToAddPage: number): void {
+    this.currentNeedToAddPage = currentNeedToAddPage;
+  }
+
+  @Mutation setaPagination(aPagination: Pagination): void {
+    this.aPagination = aPagination;
+  }
+
+
+
 }
 
 export const paramedicPatientsModule = getModule(ParamedicPatientsModule);

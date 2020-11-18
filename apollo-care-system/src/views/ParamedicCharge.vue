@@ -104,9 +104,9 @@
             v-model="modify_items"
             item-key="iid"
             :headers="headers"
-            :items="patient_not_items"
+            :items="needToAddPatients"
             :search="a_search"
-            :loading="a_loading"
+            :loading="aLoading"
             loading-text="請稍後..."
             show-select
             :page.sync="a_patientOptions.page"
@@ -194,9 +194,6 @@ export default class ParamedicCharge extends Vue {
   public a_currentPage = 1;
   private a_patientOptions = getDefaultPatientOptions();
   private a_lastSearch = "";
-
-  public loading = false;
-  public a_loading = false;
   public search = "";
   public a_search = "";
   public headers = [
@@ -213,8 +210,6 @@ export default class ParamedicCharge extends Vue {
     { text: "電話", sortable: false, value: "phone" },
     { text: "信箱", sortable: false, value: "email" }
   ];
-  public patient_not: PatientInfo[] = [];
-  public patient_not_items: PatientInfo[] = [];
   public modify_items = [];
   public add_list = "";
 
@@ -222,6 +217,14 @@ export default class ParamedicCharge extends Vue {
   public add_dialog = false;
   public add_dialog2 = false;
   public dialogTitle = "";
+
+  get loading() {
+    return paramedicPatientsModule.loading;
+  }
+
+  get aLoading() {
+    return paramedicPatientsModule.aLoading;
+  }
 
   get account() {
     return paramedicModule.account;
@@ -239,6 +242,18 @@ export default class ParamedicCharge extends Vue {
     paramedicPatientsModule.setPagination(pagination);
   }
 
+  get needToAddPatients() {
+    return paramedicPatientsModule.needToAddPatients;
+  }
+
+  get aPagination() {
+    return paramedicPatientsModule.aPagination;
+  }
+
+  set aPagination(aPagination) {
+    paramedicPatientsModule.setaPagination(aPagination);
+  }
+
   async created() {
     this.pagination = getDefaultPagination();
     await this.updateTableData();
@@ -251,74 +266,21 @@ export default class ParamedicCharge extends Vue {
 
   async destroyed() {
     paramedicModule.clearAccount();
-    await this.clearPatient();
+    paramedicPatientsModule.clearResponsible();
+    paramedicPatientsModule.clearNeedToAdd();
   }
 
   async justNeedAdd() {
-    this.a_loading = true;
-    this.clearaPatient();
-    if (!this.a_loading) {
+    if (!this.aLoading) {
       if (this.a_patientOptions.q !== this.a_lastSearch) {
         this.a_patientOptions.page = 1;
         this.a_lastSearch = this.a_patientOptions.q;
       }
     }
-    const result = await http.get(
-      `/user/${this.account.uuid}/patients?mode=not&q=${this.a_patientOptions.q}&page=${this.a_patientOptions.page}&limit=10&role=Patient`
+    await paramedicPatientsModule.needToAddPatientsList(
+      this.account.uuid,
+      this.a_patientOptions
     );
-    if (result) {
-      if (result.data.status === "Success") {
-        const a_data = Object.assign({}, result.data.data);
-        this.a_totalPages = a_data.total_page;
-        this.patient_not = a_data.patients;
-        this.a_currentPage = this.a_patientOptions.page;
-        this.patient_not.forEach(element => {
-          if (element) {
-            const len = element.name.length;
-            switch (len) {
-              case 2:
-                element.name = element.name.substring(0, 1) + "◯";
-                break;
-              case 3:
-                element.name =
-                  element.name.substring(0, 1) +
-                  "◯" +
-                  element.name.substring(2, 3);
-                break;
-              case 4:
-                element.name =
-                  element.name.substring(0, 1) +
-                  "◯◯" +
-                  element.name.substring(3, 4);
-                break;
-              default:
-                element.name =
-                  element.name.substr(0, 3) +
-                  "◯".repeat(len - 6) +
-                  element.name.substr(len - 3, 3);
-                break;
-            }
-            element.gender = GENDER[element.gender];
-            element.iid =
-              element.iid.substring(0, 3) +
-              "****" +
-              element.iid.substring(7, 10);
-            this.patient_not_items.push(element);
-          }
-          const a_pagination = getPagination(
-            this.patient_not_items,
-            this.a_totalPages,
-            this.a_currentPage
-          );
-          this.setaPagination(a_pagination);
-          this.a_loading = false;
-        });
-      } else {
-        console.error(result);
-      }
-    } else {
-      console.error(result);
-    }
   }
 
   async updateTableData() {
@@ -329,21 +291,10 @@ export default class ParamedicCharge extends Vue {
       }
     }
     console.log(JSON.stringify(this.patientOptions));
-    await paramedicPatientsModule.responsiblePatientsList(this.account.uuid, this.patientOptions);
-  }
-
-  clearPatient() {
-    this.totalPatient = 0;
-    this.modify_items = [];
-    this.totalPages = 0;
-    this.pagination = getDefaultPagination();
-  }
-
-  clearaPatient() {
-    this.patient_not = [];
-    this.patient_not_items = [];
-    this.a_pagination = getDefaultPagination();
-    this.a_totalPages = 0;
+    await paramedicPatientsModule.responsiblePatientsList(
+      this.account.uuid,
+      this.patientOptions
+    );
   }
 
   removeDialog() {
