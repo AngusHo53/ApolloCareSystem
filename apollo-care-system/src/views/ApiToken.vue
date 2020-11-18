@@ -88,7 +88,6 @@
 import { Vue, Component } from "vue-property-decorator";
 import { appModule } from "@/store/modules/app";
 import { apiTokenModule } from "@/store/modules/apiToken";
-import http from "../http/axios";
 
 @Component
 export default class ApiToken extends Vue {

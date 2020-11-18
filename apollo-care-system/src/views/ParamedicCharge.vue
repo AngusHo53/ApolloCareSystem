@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-toolbar-title>{{paramedic_name}}負責個案 {{ totalPatient ? '(' + totalPatient + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title>{{account.name}}負責個案 {{ totalPatient ? '(' + totalPatient + ')' : '' }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-col cols="12" md="2">
             <v-btn class="mb-3 blue white--text" @click="addDialog()">新增個案</v-btn>
@@ -26,7 +26,7 @@
             v-model="modify_items"
             item-key="iid"
             :headers="headers"
-            :items="patient_items"
+            :items="responsiblePatients"
             :loading="loading"
             loading-text="請稍後..."
             :search="search"
@@ -171,44 +171,34 @@ import { PatientInfo } from "@/types";
 import {
   GENDER,
   getDefaultPagination,
-  getPagination
+  getPagination,
+  getDefaultPatientOptions
 } from "@/utils/store-util";
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
 import http from "@/http/axios";
 import { appModule } from "@/store/modules/app";
+import { paramedicModule } from "@/store/modules/paramedic";
+import { paramedicPatientsModule } from "@/store/modules/paramedicPatients";
 
 @Component
 export default class ParamedicCharge extends Vue {
-  public pagination = getDefaultPagination();
   public totalPages = 0;
   public currentPage = 1;
-  private patientOptions = {
-    page: 1,
-    q: "",
-    order: "asc",
-    sort: ""
-  };
+  public patientOptions = getDefaultPatientOptions();
   private lastSearch = "";
   public totalPatient = 0;
 
   public a_pagination = getDefaultPagination();
   public a_totalPages = 0;
   public a_currentPage = 1;
-  private a_patientOptions = {
-    page: 1,
-    q: "",
-    order: "asc",
-    sort: ""
-  };
+  private a_patientOptions = getDefaultPatientOptions();
   private a_lastSearch = "";
 
   public loading = false;
   public a_loading = false;
   public search = "";
   public a_search = "";
-  public paramedic_name = "";
-  public paramedic_id = "";
   public headers = [
     {
       text: "名稱",
@@ -223,8 +213,6 @@ export default class ParamedicCharge extends Vue {
     { text: "電話", sortable: false, value: "phone" },
     { text: "信箱", sortable: false, value: "email" }
   ];
-  public patient: PatientInfo[] = [];
-  public patient_items: PatientInfo[] = [];
   public patient_not: PatientInfo[] = [];
   public patient_not_items: PatientInfo[] = [];
   public modify_items = [];
@@ -235,17 +223,26 @@ export default class ParamedicCharge extends Vue {
   public add_dialog2 = false;
   public dialogTitle = "";
 
-  async created() {
-    this.setPagination(getDefaultPagination());
-    this.paramedic_name = this.$route.params.name;
-    this.paramedic_id = this.$route.params.id;
-
-    await this.updateTableData();
-    await this.justNeedAdd();
+  get account() {
+    return paramedicModule.account;
   }
 
-  setPagination(pagination) {
-    this.pagination = pagination;
+  get responsiblePatients() {
+    return paramedicPatientsModule.responsiblePatients;
+  }
+
+  get pagination() {
+    return paramedicPatientsModule.pagination;
+  }
+
+  set pagination(pagination) {
+    paramedicPatientsModule.setPagination(pagination);
+  }
+
+  async created() {
+    this.pagination = getDefaultPagination();
+    await this.updateTableData();
+    await this.justNeedAdd();
   }
 
   setaPagination(pagination) {
@@ -253,6 +250,7 @@ export default class ParamedicCharge extends Vue {
   }
 
   async destroyed() {
+    paramedicModule.clearAccount();
     await this.clearPatient();
   }
 
@@ -266,7 +264,7 @@ export default class ParamedicCharge extends Vue {
       }
     }
     const result = await http.get(
-      `/user/${this.paramedic_id}/patients?mode=not&q=${this.a_patientOptions.q}&page=${this.a_patientOptions.page}&limit=10&role=Patient`
+      `/user/${this.account.uuid}/patients?mode=not&q=${this.a_patientOptions.q}&page=${this.a_patientOptions.page}&limit=10&role=Patient`
     );
     if (result) {
       if (result.data.status === "Success") {
@@ -282,17 +280,29 @@ export default class ParamedicCharge extends Vue {
                 element.name = element.name.substring(0, 1) + "◯";
                 break;
               case 3:
-                element.name = element.name.substring(0, 1) + "◯" + element.name.substring(2, 3);
+                element.name =
+                  element.name.substring(0, 1) +
+                  "◯" +
+                  element.name.substring(2, 3);
                 break;
               case 4:
-                element.name = element.name.substring(0, 1) + "◯◯" + element.name.substring(3, 4);
+                element.name =
+                  element.name.substring(0, 1) +
+                  "◯◯" +
+                  element.name.substring(3, 4);
                 break;
               default:
-                element.name = element.name.substr(0, 3) + "◯".repeat(len-6) + element.name.substr(len-3, 3);
+                element.name =
+                  element.name.substr(0, 3) +
+                  "◯".repeat(len - 6) +
+                  element.name.substr(len - 3, 3);
                 break;
             }
             element.gender = GENDER[element.gender];
-            element.iid = element.iid.substring(0, 3) + "****" + element.iid.substring(7, 10);
+            element.iid =
+              element.iid.substring(0, 3) +
+              "****" +
+              element.iid.substring(7, 10);
             this.patient_not_items.push(element);
           }
           const a_pagination = getPagination(
@@ -312,65 +322,18 @@ export default class ParamedicCharge extends Vue {
   }
 
   async updateTableData() {
-    this.loading = true;
-    this.clearPatient();
     if (!this.loading) {
       if (this.patientOptions.q !== this.lastSearch) {
         this.patientOptions.page = 1;
         this.lastSearch = this.patientOptions.q;
       }
     }
-    const result = await http.get(
-      `/user/${this.paramedic_id}/patients?q=${this.patientOptions.q}&page=${this.patientOptions.page}&limit=10`
-    );
-    if (result) {
-      if (result.data.status === "Success") {
-        const data = Object.assign({}, result.data.data);
-        this.patient = data.patients;
-        this.totalPatient = data.total_patients;
-        this.totalPages = data.total_page;
-        this.currentPage = this.patientOptions.page;
-        this.patient.forEach(element => {
-          if (element) {
-            const len = element.name.length;
-            switch (len) {
-              case 2:
-                element.name = element.name.substring(0, 1) + "◯";
-                break;
-              case 3:
-                element.name = element.name.substring(0, 1) + "◯" + element.name.substring(2, 3);
-                break;
-              case 4:
-                element.name = element.name.substring(0, 1) + "◯◯" + element.name.substring(3, 4);
-                break;
-              default:
-                element.name = element.name.substr(0, 3) + "◯".repeat(len-6) + element.name.substr(len-3, 3);
-                break;
-            }
-            element.gender = GENDER[element.gender];
-            element.iid = element.iid.substring(0, 3) + "****" + element.iid.substring(7, 10);
-            this.patient_items.push(element);
-          }
-        });
-        const pagination = getPagination(
-          this.patient_items,
-          this.totalPages,
-          this.currentPage
-        );
-        this.setPagination(pagination);
-        this.loading = false;
-      } else {
-        console.log("error");
-      }
-    } else {
-      console.log("error");
-    }
+    console.log(JSON.stringify(this.patientOptions));
+    await paramedicPatientsModule.responsiblePatientsList(this.account.uuid, this.patientOptions);
   }
 
   clearPatient() {
     this.totalPatient = 0;
-    this.patient = [];
-    this.patient_items = [];
     this.modify_items = [];
     this.totalPages = 0;
     this.pagination = getDefaultPagination();
@@ -433,7 +396,7 @@ export default class ParamedicCharge extends Vue {
     }
 
     const result = await http.post(
-      "/user/" + this.paramedic_id + "/patients",
+      "/user/" + this.account.uuid + "/patients",
       params
     );
     if (result) {

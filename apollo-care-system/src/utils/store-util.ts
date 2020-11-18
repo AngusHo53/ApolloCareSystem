@@ -1,4 +1,4 @@
-import { Entity } from "@/types";
+import { Entity, PatientOptions } from "@/types";
 export const DEFAULT_ROW_PER_PAGE = 10;
 export const GENDER = {
   1: '男',
@@ -199,6 +199,15 @@ export function getDefaultPagination(): Pagination {
     totalItems: 0,
     rowsPerPage: DEFAULT_ROW_PER_PAGE,
     pages: 0
+  };
+}
+
+export function getDefaultPatientOptions(): PatientOptions {
+  return {
+    page: 1,
+    q: "",
+    order: "asc",
+    sort: ""
   };
 }
 

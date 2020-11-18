@@ -7,15 +7,17 @@ import {
 } from "vuex-module-decorators";
 import { Account } from "@/types";
 import store from "@/store";
-import { getAccountList, replaceRole } from '@/api/accountListService';
-export interface RoleListState {
+import { getAccountList } from '@/api/accountListService';
+import { GENDER } from '@/utils/store-util';
+export interface ParamedicState {
   accounts: Account[];
   account: Account;
   loading: boolean;
+  totalAccounts: number;
 }
 
-@Module({ store, dynamic: true, name: "roleListModule" })
-class RoleListModule extends VuexModule implements RoleListState {
+@Module({ store, dynamic: true, name: "paramedicModule" })
+class ParamedicModule extends VuexModule implements ParamedicState {
   public accounts: Account[] = [];
   public account: Account = {
     age: 0,
@@ -33,39 +35,28 @@ class RoleListModule extends VuexModule implements RoleListState {
     place: "",
     roles: [""]
   };
+  public totalAccounts = 0;
   public loading = false;
 
-  @Action async roleList() {
+  @Action async accountList() {
     this.setLoading(true);
-    this.setRoleList(await getAccountList());
-    this.setLoading(false);
-  }
+    this.setAccounts(await getAccountList());
+    this.setTotalAccounts(this.accounts.length);
 
-  @Action async replaceRole() {
-    this.setLoading(true);
-    await replaceRole(this.account);
-    this.setLoading(false);
-    this.setAccount({
-      age: 0,
-      birthday: "",
-      created_at: "",
-      gender: "",
-      health_state: 0,
-      id: 0,
-      iid: "",
-      name: "",
-      phone: "",
-      updated_at: "",
-      uuid: "",
-      email: "",
-      place: "",
-      roles: [""]
+    this.accounts.forEach(element => {
+      if (element && element.roles.includes("Paramedic")) {
+        element.gender = GENDER[element.gender];
+      }
     });
-    this.roleList();
+    this.setLoading(false);
   }
 
-  @Action clearRoleList() {
-    this.setRoleList([]);
+  @Action clearAccountList() {
+    this.setAccounts([]);
+    this.setTotalAccounts(0);
+  }
+
+  @Action clearAccount() {
     this.setAccount({
       age: 0,
       birthday: "",
@@ -88,7 +79,7 @@ class RoleListModule extends VuexModule implements RoleListState {
     this.loading = loading;
   }
 
-  @Mutation setRoleList(accounts: Account[]): void {
+  @Mutation setAccounts(accounts: Account[]): void {
     this.accounts = accounts;
   }
 
@@ -96,7 +87,9 @@ class RoleListModule extends VuexModule implements RoleListState {
     this.account = account;
   }
 
-
+  @Mutation setTotalAccounts(totalAccounts: number): void {
+    this.totalAccounts = totalAccounts;
+  }
 }
 
-export const roleListModule = getModule(RoleListModule);
+export const paramedicModule = getModule(ParamedicModule);

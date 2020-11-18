@@ -42,7 +42,7 @@
 
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                      <v-btn color="blue darken-1" text @click="dialog = false;">Cancel</v-btn>
                       <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                     </v-card-actions>
                   </v-card>
@@ -60,10 +60,8 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { appModule } from "@/store/modules/app";
 import { userModule } from "@/store/modules/user";
 import { roleListModule } from "@/store/modules/roleList";
-import http from "../http/axios";
 
 @Component
 export default class RoleList extends Vue {
