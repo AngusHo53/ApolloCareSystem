@@ -85,9 +85,10 @@ export default class ParamedicList extends Vue {
 
   changeToPatient(item) {
     this.account = Object.assign({}, item);
+    localStorage.setItem("accountName", item.name);
     this.$router.push({
       name: `負責個案`,
-      params: { name: item.name, id: item.uuid }
+      params: { id: item.uuid }
     });
   }
 }

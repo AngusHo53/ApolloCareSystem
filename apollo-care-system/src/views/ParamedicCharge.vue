@@ -248,10 +248,8 @@ export default class ParamedicCharge extends Vue {
   }
 
   async created() {
-    console.log(JSON.stringify(this.$router.currentRoute.params.name));
-    this.account.name = this.$router.currentRoute.params.name;
+    this.account.name = localStorage.getItem("accountName");
     this.account.uuid = this.$router.currentRoute.params.id;
-    console.log(JSON.stringify(this.account));
 
     this.pagination = getDefaultPagination();
     await this.updateTableData();
