@@ -86,11 +86,9 @@ export default class ParamedicList extends Vue {
   changeToPatient(item) {
     this.account = Object.assign({}, item);
     this.$router.push({
-      name: `負責個案`
+      name: `負責個案`,
+      params: { name: item.name, id: item.uuid }
     });
-  }
-  async destroyed() {
-    await paramedicModule.clearAccountList();
   }
 }
 </script>

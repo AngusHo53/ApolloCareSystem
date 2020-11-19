@@ -207,17 +207,16 @@ export default class ParamedicCharge extends Vue {
   public add_dialog = false;
   public add_dialog2 = false;
   public dialogTitle = "";
-
+  public account = {
+    name: "",
+    uuid: ""
+  };
   get loading() {
     return paramedicPatientsModule.loading;
   }
 
   get aLoading() {
     return paramedicPatientsModule.aLoading;
-  }
-
-  get account() {
-    return paramedicModule.account;
   }
 
   get responsiblePatients() {
@@ -249,15 +248,14 @@ export default class ParamedicCharge extends Vue {
   }
 
   async created() {
+    console.log(JSON.stringify(this.$router.currentRoute.params.name));
+    this.account.name = this.$router.currentRoute.params.name;
+    this.account.uuid = this.$router.currentRoute.params.id;
+    console.log(JSON.stringify(this.account));
+
     this.pagination = getDefaultPagination();
     await this.updateTableData();
     await this.justNeedAdd();
-  }
-
-  async destroyed() {
-    paramedicModule.clearAccount();
-    paramedicPatientsModule.clearResponsible();
-    paramedicPatientsModule.clearNeedToAdd();
   }
 
   async justNeedAdd() {
@@ -337,20 +335,13 @@ export default class ParamedicCharge extends Vue {
       params.remove = remove_id;
     }
 
-    const result = await http.post(
-      "/user/" + this.account.uuid + "/patients",
-      params
-    );
-    if (result) {
-      if (result.data.status === "Success") {
-        location.reload();
-        appModule.sendSuccessNotice("變更成功");
-      } else {
-        appModule.sendErrorNotice("變更失敗");
-      }
-    } else {
-      appModule.sendErrorNotice("變更失敗");
-    }
+    const data = {
+      uuid: this.account.uuid,
+      params: params
+    };
+
+    await paramedicPatientsModule.addPatientsToAccount(data);
+    location.reload();
   }
 
   close() {
@@ -373,6 +364,11 @@ export default class ParamedicCharge extends Vue {
     this.add_dialog2 = false;
     this.modifyPatient();
   }
+
+  // async destroyed() {
+  //   paramedicPatientsModule.clearResponsible();
+  //   paramedicPatientsModule.clearNeedToAdd();
+  // }
 
   @Watch("patientOptions.q")
   watchSearch(newVal, oldVal) {

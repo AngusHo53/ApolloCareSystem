@@ -8,7 +8,7 @@ import {
 import { PatientInfo, PatientOptions } from '@/types';
 import store from "@/store";
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
-import { getPatientsByAccount, getPatientsNeedToAdd } from '@/api/accountListService';
+import { getPatientsByAccount, getPatientsNeedToAdd, addPatientsToAccount } from '@/api/accountListService';
 export interface ParamedicPatientsState {
   loading: boolean;
   aLoading: boolean;
@@ -83,6 +83,13 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
       this.currentResponsiblePage
     );
     this.setPagination(pagination);
+    this.setLoading(false);
+  }
+
+  @Action
+  async addPatientsToAccount(param) {
+    this.setLoading(true);
+    await addPatientsToAccount(param.uuid,param.params);
     this.setLoading(false);
   }
 

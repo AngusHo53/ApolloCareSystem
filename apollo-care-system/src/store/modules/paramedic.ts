@@ -54,9 +54,6 @@ class ParamedicModule extends VuexModule implements ParamedicState {
   @Action clearAccountList() {
     this.setAccounts([]);
     this.setTotalAccounts(0);
-  }
-
-  @Action clearAccount() {
     this.setAccount({
       age: 0,
       birthday: "",

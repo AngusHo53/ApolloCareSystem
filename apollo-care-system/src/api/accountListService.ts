@@ -57,3 +57,19 @@ export async function getPatientsNeedToAdd(accountId, patientOptions) {
     appModule.sendErrorNotice("取得列表失敗");
   }
 }
+
+export async function addPatientsToAccount(accountId, params) {
+  const result = await http.post(
+    "/user/" + accountId + "/patients",
+    params
+  );
+  if (result) {
+    if (result.data.status === "Success") {
+      appModule.sendSuccessNotice("變更成功");
+    } else {
+      appModule.sendErrorNotice("變更失敗");
+    }
+  } else {
+    appModule.sendErrorNotice("變更失敗");
+  }
+}
