@@ -185,9 +185,5 @@ export default class ApiToken extends Vue {
   created() {
     apiTokenModule.apiList();
   }
-
-  destroyed() {
-    apiTokenModule.clearApiToken();
-  }
 }
 </script>

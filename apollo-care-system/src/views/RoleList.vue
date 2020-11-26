@@ -49,7 +49,7 @@
                 </v-dialog>
               </v-toolbar>
             </template>
-            <template v-slot:item.actions="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
               <v-awesome-icon class="mr-2" @click="editItem(item)" icon="edit" size="lg" />
             </template>
           </v-data-table>
@@ -117,10 +117,6 @@ export default class RoleList extends Vue {
   public async save() {
     roleListModule.replaceRole();
     this.dialog = false;
-  }
-
-  destroyed() {
-    roleListModule.clearRoleList();
   }
 }
 </script>
