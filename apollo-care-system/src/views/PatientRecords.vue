@@ -100,7 +100,7 @@
             :group-by="'measure_at'"
             :group-desc="true"
           >
-            <template v-slot:group.header="{items, isOpen, toggle}">
+            <template v-slot:[`group.header`]="{items, isOpen, toggle}">
               <th colspan="3">
                 <v-awesome-icon @click="toggle" :icon="isOpen ? 'minus' : 'plus' " size="lg" />
                 {{items[0].category}} {{ items[0].measure_at | formatMeasureAt}}
