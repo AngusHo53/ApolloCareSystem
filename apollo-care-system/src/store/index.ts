@@ -7,9 +7,10 @@ import { PatientState } from "./modules/patients";
 import { AppState } from "./modules/app";
 import { RecordState } from "./modules/records";
 import { ApiTokenState } from "./modules/apiToken";
-import {RoleListState} from "./modules/roleList";
+import { RoleListState } from "./modules/roleList";
 import { ParamedicState } from "./modules/paramedic";
-import { ParamedicPatientsState } from "./modules/paramedicPatients"
+import { ParamedicPatientsState } from "./modules/paramedicPatients";
+import { PlaceState } from "./modules/place";
 Vue.use(Vuex);
 
 interface RootState {
@@ -21,6 +22,7 @@ interface RootState {
   roleListState: RoleListState;
   paramedicState: ParamedicState;
   paramedicPatientsState: ParamedicPatientsState;
+  placeState: PlaceState;
 }
 
 export default new Vuex.Store<RootState>({

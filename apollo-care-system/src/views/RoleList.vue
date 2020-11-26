@@ -104,7 +104,7 @@ export default class RoleList extends Vue {
     roleListModule.roleList();
     if (this.user.roles.includes("Owner")) {
       this.role_item = this.role_item.concat(this.owner_role);
-    } else if (this.user.roles.includes("Admen")) {
+    } else if (this.user.roles.includes("Admin")) {
       this.role_item = this.role_item.concat(this.admin_role);
     }
   }

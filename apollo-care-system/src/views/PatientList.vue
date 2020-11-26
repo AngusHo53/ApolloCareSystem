@@ -143,6 +143,7 @@ import { Patient, PatientInfo } from "@/types";
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
 import { appModule } from "@/store/modules/app";
+import { placeModule } from "@/store/modules/place";
 import {
   getDefaultPagination,
   getPagination,
@@ -174,6 +175,10 @@ export default class PatientList extends Vue {
     index: [],
     shortcode: []
   };
+
+  // get place(){
+  //   return placeModule.place;
+  // }
 
   public editDialog = false;
   public pagination = getDefaultPagination();
@@ -211,6 +216,7 @@ export default class PatientList extends Vue {
   async created() {
     this.setPagination(getDefaultPagination());
     await this.updateTableData();
+    placeModule.placeList();
     await this.getPlaceList();
   }
 
