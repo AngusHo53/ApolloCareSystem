@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 import { userModule } from "@/store/modules/user";
 import ErrorPage from "@/components/404.vue";
 import Community from "@/views/Community.vue";
+import CommunityRecords from "@/views/CommunityRecords.vue";
 import Login from "@/components/Login.vue";
 import PatientList from "@/views/PatientList.vue";
 import PatientRecords from "@/views/PatientRecords.vue";
@@ -105,12 +106,12 @@ const routes: Array<RouteConfig> = [
     name: '權限列表',
     beforeEnter: requireAuth
   },
-  {
-    path: "/community",
-    component: Community,
-    name: '社區狀態顯示表',
-    beforeEnter: requireAuth
-  },
+  // {
+  //   path: "/community",
+  //   component: Community,
+  //   name: '社區狀態顯示表',
+  //   beforeEnter: requireAuth
+  // },
   // {
   //   path: "/community/:name/records",
   //   component: CommunityRecords,

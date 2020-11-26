@@ -4,7 +4,7 @@
       <v-card>
         <v-container fluid>
           <v-data-iterator
-            :items="communityList"
+            :items="place"
             :page="page"
             :items-per-page.sync="itemsPerPage"
             :search="search"
@@ -29,54 +29,85 @@
 
             <template v-slot:default="props">
               <v-row>
-                <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="2">
+                <v-col
+                  v-for="item in props.items"
+                  :key="item.name"
+                  cols="12"
+                  sm="6"
+                  md="4"
+                  lg="2"
+                >
                   <v-card>
-                    <v-card-title class="text-h6 font-weight-bold">{{ item.branch_name }}</v-card-title>
-                    <v-card-subtitle class="text-subtitle-1 font-weight-bold">異常個案數</v-card-subtitle>
+                    <v-card-title class="text-h6 font-weight-bold">{{
+                      item.branch_name
+                    }}</v-card-title>
+                    <v-card-subtitle class="text-subtitle-1 font-weight-bold"
+                      >異常個案數</v-card-subtitle
+                    >
                     <div align="right">
                       <v-btn
                         class="ma-2 white--text"
                         dark
                         small
-                        @click.native="changeToCommunityRecordPage(item.branch_name)"
+                        @click.native="
+                          changeToCommunityRecordPage(item.branch_name)
+                        "
                       >
                         詳細資料
-                        <v-icon right dark>mdi-format-list-bulleted-square</v-icon>
+                        <v-icon right dark
+                          >mdi-format-list-bulleted-square</v-icon
+                        >
                       </v-btn>
                     </div>
                     <v-divider></v-divider>
 
                     <v-list :subheader="true">
                       <v-list-item>
-                        <v-list-item-content class="align-center">收縮壓:12人</v-list-item-content>
+                        <v-list-item-content class="align-center"
+                          >收縮壓:12人</v-list-item-content
+                        >
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content class="align-end">舒張壓:12人</v-list-item-content>
+                        <v-list-item-content class="align-end"
+                          >舒張壓:12人</v-list-item-content
+                        >
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content class="align-end">脈搏:</v-list-item-content>
+                        <v-list-item-content class="align-end"
+                          >脈搏:</v-list-item-content
+                        >
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content class="align-end">五次坐站:</v-list-item-content>
+                        <v-list-item-content class="align-end"
+                          >五次坐站:</v-list-item-content
+                        >
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content class="align-end">走路速度:</v-list-item-content>
+                        <v-list-item-content class="align-end"
+                          >走路速度:</v-list-item-content
+                        >
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content class="align-end">握力:</v-list-item-content>
+                        <v-list-item-content class="align-end"
+                          >握力:</v-list-item-content
+                        >
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content class="align-end">上月測量人數:</v-list-item-content>
+                        <v-list-item-content class="align-end"
+                          >上月測量人數:</v-list-item-content
+                        >
                       </v-list-item>
 
                       <v-list-item>
-                        <v-list-item-content class="align-end">本月測量人數:</v-list-item-content>
+                        <v-list-item-content class="align-end"
+                          >本月測量人數:</v-list-item-content
+                        >
                       </v-list-item>
                     </v-list>
                   </v-card>
@@ -85,8 +116,12 @@
             </template>
 
             <template v-slot:footer>
-              <div class="text-xs-center pt-2" style="margin-top: 50px;">
-                <v-pagination v-model="page" :length="numberOfPages" circle></v-pagination>
+              <div class="text-xs-center pt-2" style="margin-top: 50px">
+                <v-pagination
+                  v-model="page"
+                  :length="numberOfPages"
+                  circle
+                ></v-pagination>
               </div>
             </template>
           </v-data-iterator>
@@ -98,24 +133,21 @@
 <script lang="ts">
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
-import http from "@/http/axios";
-import { appModule } from "@/store/modules/app";
+import { placeModule } from "@/store/modules/place";
 
-@Component({
-  components: {}
-})
+@Component
 export default class Community extends Vue {
-  public errorMsg = "";
   public search = "";
   public page = 1;
   public itemsPerPage = 6;
-  private customerId = "";
-  private query = "";
-  private color = "";
-  private quickSearchFilter = "";
-  private itemId = -1;
-  private communityList = [];
-  private communityRecord = [];
+
+  get place() {
+    return placeModule.place;
+  }
+
+  get loading() {
+    return placeModule.loading;
+  }
 
   nextPage() {
     if (this.page + 1 <= this.numberOfPages) this.page += 1;
@@ -125,47 +157,20 @@ export default class Community extends Vue {
   }
 
   changeToCommunityRecordPage($event) {
-    console.log($event);
     this.$router.push({
       name: `社區紀錄`,
       params: {
-        name: $event
-      }
+        name: $event,
+      },
     });
   }
 
   get numberOfPages() {
-    return Math.ceil(this.communityList.length / this.itemsPerPage);
-  }
-
-  public async communityBadRecord() {
-    appModule.setLoading(true);
-    this.$Progress.start();
-
-    const result = await http.get("/place");
-    if (result) {
-      if (result.data.status === "Success") {
-        // Login Successful
-        this.communityList = result.data.data.place;
-      } else {
-        // Login Failed
-        this.errorMsg = result.data.message;
-        console.log(this.errorMsg);
-      }
-    } else {
-      console.error(result.status);
-    }
-    appModule.setLoading(false);
-  }
-
-  get loading() {
-    return appModule.loading;
+    return Math.ceil(this.place.length / this.itemsPerPage);
   }
 
   created() {
-    this.communityBadRecord();
+    placeModule.placeList();
   }
-
-  mounted() {}
 }
 </script>
