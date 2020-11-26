@@ -41,8 +41,8 @@ class PlaceModule extends VuexModule implements PlaceState {
     if (item.place != null) {
       for (let i = 0; i < this.place.length; i++) {
         if (item.place == this.place[i].branch_name) {
-          item.place =
-            this.place[i].shortcode + "," + this.place[i].index;
+          return item.place =
+             this.place[i].shortcode + "," + this.place[i].index;
         }
       }
     } else return;

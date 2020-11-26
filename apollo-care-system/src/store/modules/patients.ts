@@ -2,6 +2,7 @@
 import { Patient, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormData } from '@/types';
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
+import { getPatientsList,setPatientsInfo } from '@/api/patientsService';
 import store from '@/store';
 import http from "@/http/axios";
 
@@ -39,8 +40,8 @@ class PatientModule extends VuexModule implements PatientState {
       updated_at: '',
       uuid: '',
       email: '',
-      place:'',
-      roles:[""]
+      place: '',
+      roles: [""]
     },
     id: 0,
     record: {
@@ -64,22 +65,22 @@ class PatientModule extends VuexModule implements PatientState {
 
   @Action async getPatientsByPages(options: PatientOptions): Promise<TODO> {
     this.setLoading(true);
-    const result = await http.get(`/user?q=${options.q}&page=${options.page}&limit=10`);
-    // (`/patient/list/${patientOptions.page}?q=${patientOptions.q}&&order=${patientOptions.order}&&sort=${patientOptions.sort}`);
-    if (result) {
-      const data = result.data.data;
-      this.setTotalPatients(data.total_users);
-      this.setTotalPages(data.total_page);
-      this.setPatients(data.users);
-      this.setCurrentPage(options.page);
-      // Extract Table Data
-      await this.extractPatientInfo(data.users);
-      this.setDataTable(this.items);
-      this.setLoading(false);
-    } else {
-      console.error(result);
-    }
-    return result;
+    this.clearPatients();
+    const data = await getPatientsList(options);
+    this.setTotalPatients(data.total_users);
+    this.setTotalPages(data.total_page);
+    this.setPatients(data.users);
+    this.setCurrentPage(options.page);
+    // Extract Table Data
+    await this.extractPatientInfo(data.users);
+    this.setDataTable(this.items);
+    this.setLoading(false);
+  }
+
+  @Action async setPatientsInfo(param): Promise<TODO> {
+    this.setLoading(true);
+    await setPatientsInfo(param.uuid,param.params);
+    this.setLoading(false);
   }
 
   @Action async getPatientByUuid(uuid: string): Promise<TODO> {
@@ -111,6 +112,31 @@ class PatientModule extends VuexModule implements PatientState {
   async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
       if (element.user) {
+        console.log()
+        const len = element.user.name.length;
+        switch (len) {
+          case 2:
+            element.user.name = element.user.name.substring(0, 1) + "◯";
+            break;
+          case 3:
+            element.user.name =
+              element.user.name.substring(0, 1) +
+              "◯" +
+              element.user.name.substring(2, 3);
+            break;
+          case 4:
+            element.user.name =
+              element.user.name.substring(0, 1) +
+              "◯◯" +
+              element.user.name.substring(3, 4);
+            break;
+          default:
+            element.user.name = element.user.name.substr(0, 3) + "◯".repeat(len-6) + element.user.name.substr(len-3, 3);
+            break;
+        }
+
+        element.user.iid = element.user.iid.substring(0, 3) + "*****" + element.user.iid.substring(8, 10);
+
         element.user.gender = GENDER[element.user.gender];
         this.items.push(element.user);
       }

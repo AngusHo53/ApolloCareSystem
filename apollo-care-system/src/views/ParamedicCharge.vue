@@ -37,7 +37,7 @@
             hide-default-footer
             :single-select="false"
           >
-            <template v-slot:item.actions="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
               <v-btn fab class="indigo mr-2" small dark @click="changeToPatient(item)">
                 <v-awesome-icon icon="user" size="lg" />
               </v-btn>
@@ -362,11 +362,6 @@ export default class ParamedicCharge extends Vue {
     this.add_dialog2 = false;
     this.modifyPatient();
   }
-
-  // async destroyed() {
-  //   paramedicPatientsModule.clearResponsible();
-  //   paramedicPatientsModule.clearNeedToAdd();
-  // }
 
   @Watch("patientOptions.q")
   watchSearch(newVal, oldVal) {

@@ -24,7 +24,7 @@
             loading-text="請稍後..."
             :search="search"
           >
-            <template v-slot:item.actions="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
               <v-btn fab class="indigo mr-2" small dark @click="changeToPatient(item)">
                 <v-awesome-icon icon="user" size="lg" />
               </v-btn>

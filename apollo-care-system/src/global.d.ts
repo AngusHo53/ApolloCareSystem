@@ -54,3 +54,4 @@ type SeachQuery = {
   lessThanOrEquals: {[k:string]:number};
   greaterThanOrEquals: {[k:string]:number};
 };
+
