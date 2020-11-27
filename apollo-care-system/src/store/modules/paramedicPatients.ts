@@ -5,9 +5,10 @@ import {
   Action,
   getModule
 } from "vuex-module-decorators";
-import { PatientInfo, PatientOptions } from '@/types';
+import { PatientInfo } from '@/types';
 import store from "@/store";
-import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
+import { getDefaultPagination, getPagination } from '@/utils/store-util';
+import { formatUserInfo } from '@/utils/app-util';
 import { getPatientsByAccount, getPatientsNeedToAdd, addPatientsToAccount } from '@/api/accountListService';
 export interface ParamedicPatientsState {
   loading: boolean;
@@ -44,44 +45,11 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
     const data = await getPatientsByAccount(param.uuid, param.options);
     const data2 = await getPatientsByAccount(param.uuid, param.options);
     this.setOriginalResponsible(data2.patients);
-    this.setResponsiblePatients(data.patients);
+    this.setResponsiblePatients(await formatUserInfo(data.patients));
     this.setTotalResponsiblePatients(data.total_patients);
     this.setTotalResponsiblePages(data.total_page);
     this.setCurrentResponsiblePage(param.options.page);
 
-    this.responsiblePatients.forEach(element => {
-      if (element) {
-        const len = element.name.length;
-        switch (len) {
-          case 2:
-            element.name = element.name.substring(0, 1) + "◯";
-            break;
-          case 3:
-            element.name =
-              element.name.substring(0, 1) +
-              "◯" +
-              element.name.substring(2, 3);
-            break;
-          case 4:
-            element.name =
-              element.name.substring(0, 1) +
-              "◯◯" +
-              element.name.substring(3, 4);
-            break;
-          default:
-            element.name =
-              element.name.substr(0, 3) +
-              "◯".repeat(len - 6) +
-              element.name.substr(len - 3, 3);
-            break;
-        }
-        element.gender = GENDER[element.gender];
-        element.iid =
-          element.iid.substring(0, 3) +
-          "****" +
-          element.iid.substring(7, 10);
-      }
-    });
     const pagination = getPagination(
       this.responsiblePatients,
       this.totalResponsiblePages,
@@ -123,44 +91,10 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
     const data = await getPatientsNeedToAdd(param.uuid, param.options);
     const data2 = await getPatientsNeedToAdd(param.uuid, param.options);
     this.setOriginalPatients(data2.patients);
-    this.setNeedToAddPatients(data.patients);
+    this.setNeedToAddPatients(await formatUserInfo(data.patients));
 
     this.setTotalNeedToAddPages(data.total_page);
     this.setCurrentNeedToAddPage(this.aPagination.page);
-
-    this.needToAddPatients.forEach(element => {
-      if (element) {
-        const len = element.name.length;
-        switch (len) {
-          case 2:
-            element.name = element.name.substring(0, 1) + "◯";
-            break;
-          case 3:
-            element.name =
-              element.name.substring(0, 1) +
-              "◯" +
-              element.name.substring(2, 3);
-            break;
-          case 4:
-            element.name =
-              element.name.substring(0, 1) +
-              "◯◯" +
-              element.name.substring(3, 4);
-            break;
-          default:
-            element.name =
-              element.name.substr(0, 3) +
-              "◯".repeat(len - 6) +
-              element.name.substr(len - 3, 3);
-            break;
-        }
-        element.gender = GENDER[element.gender];
-        element.iid =
-          element.iid.substring(0, 3) +
-          "****" +
-          element.iid.substring(7, 10);
-      }
-    });
     const a_pagination = getPagination(
       this.needToAddPatients,
       this.totalNeedToAddPages,

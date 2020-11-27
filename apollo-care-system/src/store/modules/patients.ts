@@ -1,6 +1,7 @@
 
 import { Patient, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormData } from '@/types';
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
+import { formatUserInfo } from '@/utils/app-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import { getPatientsList,setPatientsInfo } from '@/api/patientsService';
 import store from '@/store';
@@ -69,10 +70,10 @@ class PatientModule extends VuexModule implements PatientState {
     const data = await getPatientsList(options);
     this.setTotalPatients(data.total_users);
     this.setTotalPages(data.total_page);
-    this.setPatients(data.users);
     this.setCurrentPage(options.page);
     // Extract Table Data
-    await this.extractPatientInfo(data.users);
+    this.setPatients(await formatUserInfo(data.users));
+    this.extractPatientInfo(this.patients);
     this.setDataTable(this.items);
     this.setLoading(false);
   }
@@ -112,32 +113,6 @@ class PatientModule extends VuexModule implements PatientState {
   async extractPatientInfo(patients: Patient[]) {
     patients.forEach(element => {
       if (element.user) {
-        console.log()
-        const len = element.user.name.length;
-        switch (len) {
-          case 2:
-            element.user.name = element.user.name.substring(0, 1) + "◯";
-            break;
-          case 3:
-            element.user.name =
-              element.user.name.substring(0, 1) +
-              "◯" +
-              element.user.name.substring(2, 3);
-            break;
-          case 4:
-            element.user.name =
-              element.user.name.substring(0, 1) +
-              "◯◯" +
-              element.user.name.substring(3, 4);
-            break;
-          default:
-            element.user.name = element.user.name.substr(0, 3) + "◯".repeat(len-6) + element.user.name.substr(len-3, 3);
-            break;
-        }
-
-        element.user.iid = element.user.iid.substring(0, 3) + "*****" + element.user.iid.substring(8, 10);
-
-        element.user.gender = GENDER[element.user.gender];
         this.items.push(element.user);
       }
     });

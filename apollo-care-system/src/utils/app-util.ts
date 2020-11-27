@@ -1,5 +1,6 @@
-import { User, SearchFilter } from "@/types";
-
+import { User } from "@/types";
+import { GENDER } from '@/utils/store-util';
+import { Patient } from '@/types';
 const SESSION_TOKEN_KEY = "apollo-token";
 const SESSION_USER_KEY = "apollo-user";
 
@@ -76,5 +77,69 @@ export function formatMeasureAt(timestamp: number) {
   else {
     return newTime;
   }
+
+}
+
+export function formatUserInfo(users) {
+  users.forEach(element => {
+    if (element.user) {
+      const len = element.user.name.length;
+      switch (len) {
+        case 2:
+          element.user.name = element.user.name.substring(0, 1) + "◯";
+          break;
+        case 3:
+          element.user.name =
+            element.user.name.substring(0, 1) +
+            "◯" +
+            element.user.name.substring(2, 3);
+          break;
+        case 4:
+          element.user.name =
+            element.user.name.substring(0, 1) +
+            "◯◯" +
+            element.user.name.substring(3, 4);
+          break;
+        default:
+          element.user.name = element.user.name.substr(0, 3) + "◯".repeat(len - 6) + element.user.name.substr(len - 3, 3);
+          break;
+      }
+
+      element.user.iid = element.user.iid.substring(0, 3) + "*****" + element.user.iid.substring(8, 10);
+
+      element.user.gender = GENDER[element.user.gender];
+    } else {
+      const len = element.name.length;
+      switch (len) {
+        case 2:
+          element.name = element.name.substring(0, 1) + "◯";
+          break;
+        case 3:
+          element.name =
+            element.name.substring(0, 1) +
+            "◯" +
+            element.name.substring(2, 3);
+          break;
+        case 4:
+          element.name =
+            element.name.substring(0, 1) +
+            "◯◯" +
+            element.name.substring(3, 4);
+          break;
+        default:
+          element.name =
+            element.name.substr(0, 3) +
+            "◯".repeat(len - 6) +
+            element.name.substr(len - 3, 3);
+          break;
+      }
+      element.gender = GENDER[element.gender];
+      element.iid =
+        element.iid.substring(0, 3) +
+        "****" +
+        element.iid.substring(7, 10);
+    }
+  });
+  return users;
 
 }
