@@ -1,5 +1,5 @@
 <template>
-  <v-app id="apollo" class="overflow-auto" style="background:#EEEEF3;">
+  <v-app id="apollo" class="overflow-auto" style="background: #eeeef3">
     <vue-progress-bar></vue-progress-bar>
     <template v-if="!signedIn">
       <router-view></router-view>
@@ -17,14 +17,26 @@
         <v-list class="pa-0">
           <v-list-item tag="div">
             <v-list-item-action>
-              <v-img max-width="2.5em" class="avatar" src="@/assets/avatar0.png" />
+              <v-img
+                max-width="2.5em"
+                class="avatar"
+                src="@/assets/avatar0.png"
+              />
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>{{ user.firstName }}{{ user.lastName }}</v-list-item-title>
+              <v-list-item-title
+                >{{ user.firstName }}{{ user.lastName }}</v-list-item-title
+              >
             </v-list-item-content>
             <!-- <v-spacer></v-spacer> -->
-            <v-list-item-action style="max-width:1em">
-              <v-menu bottom right offset-y origin="bottom right" transition="v-slide-y-transition">
+            <v-list-item-action style="max-width: 1em">
+              <v-menu
+                bottom
+                right
+                offset-y
+                origin="bottom right"
+                transition="v-slide-y-transition"
+              >
                 <template v-slot:activator="{ on }">
                   <v-btn icon small light slot="activator" v-on="on">
                     <v-icon>mdi-dots-vertical</v-icon>
@@ -39,13 +51,15 @@
                     router
                   >
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.title"></v-list-item-title>
+                      <v-list-item-title
+                        v-text="item.title"
+                      ></v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
               </v-menu>
             </v-list-item-action>
-            <v-list-item-action style="max-width:1em">
+            <v-list-item-action style="max-width: 1em">
               <v-btn icon small @click.native.stop="mini = !mini">
                 <v-icon>mdi-chevron-left</v-icon>
               </v-btn>
@@ -62,19 +76,29 @@
             <v-list-item-action class="pr-1 pl-2 mr-1">
               <v-awesome-icon :title="item.title" :icon="item.icon" />
             </v-list-item-action>
-            <v-list-item-content :class="activeMenuItem.includes(item.title) ? 'blue--text' : ''">
+            <v-list-item-content
+              :class="activeMenuItem.includes(item.title) ? 'blue--text' : ''"
+            >
               <v-list-item-title v-text="item.title"></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-app-bar app elevation="1">
-        <v-app-bar-nav-icon @click.native.stop="drawer = !drawer" light></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon
+          @click.native.stop="drawer = !drawer"
+          light
+        ></v-app-bar-nav-icon>
         <v-spacer></v-spacer>
       </v-app-bar>
       <v-main>
         <v-container fluid>
-          <v-snackbar v-model="snackbar" :top="true" :timeout="2000" :color="mode">
+          <v-snackbar
+            v-model="snackbar"
+            :top="true"
+            :timeout="2000"
+            :color="mode"
+          >
             {{ notice }}
             <!-- <v-btn dark text @click.native="closeSnackbar">取消</v-btn> -->
           </v-snackbar>
@@ -86,16 +110,30 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field label="姓名" v-model="editItem.name"></v-text-field>
+                      <v-text-field
+                        label="姓名"
+                        v-model="editItem.name"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field label="身份證字號" disabled v-model="editItem.iid"></v-text-field>
+                      <v-text-field
+                        label="身份證字號"
+                        disabled
+                        v-model="editItem.iid"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" sm="4">
-                      <v-select :items="['男', '女']" label="性別" v-model="editItem.gender"></v-select>
+                      <v-select
+                        :items="['男', '女']"
+                        label="性別"
+                        v-model="editItem.gender"
+                      ></v-select>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-text-field label="年齡" v-model="editItem.age"></v-text-field>
+                      <v-text-field
+                        label="年齡"
+                        v-model="editItem.age"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" sm="4">
                       <v-menu
@@ -116,10 +154,21 @@
                             v-on="on"
                           ></v-text-field>
                         </template>
-                        <v-date-picker v-model="editItem.birthday" no-title scrollable>
+                        <v-date-picker
+                          v-model="editItem.birthday"
+                          no-title
+                          scrollable
+                        >
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateMenu = false">取消</v-btn>
-                          <v-btn text color="primary" @click="$refs.menu.save(editItem.birthday)">確認</v-btn>
+                          <v-btn text color="primary" @click="dateMenu = false"
+                            >取消</v-btn
+                          >
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.menu.save(editItem.birthday)"
+                            >確認</v-btn
+                          >
                         </v-date-picker>
                       </v-menu>
                     </v-col>
@@ -133,15 +182,23 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field label="信箱" disabled v-model="editItem.email"></v-text-field>
+                      <v-text-field
+                        label="信箱"
+                        disabled
+                        v-model="editItem.email"
+                      ></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeEdit()">取消</v-btn>
-                <v-btn color="blue darken-1" text @click="saveEdit()">儲存</v-btn>
+                <v-btn color="blue darken-1" text @click="closeEdit()"
+                  >取消</v-btn
+                >
+                <v-btn color="blue darken-1" text @click="saveEdit()"
+                  >儲存</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -176,38 +233,38 @@ export default class App extends Vue {
       icon: "tachometer-alt",
       title: "首頁",
       vertical: "Dashboard",
-      link: "dashboard"
+      link: "dashboard",
     },
     {
       icon: "users",
       title: "個案名單",
       vertical: "Patient",
-      link: "patients"
+      link: "patients",
     },
     {
       icon: "user-nurse",
       title: "照護人員名單",
       vertical: "Paramedic",
-      link: "paramedic"
+      link: "paramedic",
     },
     {
       icon: "check",
       title: "個案審核",
       vertical: "verifyPatients",
-      link: "verifyPatients"
+      link: "verifyPatients",
     },
     {
       icon: "key",
       title: "API列表",
       vertical: "apiList",
-      link: "apilist"
+      link: "apilist",
     },
     {
       icon: "user-tag",
       title: "權限列表",
       vertical: "roleList",
-      link: "rolelist"
-    }
+      link: "rolelist",
+    },
   ];
 
   public developItems: AppMenu[] = [
@@ -215,8 +272,8 @@ export default class App extends Vue {
       icon: "key",
       title: "API列表",
       vertical: "apiList",
-      link: "apilist"
-    }
+      link: "apilist",
+    },
   ];
 
   public paramedicItems: AppMenu[] = [
@@ -224,14 +281,14 @@ export default class App extends Vue {
       icon: "tachometer-alt",
       title: "首頁",
       vertical: "Dashboard",
-      link: "dashboard"
+      link: "dashboard",
     },
     {
       icon: "users",
       title: "個案名單",
       vertical: "Patient",
-      link: "patients"
-    }
+      link: "patients",
+    },
   ];
 
   public items: AppMenu[] = [
@@ -247,13 +304,13 @@ export default class App extends Vue {
     {
       icon: "bubble_chart",
       title: "修改個人資料",
-      link: "userInfo"
+      link: "userInfo",
     },
     {
       icon: "bubble_chart",
       title: "登出",
-      link: "Login"
-    }
+      link: "Login",
+    },
   ];
 
   private miniVariant = false;
@@ -277,7 +334,7 @@ export default class App extends Vue {
     updated_at: "",
     uuid: "",
     email: "",
-    place: ""
+    place: "",
   };
 
   @Watch("$route", { immediate: true, deep: true })
@@ -310,7 +367,7 @@ export default class App extends Vue {
       next();
     });
     //  hook the progress bar to finish after we've finished moving router-view
-    this.$router.afterEach(to => {
+    this.$router.afterEach((to) => {
       if (to.name !== "ErrorPage") {
         this.menuItem = to.name;
       }
@@ -322,7 +379,10 @@ export default class App extends Vue {
   roleItem() {
     if (!this.signedIn) return;
     else {
-      if (this.user.roles.includes("Owner") || this.user.roles.includes("Admin")) {
+      if (
+        this.user.roles.includes("Owner") ||
+        this.user.roles.includes("Admin")
+      ) {
         this.items = this.items.concat(this.adminItems);
         return;
       } else if (this.user.roles.includes("Developer")) {
@@ -362,7 +422,7 @@ export default class App extends Vue {
   handleNavigtiion(item: TODO) {
     this.menuItem = item.title;
     this.$router.push({
-      name: item.title
+      name: item.title,
     });
   }
 
@@ -374,27 +434,29 @@ export default class App extends Vue {
     } else if (item.title === "修改個人資料") {
       this.editDialog = true;
       this.editItem = JSON.parse(JSON.stringify(this.user));
+      this.editItem.phone = this.editItem.phone.substring(4,this.editItem.phone.length);
     }
   }
 
   async saveEdit() {
     if (this.editItem.gender === "1") this.editItem.gender = "男";
     else if (this.editItem.gender === "2") this.editItem.gender = "女";
-
-    this.editItem.phone = "+886" + this.editItem.phone;
+    if (this.editItem.phone != "") {
+      this.editItem.phone = "+886" + this.editItem.phone;
+    }
 
     const params = {
       age: this.editItem.age,
       gender: this.editItem.gender,
       name: this.editItem.name,
       phone: this.editItem.phone,
-      place: this.editItem.place
+      place: this.editItem.place,
     };
 
     const result = await http.put("/user/" + this.editItem.uuid, params);
     if (result) {
       if (result.data.status === "Success") {
-        appModule.sendSuccessNotice("修改成功");
+        appModule.sendSuccessNotice("修改成功，請重新登入以便檢查資料是否正確");
       } else {
         appModule.sendErrorNotice("修改失敗");
       }
@@ -402,7 +464,6 @@ export default class App extends Vue {
       console.error(result.data.status);
     }
     this.closeEdit();
-    // location.reload();
   }
 
   closeEdit() {
@@ -419,12 +480,10 @@ export default class App extends Vue {
       updated_at: "",
       uuid: "",
       email: "",
-      place: ""
+      place: "",
     };
     this.editDialog = false;
   }
-
-  mounted() {}
 }
 </script>
 <style scoped>

@@ -314,6 +314,7 @@ export default class PatientList extends Vue {
   async edit(item: PatientInfo[]) {
     this.editDialog = true;
     this.editItem = JSON.parse(JSON.stringify(item));
+    this.editItem.phone = this.editItem.phone.substring(4,this.editItem.phone.length);
     this.editItem.place = await placeModule.codetoPlace(item);
   }
 
