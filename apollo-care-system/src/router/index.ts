@@ -89,12 +89,6 @@ const routes: Array<RouteConfig> = [
     beforeEnter: requireAuth
   },
   {
-    path: "/userInfo",
-    component: UserForm,
-    name: "個人資料",
-    beforeEnter: requireAuth
-  },
-  {
     path: "/apiToken",
     component: ApiToken,
     name: 'API列表',

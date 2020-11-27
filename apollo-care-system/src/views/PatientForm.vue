@@ -7,7 +7,7 @@
           <v-card class="lighten-4 elevation-0">
             <v-card-title class="title">
               <v-icon>mdi-account</v-icon>
-              {{ title }}
+              新增個案資料
               <v-spacer></v-spacer>
               <v-btn fab small dark class="grey mr-2" @click.native="cancel()">
                 <v-awesome-icon icon="times-circle" size="lg" />
@@ -17,7 +17,13 @@
               <v-container fluid grid-list-sm>
                 <v-layout row wrap>
                   <v-flex md3 sm12>
-                    <v-img small max-width="20em" :src="avatar" class="avatar" :srcset="avatar" />
+                    <v-img
+                      small
+                      max-width="20em"
+                      :src="avatar"
+                      class="avatar"
+                      :srcset="avatar"
+                    />
                   </v-flex>
                   <v-flex md9 sm12>
                     <v-container fluid grid-list-sm>
@@ -26,7 +32,11 @@
                           <v-text-field
                             name="firstName"
                             label="*姓名"
-                            :rules="[() => !!patientFormData.name || 'This field is required']"
+                            :rules="[
+                              () =>
+                                !!patientFormData.name ||
+                                'This field is required',
+                            ]"
                             value="Input text"
                             v-model="patientFormData.name"
                             class="input-group--focused"
@@ -38,7 +48,11 @@
                           <v-autocomplete
                             ref="gender"
                             v-model="patientFormData.gender"
-                            :rules="[() => !!patientFormData.gender || 'This field is required']"
+                            :rules="[
+                              () =>
+                                !!patientFormData.gender ||
+                                'This field is required',
+                            ]"
                             :items="['男', '女']"
                             label="*性別"
                             placeholder
@@ -89,9 +103,15 @@
                           <v-autocomplete
                             ref="place"
                             v-model="patientFormData.place"
-                            :rules="[() => !!patientFormData.place || 'This field is required']"
-                            :items="countries"
-                            label="*地區"
+                            :rules="[
+                              () =>
+                                !!patientFormData.place ||
+                                'This field is required',
+                            ]"
+                            :items="place"
+                            item-text="branch_name"
+                            item-value="branch_name"
+                            label="地區"
                             placeholder
                             required
                           ></v-autocomplete>
@@ -107,7 +127,13 @@
               <v-slide-x-reverse-transition>
                 <v-tooltip left>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon class="my-0" v-bind="attrs" @click="resetForm" v-on="on">
+                    <v-btn
+                      icon
+                      class="my-0"
+                      v-bind="attrs"
+                      @click="resetForm"
+                      v-on="on"
+                    >
                       <v-icon>mdi-refresh</v-icon>
                     </v-btn>
                   </template>
@@ -131,18 +157,22 @@ import { PatientFormData } from "@/types";
 import { appModule } from "@/store/modules/app";
 import { isValidEmail } from "@/utils/app-util";
 import { patientModule } from "@/store/modules/patients";
+import { placeModule } from "@/store/modules/place";
 import { GENDER } from "@/utils/store-util";
 
 @Component
 export default class PatientForm extends Vue {
-  title = "";
-  loading = false;
   rules = {
-    email: [() => isValidEmail(this.patientFormData.email)]
+    email: [() => isValidEmail(this.patientFormData.email)],
   };
 
   avatar = "";
-  countries = ["DN,1", "台中市", "台南市"];
+  get loading() {
+    return patientModule.loading;
+  }
+  get place() {
+    return placeModule.place;
+  }
   patientFormData: PatientFormData = {
     birthday: "",
     gender: "",
@@ -151,23 +181,16 @@ export default class PatientForm extends Vue {
     email: "",
     iid: "",
     role: "Patient",
-    place: ""
+    place: "",
   };
 
-  save() {
+  async save() {
     this.patientFormData.gender = Object.keys(GENDER).find(
-      key => GENDER[key] === this.patientFormData.gender
+      (key) => GENDER[key] === this.patientFormData.gender
     );
-    this.loading = true;
-    // this.place.country + this.place.township + this.place.areaDetail;
-    patientModule.createPatient(this.patientFormData).then(result => {
-      if (result.data.status === "Success") {
-        appModule.sendSuccessNotice("新增成功");
-      } else {
-        appModule.sendErrorNotice("新增失敗" + result.data.message);
-      }
-      this.loading = false;
-    });
+    await placeModule.placetoCode(this.patientFormData);
+
+    patientModule.createPatient(this.patientFormData);
   }
 
   resetForm() {
@@ -179,21 +202,13 @@ export default class PatientForm extends Vue {
       email: "",
       iid: "",
       role: "Patient",
-      place: ""
+      place: "",
     };
     appModule.setSnackbar;
   }
 
   cancel() {
     this.$router.push({ name: "個案名單" });
-  }
-
-  created() {}
-
-  mounted() {
-    if (this.$route.params.id) {
-      this.title = "編輯個案資料";
-    } else this.title = "新增個案資料";
   }
 }
 </script>

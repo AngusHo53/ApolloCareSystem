@@ -3,7 +3,7 @@ import { Patient, Entity, PatientInfo, PatientOptions, MeasureData, PatientFormD
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
 import { formatUserInfo } from '@/utils/app-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
-import { getPatientsList,setPatientsInfo } from '@/api/patientsService';
+import { getPatientsList, setPatientsInfo, getPatientByUuid, createPatient } from '@/api/patientsService';
 import store from '@/store';
 import http from "@/http/axios";
 
@@ -18,7 +18,7 @@ export interface PatientState {
 @Module({ store, dynamic: true, name: 'patientModule' })
 class PatientModule extends VuexModule implements PatientState {
   public pagination = getDefaultPagination();
-  public loading = true;
+  public loading = false;
   measureDataInit: MeasureData = {
     measure_at: '',
     category: '',
@@ -80,33 +80,51 @@ class PatientModule extends VuexModule implements PatientState {
 
   @Action async setPatientsInfo(param): Promise<TODO> {
     this.setLoading(true);
-    await setPatientsInfo(param.uuid,param.params);
+    await setPatientsInfo(param.uuid, param.params);
     this.setLoading(false);
   }
 
   @Action async getPatientByUuid(uuid: string): Promise<TODO> {
-    this.setPatient(undefined);
-    const result = await http.get(`/user/${uuid}?with=record&record=mode%3Afull%7Cfield%3Aall`);
-    if (result.data.data) {
-      const data = result.data.data;
-      data.user.gender = GENDER[data.user.gender];
-      this.setPatient(data);
-    } else {
-      console.error(result);
-    }
-    return result;
+    this.setPatient({
+      user: {
+        age: 0,
+        birthday: '',
+        created_at: '',
+        gender: '',
+        health_state: 0,
+        id: 0,
+        iid: '',
+        name: '',
+        phone: '',
+        updated_at: '',
+        uuid: '',
+        email: '',
+        place: '',
+        roles: [""]
+      },
+      id: 0,
+      record: {
+        blood: null,
+        blood_glucose: null,
+        blood_pressure: null,
+        body_temperature: null,
+        bone: null,
+        frailty: null,
+        mental: null,
+        metabolic: null,
+        spo2: null
+      }
+    });
+    const data = await getPatientByUuid(uuid);
+    data.user.gender = GENDER[data.user.gender];
+    this.setPatient(data);
   }
 
   @Action async createPatient(info: PatientFormData): Promise<TODO> {
     this.setLoading(true);
-    this.setPatient(undefined);
-    const result = await http.post(`/user`, info);
-    if (result.data.status === "Success") {
-      this.setLoading(false);
-    } else {
-      console.error(result);
-    }
-    return result;
+    createPatient(info)
+    this.setLoading(false);
+
   }
 
   @Action({ rawError: true })
