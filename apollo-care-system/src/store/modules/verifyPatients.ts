@@ -1,6 +1,6 @@
 
-import { Patient, Entity, PatientInfo, PatientOptions, VerifyPatientsOptions } from '@/types';
-import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
+import { Patient, Entity, PatientInfo, PatientOptions } from '@/types';
+import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { formatUserInfo } from '@/utils/app-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import { getVerifyPatients,verifyPatientsByUuid } from "@/api/patientsService";
@@ -26,6 +26,7 @@ class VerifyPatientModule extends VuexModule implements PatientState {
 
   @Action async getVerifyPatients(options: PatientOptions): Promise<TODO> {
     this.setLoading(true);
+    this.clearVerifyPatients();
     const data = await getVerifyPatients(options);
     this.setTotalVerifyPatients(data.total_users);
     this.setTotalPages(data.total_page);

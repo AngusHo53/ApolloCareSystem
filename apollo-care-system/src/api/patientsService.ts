@@ -27,6 +27,50 @@ export async function getPatientByUuid(uuid) {
   }
 }
 
+export async function getPatientRecordByUuid(patientOptions) {
+  if (patientOptions.range) {
+    const result = await http.get(`/user/${patientOptions.uuid}/record?limit=${patientOptions.limit}&range=${patientOptions.range}`);
+    if (result) {
+      if (result.data.status === "Success") {
+        return result.data.data;
+      } else {
+        appModule.sendErrorNotice("取得圖表失敗");
+      }
+    } else {
+      appModule.sendErrorNotice("取得圖表失敗");
+    }
+  }
+  else {
+    const result = await http.get(
+      `/user/${patientOptions.uuid}/record?limit=${patientOptions.limit}&page=${patientOptions.page}`
+    );
+    if (result) {
+      if (result.data.status === "Success") {
+        return result.data.data;
+      } else {
+        appModule.sendErrorNotice("取得記錄失敗");
+      }
+    } else {
+      appModule.sendErrorNotice("取得記錄失敗");
+    }
+  }
+
+
+}
+
+export async function getMeasurementTypes() {
+  const result = await http.get(`/measurements/types`);
+  if (result) {
+    if (result.data.status === "Success") {
+      return result.data.data.measurement_type;
+    } else {
+      appModule.sendErrorNotice("取得資料失敗");
+    }
+  } else {
+    appModule.sendErrorNotice("取得資料失敗");
+  }
+}
+
 
 export async function setPatientsInfo(patientsId, params) {
   const result = await http.put("/user/" + patientsId, params);

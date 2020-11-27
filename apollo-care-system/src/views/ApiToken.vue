@@ -70,10 +70,10 @@
                 </v-dialog>
               </v-toolbar>
             </template>
-            <template v-slot:item.api_key_icon="{item}">
+            <template v-slot:[`item.api_key_icon`]="{item}">
               <v-awesome-icon class="mr-2" @click="apikey(item)" icon="key" size="lg" />
             </template>
-            <template v-slot:item.actions="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
               <v-awesome-icon class="mr-2" @click="editItem(item)" icon="edit" size="lg" />
               <v-awesome-icon class="mr-2" @click="deleteItem(item)" icon="trash" size="lg" />
               <v-awesome-icon class="mr-2" @click="resetItem(item)" icon="sync-alt" size="lg" />

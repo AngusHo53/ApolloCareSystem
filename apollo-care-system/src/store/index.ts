@@ -4,6 +4,7 @@ import Vuex from "vuex";
 
 import { UserState } from "./modules/user";
 import { PatientState } from "./modules/patients";
+import { PatientRecordsState } from "./modules/patientRecords";
 import { AppState } from "./modules/app";
 import { RecordState } from "./modules/records";
 import { ApiTokenState } from "./modules/apiToken";
@@ -17,6 +18,7 @@ interface RootState {
   appState: AppState;
   userState: UserState;
   patientState: PatientState;
+  patientRecordsState: PatientRecordsState;
   recordState: RecordState;
   apiTokenState: ApiTokenState;
   roleListState: RoleListState;

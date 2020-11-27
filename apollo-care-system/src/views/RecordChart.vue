@@ -79,6 +79,7 @@ import { Component } from "vue-property-decorator";
 
 import VueApexCharts from "vue-apexcharts";
 import { recordModule } from "@/store/modules/records";
+import { patientRecordsModule } from "@/store/modules/patientRecords";
 import {
   MEASUREITEM,
   MEASUREMENT_STATUS,
@@ -138,10 +139,9 @@ export default class RecordChart extends Vue {
 
   async changeRange() {
     this.resetChart();
-    recordModule.clearRecords();
-    recordModule.getPatientRecordByUuid(this.recordsOptions).then(() => {
-      this.update();
-    });
+    patientRecordsModule.clearRecord();
+    await patientRecordsModule.getPatientRecordByUuid(this.recordsOptions);
+    this.update();
   }
 
   color(status) {
@@ -260,15 +260,15 @@ export default class RecordChart extends Vue {
   }
 
   get items() {
-    return recordModule.items;
+    return patientRecordsModule.items;
   }
 
   get measurementTypes() {
-    return recordModule.measurementTypes;
+    return patientRecordsModule.measurementTypes;
   }
 
   get loading() {
-    return appModule.loading;
+    return patientRecordsModule.loading;
   }
 }
 </script>

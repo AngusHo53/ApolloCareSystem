@@ -89,16 +89,9 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { Patient, PatientInfo, Entity, VerifyPatientsOptions } from "@/types";
+import { VerifyPatientsOptions } from "@/types";
 import Table from "@/components/Table.vue";
-import { appModule } from "@/store/modules/app";
 import { verifyPatientModule } from "@/store/modules/verifyPatients";
-import {
-  getDefaultPagination,
-  getPagination,
-  GENDER,
-} from "@/utils/store-util";
-import http from "@/http/axios";
 
 @Component({
   components: {
@@ -205,6 +198,10 @@ export default class VerifyPatients extends Vue {
       }
       await verifyPatientModule.verifyPatientsByUuid(param);
     }
+  }
+
+  async destroyed() {
+    verifyPatientModule.clearVerifyPatients();
   }
 }
 </script>
