@@ -240,7 +240,6 @@ export default class Dashboard extends Vue {
     await this.getPlaceList();
     await this.getMeasurementTypes();
     await this.updateCard();
-    console.log(JSON.parse(JSON.stringify(this.patients_record)));
   }
 
   async updateCard() {

@@ -33,12 +33,17 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   public totalNeedToAddPages = 0;
   public currentNeedToAddPage = 1;
 
+  public originalResponsible: PatientInfo[] = [];
+  public originalPatients: PatientInfo[] = [];
+
 
   @Action
   async responsiblePatientsList(param) {
     this.setLoading(true);
     this.clearResponsible();
     const data = await getPatientsByAccount(param.uuid, param.options);
+    const data2 = await getPatientsByAccount(param.uuid, param.options);
+    this.setOriginalResponsible(data2.patients);
     this.setResponsiblePatients(data.patients);
     this.setTotalResponsiblePatients(data.total_patients);
     this.setTotalResponsiblePages(data.total_page);
@@ -89,16 +94,37 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   @Action
   async addPatientsToAccount(param) {
     this.setLoading(true);
-    await addPatientsToAccount(param.uuid,param.params);
+    await addPatientsToAccount(param.uuid, param.params);
     this.setLoading(false);
+  }
+
+  @Action
+  async modifyPatientsId(uuid) {
+    for (const item of this.originalPatients) {
+      if (uuid === item.uuid) {
+        return item.iid;
+      }
+    }
+  }
+
+  @Action
+  async modifyResponsible(uuid) {
+    for (const item of this.originalResponsible) {
+      if (uuid === item.uuid) {
+        return item.iid;
+      }
+    }
   }
 
   @Action
   async needToAddPatientsList(param) {
     this.setaLoading(true);
     this.clearNeedToAdd();
-    const data = await getPatientsNeedToAdd(param.uuid, param.options)
+    const data = await getPatientsNeedToAdd(param.uuid, param.options);
+    const data2 = await getPatientsNeedToAdd(param.uuid, param.options);
+    this.setOriginalPatients(data2.patients);
     this.setNeedToAddPatients(data.patients);
+
     this.setTotalNeedToAddPages(data.total_page);
     this.setCurrentNeedToAddPage(this.aPagination.page);
 
@@ -190,6 +216,14 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
 
   @Mutation setNeedToAddPatients(needToAddPatients: PatientInfo[]): void {
     this.needToAddPatients = needToAddPatients;
+  }
+
+  @Mutation setOriginalPatients(originalPatients: PatientInfo[]): void {
+    this.originalPatients = originalPatients;
+  }
+
+  @Mutation setOriginalResponsible(originalResponsible: PatientInfo[]): void {
+    this.originalResponsible = originalResponsible;
   }
 
   @Mutation setTotalNeedToAddPages(totalNeedToAddPages: number): void {

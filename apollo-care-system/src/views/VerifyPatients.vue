@@ -171,8 +171,7 @@ export default class VerifyPatients extends Vue {
 
   async updateTableData() {
     await this.clearVerifyPatients();
-    // this.verifyPatientOptions.page = this.pagination.page;
-    // console.log(this.verifyPatientOptions.page);
+
     await this.getVerifyPatients(this.verifyPatientOptions);
   }
 

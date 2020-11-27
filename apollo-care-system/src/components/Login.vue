@@ -300,10 +300,7 @@ export default class Login extends Vue {
     const result = await http.put("/auth", params);
     if (result) {
       if (result.data.status === "Success") {
-        console.log("註冊成功");
         this.registerDialog = false;
-      } else {
-        console.log("註冊失敗");
       }
       this.loading = false;
     }

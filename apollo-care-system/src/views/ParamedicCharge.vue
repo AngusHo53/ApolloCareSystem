@@ -3,13 +3,24 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-toolbar-title>{{account.name}}負責個案 {{ totalResponsiblePatients ? '(' + totalResponsiblePatients + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title
+            >{{ account.name }}負責個案
+            {{
+              totalResponsiblePatients
+                ? "(" + totalResponsiblePatients + ")"
+                : ""
+            }}</v-toolbar-title
+          >
           <v-spacer></v-spacer>
           <v-col cols="12" md="2">
-            <v-btn class="mb-3 blue white--text" @click="addDialog()">新增個案</v-btn>
+            <v-btn class="mb-3 blue white--text" @click="addDialog()"
+              >新增個案</v-btn
+            >
           </v-col>
           <v-col cols="12" md="2">
-            <v-btn class="mb-3 red white--text" @click="removeDialog()">移除個案</v-btn>
+            <v-btn class="mb-3 red white--text" @click="removeDialog()"
+              >移除個案</v-btn
+            >
           </v-col>
         </v-card-title>
         <v-card-text>
@@ -38,7 +49,13 @@
             :single-select="false"
           >
             <template v-slot:[`item.actions`]="{ item }">
-              <v-btn fab class="indigo mr-2" small dark @click="changeToPatient(item)">
+              <v-btn
+                fab
+                class="indigo mr-2"
+                small
+                dark
+                @click="changeToPatient(item)"
+              >
                 <v-awesome-icon icon="user" size="lg" />
               </v-btn>
             </template>
@@ -58,7 +75,7 @@
     <v-dialog v-if="modify_items" v-model="remove_dialog" max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">移除個案({{modify_items.length}})</span>
+          <span class="headline">移除個案({{ modify_items.length }})</span>
         </v-card-title>
         <v-card-text>
           <v-divider></v-divider>
@@ -67,8 +84,10 @@
               <v-awesome-icon icon="user" size="lg" />
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>名稱: {{item.name}}</v-list-item-title>
-              <v-list-item-subtitle>身份證字號:</v-list-item-subtitle>
+              <v-list-item-title>名稱: {{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle
+                >身份證字號:{{ item.iid }}</v-list-item-subtitle
+              >
             </v-list-item-content>
           </v-list-item>
         </v-card-text>
@@ -83,8 +102,10 @@
     <v-dialog v-if="modify_items" v-model="add_dialog" max-width="80%">
       <v-card>
         <v-card-title>
-          <span class="headline">新增個案({{modify_items.length}})</span>
-          <v-btn class="ml-auto pa-2 blue white--text" @click="addDialog2()">批量匯入個案</v-btn>
+          <span class="headline">新增個案({{ modify_items.length }})</span>
+          <v-btn class="ml-auto pa-2 blue white--text" @click="addDialog2()"
+            >批量匯入個案</v-btn
+          >
         </v-card-title>
         <v-card-text>
           <v-divider></v-divider>
@@ -125,9 +146,13 @@
             ></v-pagination>
           </div>
           <v-spacer></v-spacer>
-          <p class="text-h5 font-weight-black grey--text text--darken-4">新增個案身分證字號:</p>
+          <p class="text-h5 font-weight-black grey--text text--darken-4">
+            新增個案身分證字號:
+          </p>
           <div class="rounded grey lighten-2 pa-4">
-            <span v-for="(item) in modify_items" :key="item.uuid">{{item.iid}},</span>
+            <span v-for="item in modify_items" :key="item.uuid"
+              >{{ item.iid }},</span
+            >
           </div>
           <p>請確認個案身分證字號是否正確，確認後再送出。</p>
         </v-card-text>
@@ -143,7 +168,7 @@
     <v-dialog v-model="add_dialog2" max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">批量匯入個案({{add_list.length}})</span>
+          <span class="headline">批量匯入個案({{ add_list.length }})</span>
         </v-card-title>
         <v-card-text>
           <v-divider></v-divider>
@@ -169,7 +194,7 @@
 <script lang="ts">
 import {
   getDefaultPagination,
-  getDefaultPatientOptions
+  getDefaultPatientOptions,
 } from "@/utils/store-util";
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
@@ -191,14 +216,14 @@ export default class ParamedicCharge extends Vue {
       text: "名稱",
       left: true,
       sortable: false,
-      value: "name"
+      value: "name",
     },
     { text: "身份證字號", sortable: false, value: "iid" },
     { text: "性別", sortable: false, value: "gender" },
     { text: "年齡", sortable: false, value: "age" },
     { text: "生日", sortable: false, value: "birthday" },
     { text: "電話", sortable: false, value: "phone" },
-    { text: "信箱", sortable: false, value: "email" }
+    { text: "信箱", sortable: false, value: "email" },
   ];
   public modify_items = [];
   public add_list = "";
@@ -209,7 +234,7 @@ export default class ParamedicCharge extends Vue {
   public dialogTitle = "";
   public account = {
     name: "",
-    uuid: ""
+    uuid: "",
   };
   get loading() {
     return paramedicPatientsModule.loading;
@@ -251,6 +276,10 @@ export default class ParamedicCharge extends Vue {
     this.account.name = localStorage.getItem("accountName");
     this.account.uuid = this.$router.currentRoute.params.id;
 
+    this.updateTable();
+  }
+
+  async updateTable() {
     this.pagination = getDefaultPagination();
     await this.updateTableData();
     await this.justNeedAdd();
@@ -265,7 +294,7 @@ export default class ParamedicCharge extends Vue {
     }
     const param = {
       uuid: this.account.uuid,
-      options: this.a_patientOptions
+      options: this.a_patientOptions,
     };
     await paramedicPatientsModule.needToAddPatientsList(param);
   }
@@ -279,7 +308,7 @@ export default class ParamedicCharge extends Vue {
     }
     const param = {
       uuid: this.account.uuid,
-      options: this.patientOptions
+      options: this.patientOptions,
     };
     await paramedicPatientsModule.responsiblePatientsList(param);
   }
@@ -311,35 +340,43 @@ export default class ParamedicCharge extends Vue {
   async modifyPatient() {
     const params = {
       add: [],
-      remove: []
+      remove: [],
     };
     if (this.dialogTitle === "新增個案") {
       const add_id = [];
 
-      const add_list = this.add_list.split(",");
-
-      add_list.forEach(function(item) {
-        add_id.push(item);
-      });
-      this.modify_items.forEach(function(item) {
-        add_id.push(item.iid);
-      });
-      params.add = add_id;
+      if (this.add_list.length > 0) {
+        const add_list = this.add_list.split(",");
+        add_list.forEach(function (item) {
+          add_id.push(item);
+        });
+      }
+      if (this.modify_items.length > 0) {
+        for (const item of this.modify_items) {
+          add_id.push(
+            await paramedicPatientsModule.modifyPatientsId(item.uuid)
+          );
+          params.add = add_id;
+        }
+      }
     } else {
       const remove_id = [];
-      this.modify_items.forEach(function(item) {
-        remove_id.push(item.iid);
-      });
-      params.remove = remove_id;
+      if (this.modify_items.length > 0) {
+        for (const item of this.modify_items) {
+          remove_id.push(
+            await paramedicPatientsModule.modifyResponsible(item.uuid)
+          );
+          params.remove = remove_id;
+        }
+      }
     }
 
     const data = {
       uuid: this.account.uuid,
-      params: params
+      params: params,
     };
 
     await paramedicPatientsModule.addPatientsToAccount(data);
-    location.reload();
   }
 
   close() {
@@ -357,10 +394,10 @@ export default class ParamedicCharge extends Vue {
   }
 
   public async save() {
-    this.remove_dialog = false;
-    this.add_dialog = false;
-    this.add_dialog2 = false;
-    this.modifyPatient();
+    await this.modifyPatient();
+    this.close();
+    this.close2();
+    await this.updateTable();
   }
 
   @Watch("patientOptions.q")
