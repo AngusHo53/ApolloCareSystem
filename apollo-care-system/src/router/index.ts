@@ -11,7 +11,6 @@ import RecordChart from "@/views/RecordChart.vue";
 import PatientForm from "@/views/PatientForm.vue";
 import VerifyPatients from "@/views/VerifyPatients.vue";
 import ApiToken from "@/views/ApiToken.vue";
-import UserForm from "@/views/UserForm.vue";
 import RoleList from "@/views/RoleList.vue";
 import ParamedicList from "@/views/ParamedicList.vue";
 import Dashboard from "@/views/Dashboard.vue";

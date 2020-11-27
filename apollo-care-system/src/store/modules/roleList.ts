@@ -8,6 +8,8 @@ import {
 import { Account } from "@/types";
 import store from "@/store";
 import { getAccountList, replaceRole } from '@/api/accountListService';
+import lodash from "lodash";
+
 export interface RoleListState {
   accounts: Account[];
   account: Account;
@@ -89,11 +91,11 @@ class RoleListModule extends VuexModule implements RoleListState {
   }
 
   @Mutation setRoleList(accounts: Account[]): void {
-    this.accounts = accounts;
+    this.accounts = lodash.cloneDeep(accounts);
   }
 
   @Mutation setAccount(account: Account): void {
-    this.account = account;
+    this.account = lodash.cloneDeep(account);
   }
 
 

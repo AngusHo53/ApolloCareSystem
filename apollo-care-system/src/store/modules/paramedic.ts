@@ -9,6 +9,8 @@ import { Account } from "@/types";
 import store from "@/store";
 import { getAccountList } from '@/api/accountListService';
 import { GENDER } from '@/utils/store-util';
+import lodash from "lodash";
+
 export interface ParamedicState {
   accounts: Account[];
   account: Account;
@@ -77,11 +79,11 @@ class ParamedicModule extends VuexModule implements ParamedicState {
   }
 
   @Mutation setAccounts(accounts: Account[]): void {
-    this.accounts = accounts;
+    this.accounts = lodash.cloneDeep(accounts);
   }
 
   @Mutation setAccount(account: Account): void {
-    this.account = account;
+    this.account = lodash.cloneDeep(account);
   }
 
   @Mutation setTotalAccounts(totalAccounts: number): void {

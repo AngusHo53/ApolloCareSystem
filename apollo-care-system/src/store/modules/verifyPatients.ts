@@ -5,6 +5,7 @@ import { formatUserInfo } from '@/utils/app-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import { getVerifyPatients,verifyPatientsByUuid } from "@/api/patientsService";
 import store from '@/store';
+import lodash from "lodash";
 
 export interface PatientState {
   pagination: Pagination;
@@ -27,7 +28,7 @@ class VerifyPatientModule extends VuexModule implements PatientState {
   @Action async getVerifyPatients(options: PatientOptions): Promise<TODO> {
     this.setLoading(true);
     this.clearVerifyPatients();
-    const data = await getVerifyPatients(options);
+    const data = lodash.cloneDeep(await getVerifyPatients(options));
     this.setTotalVerifyPatients(data.total_users);
     this.setTotalPages(data.total_page);
     this.setVerifyPatients(await formatUserInfo(data.users));
@@ -72,7 +73,7 @@ class VerifyPatientModule extends VuexModule implements PatientState {
   }
 
   @Mutation setVerifyPatients(verifyPatients: Patient[]): void {
-    this.verifyPatients = verifyPatients;
+    this.verifyPatients = lodash.cloneDeep(verifyPatients);
   }
 
   @Mutation setPagination(pagination: TODO): void {
@@ -90,7 +91,7 @@ class VerifyPatientModule extends VuexModule implements PatientState {
     this.currentPage = page;
   }
   @Mutation setItems(items: PatientInfo[]): void {
-    this.verifyItems = items;
+    this.verifyItems = lodash.cloneDeep(items);
   }
 
 }

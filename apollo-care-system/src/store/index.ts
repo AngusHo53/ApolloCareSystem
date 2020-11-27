@@ -6,7 +6,6 @@ import { UserState } from "./modules/user";
 import { PatientState } from "./modules/patients";
 import { PatientRecordsState } from "./modules/patientRecords";
 import { AppState } from "./modules/app";
-import { RecordState } from "./modules/records";
 import { ApiTokenState } from "./modules/apiToken";
 import { RoleListState } from "./modules/roleList";
 import { ParamedicState } from "./modules/paramedic";
@@ -19,7 +18,6 @@ interface RootState {
   userState: UserState;
   patientState: PatientState;
   patientRecordsState: PatientRecordsState;
-  recordState: RecordState;
   apiTokenState: ApiTokenState;
   roleListState: RoleListState;
   paramedicState: ParamedicState;

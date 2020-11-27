@@ -78,14 +78,12 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 
 import VueApexCharts from "vue-apexcharts";
-import { recordModule } from "@/store/modules/records";
 import { patientRecordsModule } from "@/store/modules/patientRecords";
 import {
   MEASUREITEM,
   MEASUREMENT_STATUS,
   MEASUREMENT_COLORS
 } from "@/utils/store-util";
-import { appModule } from "@/store/modules/app";
 Vue.use(VueApexCharts);
 
 interface STASUS {

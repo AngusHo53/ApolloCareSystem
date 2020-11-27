@@ -181,18 +181,11 @@ import MeasureCard from "@/components/MeasureCard.vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import { Component } from "vue-property-decorator";
 import Vue from "vue";
-import { Patient, MeasureData } from "@/types";
-import {
-  getDefaultPagination,
-  MEASUREITEM,
-  GENDER,
-  getPagination,
-} from "@/utils/store-util";
+import { getDefaultPagination, MEASUREITEM } from "@/utils/store-util";
 import { patientRecordsModule } from "@/store/modules/patientRecords";
 import { placeModule } from "@/store/modules/place";
 import { formatValue } from "@/utils/app-util";
 import { formatMeasureAt } from "@/utils/app-util";
-import http from "@/http/axios";
 
 Vue.filter("formatValue", function (value) {
   return formatValue(value);

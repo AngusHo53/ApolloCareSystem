@@ -10,6 +10,8 @@ import store from "@/store";
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { formatUserInfo } from '@/utils/app-util';
 import { getPatientsByAccount, getPatientsNeedToAdd, addPatientsToAccount } from '@/api/accountListService';
+import lodash from "lodash";
+
 export interface ParamedicPatientsState {
   loading: boolean;
   aLoading: boolean;
@@ -128,7 +130,7 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   }
 
   @Mutation setResponsiblePatients(responsiblePatients: PatientInfo[]): void {
-    this.responsiblePatients = responsiblePatients;
+    this.responsiblePatients = lodash.cloneDeep(responsiblePatients);
   }
 
   @Mutation setTotalResponsiblePatients(totalResponsiblePatients: number): void {
@@ -149,15 +151,15 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   }
 
   @Mutation setNeedToAddPatients(needToAddPatients: PatientInfo[]): void {
-    this.needToAddPatients = needToAddPatients;
+    this.needToAddPatients = lodash.cloneDeep(needToAddPatients);
   }
 
   @Mutation setOriginalPatients(originalPatients: PatientInfo[]): void {
-    this.originalPatients = originalPatients;
+    this.originalPatients = lodash.cloneDeep(originalPatients);
   }
 
   @Mutation setOriginalResponsible(originalResponsible: PatientInfo[]): void {
-    this.originalResponsible = originalResponsible;
+    this.originalResponsible = lodash.cloneDeep(originalResponsible);
   }
 
   @Mutation setTotalNeedToAddPages(totalNeedToAddPages: number): void {

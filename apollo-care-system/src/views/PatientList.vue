@@ -201,18 +201,14 @@
   </v-container>
 </template>
 <script lang="ts">
-import { Patient, PatientInfo } from "@/types";
+import { PatientInfo } from "@/types";
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
-import { appModule } from "@/store/modules/app";
 import { placeModule } from "@/store/modules/place";
 import {
   getDefaultPagination,
   getDefaultPatientOptions,
-  getPagination,
-  GENDER,
 } from "@/utils/store-util";
-import http from "@/http/axios";
 import { patientModule } from "../store/modules/patients";
 
 @Component

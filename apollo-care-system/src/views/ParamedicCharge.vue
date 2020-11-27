@@ -198,9 +198,6 @@ import {
 } from "@/utils/store-util";
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
-import http from "@/http/axios";
-import { appModule } from "@/store/modules/app";
-import { paramedicModule } from "@/store/modules/paramedic";
 import { paramedicPatientsModule } from "@/store/modules/paramedicPatients";
 
 @Component

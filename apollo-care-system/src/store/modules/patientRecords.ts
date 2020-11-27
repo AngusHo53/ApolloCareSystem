@@ -1,10 +1,10 @@
-
-import { Patient, Entity, PatientInfo, MeasureData, RecordOptions } from '@/types';
+import { Patient, Entity, PatientInfo, MeasureData } from '@/types';
 import { getDefaultPagination, getPagination } from '@/utils/store-util';
 import { formatUserInfo, formatValue } from '@/utils/app-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
 import { getPatientByUuid, getPatientRecordByUuid, getMeasurementTypes } from '@/api/patientsService';
 import store from '@/store';
+import lodash from "lodash";
 
 export interface PatientRecordsState {
   pagination: Pagination;
@@ -116,7 +116,7 @@ class PatientRecordsModule extends VuexModule implements PatientRecordsState {
     this.setrLoading(false);
   }
 
-  @Action async formateData(obj: { data: any, formatTime: boolean }) {
+  @Action async formateData(obj: { data, formatTime: boolean }) {
     const total = new Set();
 
     await obj.data.sort((a, b) => {
@@ -172,11 +172,11 @@ class PatientRecordsModule extends VuexModule implements PatientRecordsState {
   }
 
   @Mutation setPatient(patient: Patient): void {
-    this.patient = patient;
+    this.patient = lodash.cloneDeep(patient);
   }
 
   @Mutation setRecords(records: MeasureData[]): void {
-    this.records = records;
+    this.records = lodash.cloneDeep(records);
   }
 
   @Mutation setTotalRecords(totalRecords: number): void {
@@ -191,10 +191,10 @@ class PatientRecordsModule extends VuexModule implements PatientRecordsState {
   }
 
   @Mutation setItems(items): void {
-    this.items = items;
+    this.items = lodash.cloneDeep(items);
   }
 
-  @Mutation setMeasurementTypes(measurementTypes: any) {
+  @Mutation setMeasurementTypes(measurementTypes) {
     this.measurementTypes = measurementTypes;
   }
 

@@ -168,12 +168,10 @@
 <script lang="ts">
 import { Patient, PatientInfo, PatientsRecord } from "@/types";
 import {
-  MEASUREITEM,
   MEASUREMENT_STATUS,
   MEASUREMENT_COLORS
 } from "@/utils/store-util";
 import { Component, Watch } from "vue-property-decorator";
-import { recordModule } from "@/store/modules/records";
 import VueApexCharts from "vue-apexcharts";
 import Vue from "vue";
 import { getDefaultPagination, getPagination } from "@/utils/store-util";
@@ -694,7 +692,7 @@ export default class Dashboard extends Vue {
     this.loading = false;
   }
 
-  updateSeries(value, type) {
+  updateSeries(value,) {
     const Series = [
       {
         name: "測量值",
@@ -711,7 +709,6 @@ export default class Dashboard extends Vue {
     ];
     return Series;
   }
-  updateOptions(value, type) {}
 
   clearPatient() {
     this.patients = [];

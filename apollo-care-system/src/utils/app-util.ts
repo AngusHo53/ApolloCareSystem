@@ -1,6 +1,5 @@
 import { User } from "@/types";
 import { GENDER } from '@/utils/store-util';
-import { Patient } from '@/types';
 const SESSION_TOKEN_KEY = "apollo-token";
 const SESSION_USER_KEY = "apollo-user";
 

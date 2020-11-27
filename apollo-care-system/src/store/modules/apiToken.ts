@@ -8,6 +8,8 @@ import {
 import { ApiToken } from "@/types";
 import store from "@/store";
 import { getApiList, createApi, modifyApi, deleteApi, resetToken } from '@/api/apiTokenService';
+import lodash from "lodash";
+
 export interface ApiTokenState {
   api_list: ApiToken[];
   api_token: ApiToken;
@@ -99,7 +101,7 @@ class ApiTokenModule extends VuexModule implements ApiTokenState {
   }
 
   @Mutation setApiList(api_list: ApiToken[]): void {
-    this.api_list = api_list;
+    this.api_list = lodash.cloneDeep(api_list);
   }
 
   @Mutation setApiToken(api_token: ApiToken): void {
