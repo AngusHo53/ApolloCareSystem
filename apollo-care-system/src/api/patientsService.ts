@@ -53,3 +53,31 @@ export async function createPatient(info) {
     appModule.sendErrorNotice("新增失敗");
   }
 }
+
+export async function getVerifyPatients(patientOptions) {
+  const result = await http.get(
+    `/user?verify=-1&page=${patientOptions.page}&limit=10`
+  );
+  if (result) {
+    if (result.data.status === "Success") {
+      return result.data.data;
+    } else {
+      appModule.sendErrorNotice("取得列表失敗");
+    }
+  } else {
+    appModule.sendErrorNotice("取得列表失敗");
+  }
+}
+
+export async function verifyPatientsByUuid(uuid, params) {
+  const result = await http.post(`/user/${uuid}/verify`, params);
+  if (result) {
+    if (result.data.status === "Success") {
+      return result.data.data;
+    } else {
+      appModule.sendErrorNotice("審核個案失敗");
+    }
+  } else {
+    appModule.sendErrorNotice("審核個案失敗");
+  }
+}

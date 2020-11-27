@@ -1,11 +1,10 @@
 
-import { Patient, Order, Entity, PatientInfo, PatientOptions, VerifyPatientsOptions, RecordOptions, MeasureData, Record } from '@/types';
+import { Patient, Entity, PatientInfo, PatientOptions, VerifyPatientsOptions } from '@/types';
 import { getDefaultPagination, getPagination, GENDER } from '@/utils/store-util';
+import { formatUserInfo } from '@/utils/app-util';
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators';
+import { getVerifyPatients,verifyPatientsByUuid } from "@/api/patientsService";
 import store from '@/store';
-import Vue from 'vue';
-import http from "@/http/axios";
-import { reject } from 'lodash';
 
 export interface PatientState {
   pagination: Pagination;
@@ -21,43 +20,27 @@ class VerifyPatientModule extends VuexModule implements PatientState {
   public currentPage = 1;
 
   status = true;
-  loading = true;
+  loading = false;
   verifyPatients: Patient[] = [];
   verifyItems: PatientInfo[] = [];
 
   @Action async getVerifyPatients(options: PatientOptions): Promise<TODO> {
     this.setLoading(true);
-    const result = await http.get(`/user?verify=-1&page=${options.page}&limit=10`);
-    if (result.data.data) {
-      const data = result.data.data;
-      this.setTotalVerifyPatients(data.total_users);
-      this.setTotalPages(data.total_page);
-      this.setVerifyPatients(data.users);
-      this.setCurrentPage(options.page);
+    const data = await getVerifyPatients(options);
+    this.setTotalVerifyPatients(data.total_users);
+    this.setTotalPages(data.total_page);
+    this.setVerifyPatients(await formatUserInfo(data.users));
+    this.setCurrentPage(options.page);
 
-      await this.extractVerifyPatientInfo(data.users);
-      this.setDataTable(this.verifyItems);
+    await this.extractVerifyPatientInfo(this.verifyPatients);
+    this.setDataTable(this.verifyItems);
+    this.setLoading(false);
 
-      this.setLoading(false);
-    } else {
-      console.error(result);
-    }
   }
 
-  @Action async verifyPatientsByUuid(verifySelects: VerifyPatientsOptions): Promise<TODO> {
+  @Action async verifyPatientsByUuid(params): Promise<TODO> {
     this.setLoading(true);
-    const patients = verifySelects.patients;
-    const params = {
-      status: verifySelects.status,
-    };
-    for (const patient of patients) {
-      const result = await http.post(`/user/${patient.uuid}/verify`, params);
-      if (result) {
-        console.log(result)
-      } else {
-        console.error(result);
-      }
-    }
+    verifyPatientsByUuid(params.uuid,params.params);
     this.setLoading(false);
   }
 
@@ -65,15 +48,6 @@ class VerifyPatientModule extends VuexModule implements PatientState {
   async extractVerifyPatientInfo(verifyPatients: Patient[]) {
     verifyPatients.forEach(element => {
       if (element.user) {
-        // if (element.user.birthday) {
-        //     const timestamp = Date.parse(element.user.birthday);
-        //     if (isNaN(timestamp) === false) {
-        //         const date = new Date(element.user.birthday).toLocaleString();
-        //         element.user.birthday = date;
-        //     }
-        // }
-        // element.user.phone = 'xxxx-xxx-xxx';
-        element.user.gender = GENDER[element.user.gender];
         this.verifyItems.push(element.user);
       }
     });
