@@ -15,6 +15,7 @@ import RoleList from "@/views/RoleList.vue";
 import ParamedicList from "@/views/ParamedicList.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import ParamedicCharge from "@/views/ParamedicCharge.vue";
+import Notification from "@/views/Notification.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
   if (!userModule.isSignedIn) {
@@ -97,6 +98,11 @@ const routes: Array<RouteConfig> = [
     path: "/roleList",
     component: RoleList,
     name: '權限列表',
+    beforeEnter: requireAuth
+  },{
+    path: "/notification",
+    component: Notification,
+    name: '通知列表',
     beforeEnter: requireAuth
   },
   // {

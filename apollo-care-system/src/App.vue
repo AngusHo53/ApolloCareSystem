@@ -265,6 +265,12 @@ export default class App extends Vue {
       vertical: "roleList",
       link: "rolelist",
     },
+    {
+      icon: "bell",
+      title: "通知列表",
+      vertical: "notification",
+      link: "notification",
+    },
   ];
 
   public developItems: AppMenu[] = [
@@ -434,7 +440,10 @@ export default class App extends Vue {
     } else if (item.title === "修改個人資料") {
       this.editDialog = true;
       this.editItem = JSON.parse(JSON.stringify(this.user));
-      this.editItem.phone = this.editItem.phone.substring(4,this.editItem.phone.length);
+      this.editItem.phone = this.editItem.phone.substring(
+        4,
+        this.editItem.phone.length
+      );
     }
   }
 

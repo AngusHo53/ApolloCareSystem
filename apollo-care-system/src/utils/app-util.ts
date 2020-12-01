@@ -79,100 +79,48 @@ export function formatMeasureAt(timestamp: number) {
 
 }
 
-export function formatUserInfo(users) {
+function extractInfo(data) {
+  const len = data.name.length;
+  switch (len) {
+    case 2:
+      data.name = data.name.substring(0, 1) + "◯";
+      break;
+    case 3:
+      data.name =
+        data.name.substring(0, 1) +
+        "◯" +
+        data.name.substring(2, 3);
+      break;
+    case 4:
+      data.name =
+        data.name.substring(0, 1) +
+        "◯◯" +
+        data.name.substring(3, 4);
+      break;
+    default:
+      data.name = data.name.substr(0, 3) + "◯".repeat(len - 6) + data.name.substr(len - 3, 3);
+      break;
+  }
+
+  data.iid = data.iid.substring(0, 3) + "*****" + data.iid.substring(8, 10);
+
+  data.gender = GENDER[data.gender];
+
+  return data;
+}
+
+export async function formatUserInfo(users) {
   if (users.length > 1) {
-    users.forEach(element => {
+    for (let element of users) {
       if (element.user) {
-        const len = element.user.name.length;
-        switch (len) {
-          case 2:
-            element.user.name = element.user.name.substring(0, 1) + "◯";
-            break;
-          case 3:
-            element.user.name =
-              element.user.name.substring(0, 1) +
-              "◯" +
-              element.user.name.substring(2, 3);
-            break;
-          case 4:
-            element.user.name =
-              element.user.name.substring(0, 1) +
-              "◯◯" +
-              element.user.name.substring(3, 4);
-            break;
-          default:
-            element.user.name = element.user.name.substr(0, 3) + "◯".repeat(len - 6) + element.user.name.substr(len - 3, 3);
-            break;
-        }
-
-        element.user.iid = element.user.iid.substring(0, 3) + "*****" + element.user.iid.substring(8, 10);
-
-        element.user.gender = GENDER[element.user.gender];
+        element.user = await extractInfo(element.user);
       } else {
-        const len = element.name.length;
-        switch (len) {
-          case 2:
-            element.name = element.name.substring(0, 1) + "◯";
-            break;
-          case 3:
-            element.name =
-              element.name.substring(0, 1) +
-              "◯" +
-              element.name.substring(2, 3);
-            break;
-          case 4:
-            element.name =
-              element.name.substring(0, 1) +
-              "◯◯" +
-              element.name.substring(3, 4);
-            break;
-          default:
-            element.name =
-              element.name.substr(0, 3) +
-              "◯".repeat(len - 6) +
-              element.name.substr(len - 3, 3);
-            break;
-        }
-        element.gender = GENDER[element.gender];
-        element.iid =
-          element.iid.substring(0, 3) +
-          "****" +
-          element.iid.substring(7, 10);
+        element = await extractInfo(element);
       }
-    });
+    }
   }
   else {
-    const len = users.user.name.length;
-    switch (len) {
-      case 2:
-        users.user.name = users.user.name.substring(0, 1) + "◯";
-        break;
-      case 3:
-        users.user.name =
-        users.user.name.substring(0, 1) +
-          "◯" +
-          users.user.name.substring(2, 3);
-        break;
-      case 4:
-        users.user.name =
-        users.user.name.substring(0, 1) +
-          "◯◯" +
-          users.user.name.substring(3, 4);
-        break;
-      default:
-        users.user.name =
-        users.user.name.substr(0, 3) +
-          "◯".repeat(len - 6) +
-          users.user.name.substr(len - 3, 3);
-        break;
-    }
-    users.user.gender = GENDER[users.user.gender];
-    users.user.iid =
-    users.user.iid.substring(0, 3) +
-      "****" +
-      users.user.iid.substring(7, 10);
+    users.user = await extractInfo(users.user)
   }
-
   return users;
-
 }

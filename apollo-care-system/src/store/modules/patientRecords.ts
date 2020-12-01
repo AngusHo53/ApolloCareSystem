@@ -98,7 +98,7 @@ class PatientRecordsModule extends VuexModule implements PatientRecordsState {
       }
     });
     const data = await getPatientByUuid(uuid);
-    this.setPatient(formatUserInfo(data));
+    this.setPatient(await formatUserInfo(data));
     this.setLoading(false);
   }
 
