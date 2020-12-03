@@ -1,8 +1,8 @@
 import http from "@/http/axios";
 import { appModule } from "@/store/modules/app";
 
-export async function getNotificationList(params) {
-  const result = await http.post("/notification",params);
+export async function getNotificationList() {
+  const result = await http.post("/notification");
   if (result) {
     if (result.data.status === "Success") {
       return result.data.data.notifications;

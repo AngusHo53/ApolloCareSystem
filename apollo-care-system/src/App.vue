@@ -90,6 +90,14 @@
           light
         ></v-app-bar-nav-icon>
         <v-spacer></v-spacer>
+          <v-menu max-height="80%" max-width="20%" eager="true">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon color="green" v-bind="attrs" v-on="on">
+                <v-icon>fas fa-bell</v-icon>
+              </v-btn>
+            </template>
+            <notification> </notification>
+          </v-menu>
       </v-app-bar>
       <v-main>
         <v-container fluid>
@@ -210,11 +218,16 @@
 <script lang="ts">
 import { Component, Watch } from "vue-property-decorator";
 import Vue from "vue";
+import Notification from "@/components/Notification.vue";
 import { userModule } from "@/store/modules/user";
 import { appModule } from "./store/modules/app";
 import http from "@/http/axios";
 
-@Component
+@Component({
+  components: {
+    Notification,
+  },
+})
 export default class App extends Vue {
   get signedIn() {
     return userModule.isSignedIn;

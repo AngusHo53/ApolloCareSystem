@@ -15,7 +15,7 @@ import RoleList from "@/views/RoleList.vue";
 import ParamedicList from "@/views/ParamedicList.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import ParamedicCharge from "@/views/ParamedicCharge.vue";
-import Notification from "@/views/Notification.vue";
+import Notification from "@/components/Notification.vue";
 
 function requireAuth(to: TODO, from: TODO, next: TODO) {
   if (!userModule.isSignedIn) {

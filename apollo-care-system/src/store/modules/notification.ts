@@ -23,16 +23,23 @@ class NotificationModule extends VuexModule implements NotificationState {
   public loading = false;
 
 
-  @Action async getNotificationList(params) {
+  @Action async getNotificationList() {
     this.setLoading(true);
     patientRecordsModule.setMeasurementTypes(await getMeasurementTypes());
-    const data = await getNotificationList(params);
+    const data = await getNotificationList();
     data.forEach(element => {
       const date = new Date(
         element.created_at * 1000
       ).toLocaleString();
       element.created_at = date;
-
+      if(element.payload.data === "blood_pressure")
+      {
+        element.payload.data = "血壓";
+      }
+      else
+      {
+        element.payload.data = patientRecordsModule.measurementTypes[element.payload.data].i18n.zh;
+      }
     });
 
     this.setNotifications(data);
