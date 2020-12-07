@@ -3,16 +3,25 @@
     <v-flex xs12>
       <v-card :loading="loading">
         <v-card-title>
-          <v-toolbar-title>所有個案即時圖表 {{ totalPatients ? '(' + totalPatients + ')' : '' }}</v-toolbar-title>
+          <v-toolbar-title
+            >所有個案即時圖表
+            {{
+              totalPatients ? "(" + totalPatients + ")" : ""
+            }}</v-toolbar-title
+          >
           <v-spacer></v-spacer>
         </v-card-title>
-        <v-row no-gutters v-for="(item,index) in patients_record" :key="index">
+        <v-row no-gutters v-for="(item, index) in patients_record" :key="index">
           <v-col cols="3" class="pa-1">
             <v-row>
               <v-col cols="12" class="pt-0 pb-0">
                 <v-card>
-                  <v-card-title class="text-h6 font-weight-bold">{{item.user.user.name}}</v-card-title>
-                  <v-card-subtitle class="text-subtitle-1 font-weight-bold">{{item.user.user.place}}</v-card-subtitle>
+                  <v-card-title class="text-h6 font-weight-bold">{{
+                    item.user.user.name
+                  }}</v-card-title>
+                  <v-card-subtitle class="text-subtitle-1 font-weight-bold">{{
+                    item.user.user.place
+                  }}</v-card-subtitle>
                   <v-divider></v-divider>
                   <v-list :subheader="true">
                     <v-list-item>
@@ -20,35 +29,86 @@
                         <v-list-item-icon>
                           <v-icon
                             small
-                            v-if="item.user.record.blood_pressure.systolic.value > 170 || item.user.record.blood_pressure.diastolic.value > 120"
+                            v-if="
+                              item.user.record.blood_pressure.systolic.value >
+                                170 ||
+                              item.user.record.blood_pressure.diastolic.value >
+                                120
+                            "
                             color="red darken-2"
-                          >fas fa-circle</v-icon>
+                            >fas fa-circle</v-icon
+                          >
                           <v-icon
                             small
-                            v-if="item.user.record.blood_pressure.systolic.value > 140 && item.user.record.blood_pressure.systolic.value < 170 || item.user.record.blood_pressure.diastolic.value > 80 && item.user.record.blood_pressure.diastolic.value < 120"
+                            v-if="
+                              (item.user.record.blood_pressure.systolic.value >
+                                140 &&
+                                item.user.record.blood_pressure.systolic.value <
+                                  170) ||
+                              (item.user.record.blood_pressure.diastolic.value >
+                                80 &&
+                                item.user.record.blood_pressure.diastolic
+                                  .value < 120)
+                            "
                             color="yellow darken-2"
-                          >fas fa-circle</v-icon>
+                            >fas fa-circle</v-icon
+                          >
                         </v-list-item-icon>
                       </v-col>
                       <v-list-item-content
                         class="align-start font-weight-black text-xl-h6 text-md-body-1"
                       >
-                        <div style="display:flex">
+                        <div style="display: flex">
                           血壓
                           <span
-                            :class="[item.user.record.blood_pressure.systolic.value > 170 ? 'red--text text--darken-2':'' || item.user.record.blood_pressure.systolic.value > 140 && item.user.record.blood_pressure.systolic.value < 170 ? 'yellow--text text--darken-2':'']"
-                          >{{item.user.record.blood_pressure.systolic.value}}</span>
+                            :class="[
+                              item.user.record.blood_pressure.systolic.value >
+                              170
+                                ? 'red--text text--darken-2'
+                                : '' ||
+                                  (item.user.record.blood_pressure.systolic
+                                    .value > 140 &&
+                                    item.user.record.blood_pressure.systolic
+                                      .value < 170)
+                                ? 'yellow--text text--darken-2'
+                                : '',
+                            ]"
+                            >{{
+                              item.user.record.blood_pressure.systolic.value
+                            }}</span
+                          >
                           <span
-                            v-show="item.user.record.blood_pressure.systolic.value && item.user.record.blood_pressure.diastolic.value"
-                          >/</span>
+                            v-show="
+                              item.user.record.blood_pressure.systolic.value &&
+                              item.user.record.blood_pressure.diastolic.value
+                            "
+                            >/</span
+                          >
                           <span
-                            :class="[item.user.record.blood_pressure.diastolic.value > 120 ? 'red--text text--darken-2':'' || item.user.record.blood_pressure.diastolic.value > 80 && item.user.record.blood_pressure.diastolic.value < 120 ? 'yellow--text text--darken-2':'']"
-                          >{{item.user.record.blood_pressure.diastolic.value}}</span>
+                            :class="[
+                              item.user.record.blood_pressure.diastolic.value >
+                              120
+                                ? 'red--text text--darken-2'
+                                : '' ||
+                                  (item.user.record.blood_pressure.diastolic
+                                    .value > 80 &&
+                                    item.user.record.blood_pressure.diastolic
+                                      .value < 120)
+                                ? 'yellow--text text--darken-2'
+                                : '',
+                            ]"
+                            >{{
+                              item.user.record.blood_pressure.diastolic.value
+                            }}</span
+                          >
                         </div>
                       </v-list-item-content>
                       <v-list-item-content
                         class="align-end flex-column text-caption"
-                      >{{item.user.record.blood_pressure.systolic.measure_at}}</v-list-item-content>
+                        >{{
+                          item.user.record.blood_pressure.systolic.measure_at
+                        }}</v-list-item-content
+                      >
                     </v-list-item>
 
                     <v-list-item>
@@ -56,30 +116,54 @@
                         <v-list-item-icon>
                           <v-icon
                             small
-                            v-if="item.user.record.blood_pressure.pulse.value > 170"
+                            v-if="
+                              item.user.record.blood_pressure.pulse.value > 170
+                            "
                             color="red darken-2"
-                          >fas fa-circle</v-icon>
+                            >fas fa-circle</v-icon
+                          >
                           <v-icon
                             small
-                            v-if="item.user.record.blood_pressure.pulse.value > 140 && item.user.record.blood_pressure.pulse.value < 170"
+                            v-if="
+                              item.user.record.blood_pressure.pulse.value >
+                                140 &&
+                              item.user.record.blood_pressure.pulse.value < 170
+                            "
                             color="yellow darken-2"
-                          >fas fa-circle</v-icon>
+                            >fas fa-circle</v-icon
+                          >
                         </v-list-item-icon>
                       </v-col>
 
                       <v-list-item-content
                         class="align-center font-weight-black text-xl-h6 text-md-body-1"
                       >
-                        <div style="display:flex">
+                        <div style="display: flex">
                           脈搏
                           <span
-                            :class="[item.user.record.blood_pressure.pulse.value > 170 ? 'red--text text--darken-2':'' || item.user.record.blood_pressure.pulse.value > 140 && item.user.record.blood_pressure.pulse.value < 170 ? 'yellow--text text--darken-2':'']"
-                          >{{item.user.record.blood_pressure.pulse.value}}</span>
+                            :class="[
+                              item.user.record.blood_pressure.pulse.value > 170
+                                ? 'red--text text--darken-2'
+                                : '' ||
+                                  (item.user.record.blood_pressure.pulse.value >
+                                    140 &&
+                                    item.user.record.blood_pressure.pulse
+                                      .value < 170)
+                                ? 'yellow--text text--darken-2'
+                                : '',
+                            ]"
+                            >{{
+                              item.user.record.blood_pressure.pulse.value
+                            }}</span
+                          >
                         </div>
                       </v-list-item-content>
                       <v-list-item-content
                         class="align-end flex-column text-caption"
-                      >{{item.user.record.blood_pressure.pulse.measure_at}}</v-list-item-content>
+                        >{{
+                          item.user.record.blood_pressure.pulse.measure_at
+                        }}</v-list-item-content
+                      >
                     </v-list-item>
 
                     <v-list-item>
@@ -87,30 +171,58 @@
                         <v-list-item-icon>
                           <v-icon
                             small
-                            v-if="item.user.record.blood_glucose.blood_glucose.value > 400"
+                            v-if="
+                              item.user.record.blood_glucose.blood_glucose
+                                .value > 400
+                            "
                             color="red darken-2"
-                          >fas fa-circle</v-icon>
+                            >fas fa-circle</v-icon
+                          >
                           <v-icon
                             small
-                            v-if="item.user.record.blood_glucose.blood_glucose.value > 200 && item.user.record.blood_glucose.blood_glucose.value < 400"
+                            v-if="
+                              item.user.record.blood_glucose.blood_glucose
+                                .value > 200 &&
+                              item.user.record.blood_glucose.blood_glucose
+                                .value < 400
+                            "
                             color="yellow darken-2"
-                          >fas fa-circle</v-icon>
+                            >fas fa-circle</v-icon
+                          >
                         </v-list-item-icon>
                       </v-col>
 
                       <v-list-item-content
                         class="align-center font-weight-black text-xl-h6 text-md-body-1"
                       >
-                        <div style="display:flex">
+                        <div style="display: flex">
                           血糖
                           <span
-                            :class="[item.user.record.blood_glucose.blood_glucose.value > 400 ? 'red--text text--darken-2':'' || item.user.record.blood_glucose.blood_glucose.value > 200 && item.user.record.blood_glucose.blood_glucose.value < 400 ? 'yellow--text text--darken-2':'']"
-                          >{{item.user.record.blood_glucose.blood_glucose.value}}</span>
+                            :class="[
+                              item.user.record.blood_glucose.blood_glucose
+                                .value > 400
+                                ? 'red--text text--darken-2'
+                                : '' ||
+                                  (item.user.record.blood_glucose.blood_glucose
+                                    .value > 200 &&
+                                    item.user.record.blood_glucose.blood_glucose
+                                      .value < 400)
+                                ? 'yellow--text text--darken-2'
+                                : '',
+                            ]"
+                            >{{
+                              item.user.record.blood_glucose.blood_glucose.value
+                            }}</span
+                          >
                         </div>
                       </v-list-item-content>
                       <v-list-item-content
                         class="align-end flex-column text-caption"
-                      >{{item.user.record.blood_glucose.blood_glucose.measure_at}}</v-list-item-content>
+                        >{{
+                          item.user.record.blood_glucose.blood_glucose
+                            .measure_at
+                        }}</v-list-item-content
+                      >
                     </v-list-item>
                   </v-list>
                 </v-card>
@@ -167,10 +279,7 @@
 </template>
 <script lang="ts">
 import { Patient, PatientInfo, PatientsRecord } from "@/types";
-import {
-  MEASUREMENT_STATUS,
-  MEASUREMENT_COLORS
-} from "@/utils/store-util";
+import { MEASUREMENT_STATUS, MEASUREMENT_COLORS } from "@/utils/store-util";
 import { Component, Watch } from "vue-property-decorator";
 import VueApexCharts from "vue-apexcharts";
 import Vue from "vue";
@@ -180,8 +289,8 @@ import {} from "../types";
 Vue.use(VueApexCharts);
 @Component({
   components: {
-    VueApexCharts
-  }
+    VueApexCharts,
+  },
 })
 export default class Dashboard extends Vue {
   public loading = false;
@@ -198,34 +307,34 @@ export default class Dashboard extends Vue {
     page: 1,
     q: "",
     order: "asc",
-    sort: ""
+    sort: "",
   };
   private lastSearch = "";
   public place = {
     branch_name: [],
     index: [],
-    shortcode: []
+    shortcode: [],
   };
 
   public s_chartOptions = [];
   public s_series = [];
   public s_rule = {
     warning: [],
-    bad: []
+    bad: [],
   };
 
   public p_chartOptions = [];
   public p_series = [];
   public p_rule = {
     warning: [],
-    bad: []
+    bad: [],
   };
 
   public b_chartOptions = [];
   public b_series = [];
   public b_rule = {
     warning: [],
-    bad: []
+    bad: [],
   };
 
   @Watch("loading", { immediate: true, deep: true })
@@ -290,13 +399,22 @@ export default class Dashboard extends Vue {
             patient.user.name = patient.user.name.substring(0, 1) + "◯";
             break;
           case 3:
-            patient.user.name = patient.user.name.substring(0, 1) + "◯" + patient.user.name.substring(2, 3);
+            patient.user.name =
+              patient.user.name.substring(0, 1) +
+              "◯" +
+              patient.user.name.substring(2, 3);
             break;
           case 4:
-            patient.user.name = patient.user.name.substring(0, 1) + "◯◯" + patient.user.name.substring(3, 4);
+            patient.user.name =
+              patient.user.name.substring(0, 1) +
+              "◯◯" +
+              patient.user.name.substring(3, 4);
             break;
           default:
-            patient.user.name = patient.user.name.substr(0, 3) + "◯".repeat((len-6) > 0 ? len-6 : 1) + patient.user.name.substr(len-3, 3);
+            patient.user.name =
+              patient.user.name.substr(0, 3) +
+              "◯".repeat(len - 6 > 0 ? len - 6 : 1) +
+              patient.user.name.substr(len - 3, 3);
             break;
         }
         patient.user.place = this.codetoPlace(patient.user);
@@ -305,22 +423,32 @@ export default class Dashboard extends Vue {
           patient.record.blood_pressure.systolic.measure_at = new Date(
             patient.record.blood_pressure.systolic.measure_at * 1000
           ).toLocaleString();
+          patient.record.blood_pressure.systolic.value = Number.parseFloat(
+            patient.record.blood_pressure.systolic.value
+          ).toFixed(0);
+          patient.record.blood_pressure.diastolic.value = Number.parseFloat(
+            patient.record.blood_pressure.diastolic.value
+          ).toFixed(0);
         }
         if (patient.record.blood_pressure.pulse.measure_at !== null) {
           patient.record.blood_pressure.pulse.measure_at = new Date(
             patient.record.blood_pressure.pulse.measure_at * 1000
           ).toLocaleString();
+          patient.record.blood_pressure.pulse.value = Number.parseFloat(
+            patient.record.blood_pressure.pulse.value
+          ).toFixed(0);
         }
-        if (
-          patient.record.blood_glucose.blood_glucose.measure_at !== null
-        ) {
+        if (patient.record.blood_glucose.blood_glucose.measure_at !== null) {
           patient.record.blood_glucose.blood_glucose.measure_at = new Date(
             patient.record.blood_glucose.blood_glucose.measure_at * 1000
           ).toLocaleString();
+          patient.record.blood_glucose.blood_glucose.value = Number.parseFloat(
+            patient.record.blood_glucose.blood_glucose.value
+          ).toFixed(0);
         }
         patients_record.push({
           user: patient,
-          record: await this.patientRecord(patient)
+          record: await this.patientRecord(patient),
         });
       }
     }
@@ -379,7 +507,7 @@ export default class Dashboard extends Vue {
       systolic: [],
       diastolic: [],
       pulse: [],
-      blood_glucose: []
+      blood_glucose: [],
     };
 
     if (result.data.data) {
@@ -392,7 +520,7 @@ export default class Dashboard extends Vue {
           data.records[i].measure_at = date.substring(5, date.length - 3);
           record.systolic.push({
             measure_at: data.records[i].measure_at,
-            value: data.records[i].value
+            value: Number.parseFloat(data.records[i].value).toFixed(2),
           });
         } else if (data.records[i].key === "diastolic") {
           const date = new Date(
@@ -401,7 +529,7 @@ export default class Dashboard extends Vue {
           data.records[i].measure_at = date.substring(5, date.length - 3);
           record.diastolic.push({
             measure_at: data.records[i].measure_at,
-            value: data.records[i].value
+            value: Number.parseFloat(data.records[i].value).toFixed(2),
           });
         } else if (data.records[i].key === "pulse") {
           const date = new Date(
@@ -410,7 +538,7 @@ export default class Dashboard extends Vue {
           data.records[i].measure_at = date.substring(5, date.length - 3);
           record.pulse.push({
             measure_at: data.records[i].measure_at,
-            value: data.records[i].value
+            value: Number.parseFloat(data.records[i].value).toFixed(2),
           });
         } else if (data.records[i].key === "blood_glucose") {
           const date = new Date(
@@ -419,7 +547,7 @@ export default class Dashboard extends Vue {
           data.records[i].measure_at = date.substring(5, date.length - 3);
           record.blood_glucose.push({
             measure_at: data.records[i].measure_at,
-            value: data.records[i].value
+            value: Number.parseFloat(data.records[i].value).toFixed(2),
           });
         }
       }
@@ -432,7 +560,7 @@ export default class Dashboard extends Vue {
   updateRule(rule) {
     const value = {
       warning: [],
-      bad: []
+      bad: [],
     };
 
     for (const i in rule) {
@@ -503,209 +631,209 @@ export default class Dashboard extends Vue {
         this.s_series[i] = [
           {
             name: "測量值",
-            data: s_value[i]
+            data: s_value[i],
           },
           {
             name: "警告值",
-            data: s_warning[i]
+            data: s_warning[i],
           },
           {
             name: "異常值",
-            data: s_bad[i]
-          }
+            data: s_bad[i],
+          },
         ];
         this.p_series[i] = [
           {
             name: "測量值",
-            data: p_value[i]
+            data: p_value[i],
           },
           {
             name: "警告值",
-            data: p_warning[i]
+            data: p_warning[i],
           },
           {
             name: "異常值",
-            data: p_bad[i]
-          }
+            data: p_bad[i],
+          },
         ];
         this.b_series[i] = [
           {
             name: "測量值",
-            data: b_value[i]
+            data: b_value[i],
           },
           {
             name: "警告值",
-            data: b_warning[i]
+            data: b_warning[i],
           },
           {
             name: "異常上限值",
-            data: b_bad[i]
+            data: b_bad[i],
           },
           {
             name: "異常下限值",
-            data: b_low_bad[i]
-          }
+            data: b_low_bad[i],
+          },
         ];
 
         this.s_chartOptions[i] = {
           title: {
             text: "收縮壓",
-            align: "left"
+            align: "left",
           },
           chart: {
             type: "line",
             width: "100%",
             zoom: {
-              enabled: false
-            }
+              enabled: false,
+            },
           },
           xaxis: {
-            categories: s_measure_at[i]
+            categories: s_measure_at[i],
           },
           yaxis: {
             labels: {
-              minWidth: 10
-            }
+              minWidth: 10,
+            },
           },
 
           dataLabels: {
-            enabled: false
+            enabled: false,
           },
           stroke: {
             width: [3, 3, 3],
             curve: "straight",
-            dashArray: [0, 3, 3]
+            dashArray: [0, 3, 3],
           },
           markers: {
             size: [6, 0, 0],
             hover: {
-              sizeOffset: 10
-            }
+              sizeOffset: 10,
+            },
           },
           grid: {
-            borderColor: "#f1f1f1"
+            borderColor: "#f1f1f1",
           },
           colors: ["#757575", MEASUREMENT_COLORS[1], MEASUREMENT_COLORS[2]],
           tooltip: {
-            enabledOnSeries: [0]
-          }
+            enabledOnSeries: [0],
+          },
         };
 
         this.p_chartOptions[i] = {
           title: {
             text: "脈搏",
-            align: "left"
+            align: "left",
           },
           chart: {
             type: "line",
             width: "100%",
             zoom: {
-              enabled: false
-            }
+              enabled: false,
+            },
           },
           xaxis: {
-            categories: p_measure_at[i]
+            categories: p_measure_at[i],
           },
           yaxis: {
             labels: {
-              minWidth: 10
-            }
+              minWidth: 10,
+            },
           },
           zoom: {
-            enabled: false
+            enabled: false,
           },
           dataLabels: {
-            enabled: false
+            enabled: false,
           },
           stroke: {
             width: [3, 3, 3],
             curve: "straight",
-            dashArray: [0, 3, 3]
+            dashArray: [0, 3, 3],
           },
           markers: {
             size: [6, 0, 0],
             hover: {
-              sizeOffset: 10
-            }
+              sizeOffset: 10,
+            },
           },
           grid: {
-            borderColor: "#f1f1f1"
+            borderColor: "#f1f1f1",
           },
           colors: ["#757575", MEASUREMENT_COLORS[1], MEASUREMENT_COLORS[2]],
           tooltip: {
-            enabledOnSeries: [0]
-          }
+            enabledOnSeries: [0],
+          },
         };
 
         this.b_chartOptions[i] = {
           title: {
             text: "血糖",
-            align: "left"
+            align: "left",
           },
           chart: {
             type: "line",
             width: "100%",
             zoom: {
-              enabled: false
-            }
+              enabled: false,
+            },
           },
           xaxis: {
-            categories: b_measure_at[i]
+            categories: b_measure_at[i],
           },
           yaxis: {
             labels: {
-              minWidth: 10
-            }
+              minWidth: 10,
+            },
           },
           zoom: {
-            enabled: false
+            enabled: false,
           },
           dataLabels: {
-            enabled: false
+            enabled: false,
           },
           stroke: {
             width: [3, 3, 3, 3],
             curve: "straight",
-            dashArray: [0, 3, 3, 3]
+            dashArray: [0, 3, 3, 3],
           },
           markers: {
             size: [6, 0, 0, 0],
             hover: {
-              sizeOffset: 10
-            }
+              sizeOffset: 10,
+            },
           },
           grid: {
-            borderColor: "#f1f1f1"
+            borderColor: "#f1f1f1",
           },
           colors: [
             "#757575",
             MEASUREMENT_COLORS[1],
             MEASUREMENT_COLORS[2],
-            MEASUREMENT_COLORS[2]
+            MEASUREMENT_COLORS[2],
           ],
           tooltip: {
-            enabledOnSeries: [0]
-          }
+            enabledOnSeries: [0],
+          },
         };
       }
     }
     this.loading = false;
   }
 
-  updateSeries(value,) {
+  updateSeries(value) {
     const Series = [
       {
         name: "測量值",
-        data: value
+        data: value,
       },
       {
         name: "警告值",
-        data: []
+        data: [],
       },
       {
         name: "異常值",
-        data: []
-      }
+        data: [],
+      },
     ];
     return Series;
   }

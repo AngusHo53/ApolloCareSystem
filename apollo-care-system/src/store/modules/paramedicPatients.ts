@@ -70,6 +70,7 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
 
   @Action
   async modifyPatientsId(uuid) {
+    console.log(uuid,JSON.stringify(this.originalPatients));
     for (const item of this.originalPatients) {
       if (uuid === item.uuid) {
         return item.iid;
@@ -88,6 +89,7 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
 
   @Action
   async needToAddPatientsList(param) {
+
     this.setaLoading(true);
     this.clearNeedToAdd();
     const data = await getPatientsNeedToAdd(param.uuid, param.options);
@@ -155,7 +157,12 @@ class ParamedicPatientsModule extends VuexModule implements ParamedicPatientsSta
   }
 
   @Mutation setOriginalPatients(originalPatients: PatientInfo[]): void {
-    this.originalPatients = lodash.cloneDeep(originalPatients);
+    const set = new Set(this.originalPatients);
+    lodash.cloneDeep(originalPatients).forEach(element => {
+      if (!set.has(element)) {
+        this.originalPatients.push(lodash.cloneDeep(element));
+      }
+    })
   }
 
   @Mutation setOriginalResponsible(originalResponsible: PatientInfo[]): void {
