@@ -341,7 +341,7 @@ export default class ParamedicCharge extends Vue {
     };
     if (this.dialogTitle === "新增個案") {
       const add_id = [];
-
+      console.log(this.add_list);
       if (this.add_list.length > 0) {
         const add_list = this.add_list.split(",");
         add_list.forEach(function (item) {
@@ -353,9 +353,9 @@ export default class ParamedicCharge extends Vue {
           add_id.push(
             await paramedicPatientsModule.modifyPatientsId(item.uuid)
           );
-          params.add = add_id;
         }
       }
+      params.add = add_id;
     } else {
       const remove_id = [];
       if (this.modify_items.length > 0) {
