@@ -334,10 +334,14 @@ export default class PatientList extends Vue {
   }
 
   async saveEdit() {
-    if (this.editItem.gender === "1") this.editItem.gender = "男";
-    else if (this.editItem.gender === "2") this.editItem.gender = "女";
-    if (this.editItem.phone != "") {
+    console.log(this.editItem.phone);
+    if (this.editItem.gender === "男") this.editItem.gender = "1";
+    else if (this.editItem.gender === "女") this.editItem.gender = "2";
+    if (this.editItem.phone != null) {
       this.editItem.phone = "+886" + this.editItem.phone;
+    }
+    else if (this.editItem.phone === null) {
+      this.editItem.phone = "";
     }
 
     await placeModule.placetoCode(this.editItem);
