@@ -6,7 +6,7 @@
           <v-toolbar-title
             >個案名單
             {{
-              totalPatients ? "(" + totalPatients + ")" : ""
+              totalPatients ? '(' + totalPatients + ')' : ''
             }}</v-toolbar-title
           >
           <v-spacer></v-spacer>
@@ -201,54 +201,54 @@
   </v-container>
 </template>
 <script lang="ts">
-import { PatientInfo } from "@/types";
-import { Component, Watch } from "vue-property-decorator";
-import Vue from "vue";
-import { placeModule } from "@/store/modules/place";
+import { PatientInfo } from '@/types';
+import { Component, Watch } from 'vue-property-decorator';
+import Vue from 'vue';
+import { placeModule } from '@/store/modules/place';
 import {
   getDefaultPagination,
   getDefaultPatientOptions,
-} from "@/utils/store-util";
-import { patientModule } from "../store/modules/patients";
+} from '@/utils/store-util';
+import { patientModule } from '../store/modules/patients';
 
 @Component
 export default class PatientList extends Vue {
   public headers = [
     {
-      text: "名稱",
+      text: '名稱',
       left: true,
       sortable: false,
-      value: "name",
+      value: 'name',
     },
-    { text: "身份證字號", sortable: false, value: "iid" },
-    { text: "性別", sortable: false, value: "gender" },
-    { text: "年齡", sortable: false, value: "age" },
-    { text: "生日", sortable: false, value: "birthday" },
-    { text: "電話", sortable: false, value: "phone" },
-    { text: "信箱", sortable: false, value: "email" },
-    { text: "其他操作", value: "actions", sortable: false },
+    { text: '身份證字號', sortable: false, value: 'iid' },
+    { text: '性別', sortable: false, value: 'gender' },
+    { text: '年齡', sortable: false, value: 'age' },
+    { text: '生日', sortable: false, value: 'birthday' },
+    { text: '電話', sortable: false, value: 'phone' },
+    { text: '信箱', sortable: false, value: 'email' },
+    { text: '其他操作', value: 'actions', sortable: false },
   ];
   public editDialog = false;
   public editItem = {
     age: 0,
-    birthday: "",
-    created_at: "",
-    gender: "",
+    birthday: '',
+    created_at: '',
+    gender: '',
     health_state: 0,
     iid: 0,
-    id_card: "",
-    name: "",
-    phone: "",
-    updated_at: "",
-    uuid: "",
-    email: "",
-    place: "",
+    id_card: '',
+    name: '',
+    phone: '',
+    updated_at: '',
+    uuid: '',
+    email: '',
+    place: '',
   };
   private dateMenu = false;
   private date = new Date().toISOString().substr(0, 10);
   private patientOptions = getDefaultPatientOptions();
 
-  private lastSearch = "";
+  private lastSearch = '';
 
   get loading() {
     return patientModule.loading;
@@ -295,7 +295,7 @@ export default class PatientList extends Vue {
   }
 
   createPatient() {
-    this.$router.push("newPatient");
+    this.$router.push('newPatient');
   }
 
   changeToPatientRecordPage(item) {
@@ -310,38 +310,39 @@ export default class PatientList extends Vue {
   async edit(item: PatientInfo[]) {
     this.editDialog = true;
     this.editItem = JSON.parse(JSON.stringify(item));
-    this.editItem.phone = this.editItem.phone.substring(4,this.editItem.phone.length);
+    if (this.editItem.phone != null) {
+      this.editItem.phone = this.editItem.phone.substring(
+        4,
+        this.editItem.phone.length
+      );
+    }
     this.editItem.place = await placeModule.codetoPlace(item);
   }
 
   closeEdit() {
     this.editItem = {
       age: 0,
-      birthday: "",
-      created_at: "",
-      gender: "",
+      birthday: '',
+      created_at: '',
+      gender: '',
       health_state: 0,
       iid: 0,
-      id_card: "",
-      name: "",
-      phone: "",
-      updated_at: "",
-      uuid: "",
-      email: "",
-      place: "",
+      id_card: '',
+      name: '',
+      phone: '',
+      updated_at: '',
+      uuid: '',
+      email: '',
+      place: '',
     };
     this.editDialog = false;
   }
 
   async saveEdit() {
-    console.log(this.editItem.phone);
-    if (this.editItem.gender === "男") this.editItem.gender = "1";
-    else if (this.editItem.gender === "女") this.editItem.gender = "2";
+    if (this.editItem.gender === '男') this.editItem.gender = '1';
+    else if (this.editItem.gender === '女') this.editItem.gender = '2';
     if (this.editItem.phone != null) {
-      this.editItem.phone = "+886" + this.editItem.phone;
-    }
-    else if (this.editItem.phone === null) {
-      this.editItem.phone = "";
+      this.editItem.phone = '+886' + this.editItem.phone;
     }
 
     await placeModule.placetoCode(this.editItem);
@@ -364,9 +365,9 @@ export default class PatientList extends Vue {
     await patientModule.getPatientsByPages(this.patientOptions);
   }
 
-  @Watch("patientOptions.q")
+  @Watch('patientOptions.q')
   watchSearch(newVal, oldVal) {
-    if (newVal != oldVal && newVal == "") {
+    if (newVal != oldVal && newVal == '') {
       this.updateTableData();
     }
   }
